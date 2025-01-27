@@ -1,0 +1,47 @@
+services:
+  recruitment_db:
+    image: postgres
+    container_name: recruitment_db_container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=recruitment
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./server/init_db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+
+  recruitment_backend:
+    build: server/
+    container_name: recruitment_backend_container
+    environment:
+      - SERVER_PORT=3001
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=recruitment_db
+      - DB_NAME=recruitment
+      - DB_PORT=5432
+    ports:
+      - "3001:3001"
+    depends_on:
+      recruitment_db:
+        condition: service_healthy
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+
+  recruitment_frontend:
+    build: client/
+    container_name: recruitment_frontend_container
+    environment:
+      - VITE_BACKEND_URL=http://localhost:3001
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
