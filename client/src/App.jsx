@@ -1,33 +1,28 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import LoginPresenter from './presenter/LoginPresenter';
+import SignUpPresenter from './presenter/SignUpPresenter';
 
-/**
- * Main application component that currently focuses on the login functionality.
- * Handles different user roles (recruiter/applicant) after successful login.
- * 
- * @returns {React.ReactElement} The main application component
- */
 const App = () => {
-  /**
-   * Handles successful login based on user role
-   * @param {string} role - The role of the logged-in user ('recruiter' or 'applicant')
-   */
   const handleLoginSuccess = (role) => {
-    if (role === 'recruiter') {
-      // Handle recruiter login 
-      console.log('Recruiter logged in');
-      // TODO: Add recruiter-specific logic here
-    } else {
-      // Handle applicant login
-      console.log('Applicant logged in');
-      // TODO: Add applicant-specific logic here
-    }
+    console.log(`${role} logged in`);
+  };
+
+  const handleSignUpSuccess = () => {
+    console.log('Sign up successful');
   };
 
   return (
-    <div className="App">
-      <LoginPresenter onLoginSuccess={handleLoginSuccess} />
-    </div>
+    <Routes>
+      <Route
+        path="/"
+        element={<LoginPresenter onLoginSuccess={handleLoginSuccess} />}
+      />
+      <Route
+        path="/signup"
+        element={<SignUpPresenter onSignUpSuccess={handleSignUpSuccess} />}
+      />
+    </Routes>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Login from '../views/Login';
 
 /**
@@ -10,6 +11,7 @@ import Login from '../views/Login';
  */
 const LoginPresenter = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // React Router hook for navigation
 
   /**
    * Handles the login process when user submits credentials
@@ -41,7 +43,14 @@ const LoginPresenter = ({ onLoginSuccess }) => {
     }
   };
 
-  return <Login onLogin={handleLogin} error={error} />;
+  /**
+   * Navigate to the Sign Up page
+   */
+  const handleNavigateToSignUp = () => {
+    navigate('/signup');
+  };
+
+  return <Login onLogin={handleLogin} onNavigateToSignUp={handleNavigateToSignUp} error={error} />;
 };
 
 export default LoginPresenter;

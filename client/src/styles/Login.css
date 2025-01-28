@@ -73,3 +73,22 @@
 .submit-button:hover {
   background-color: #1d4ed8;
 }
+
+.signup-redirect {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.signup-button {
+  margin-top: 8px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.signup-button:hover {
+  background-color: #0056b3;
+}

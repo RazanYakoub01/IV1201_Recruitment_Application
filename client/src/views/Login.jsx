@@ -1,5 +1,5 @@
 import React from 'react';
-import './Login.css';
+import '../styles/Login.css';
 
 /**
  * Login view component that provides the user interface for the login form.
@@ -7,10 +7,11 @@ import './Login.css';
  * 
  * @param {Object} props Component properties
  * @param {Function} props.onLogin Callback function to handle login submission
+ * @param {Function} props.onNavigateToSignUp Callback function to navigate to the Sign Up page
  * @param {string} props.error Error message to display if login fails
  * @returns {React.ReactElement} Renders the login form with username and password fields
  */
-const Login = ({ onLogin, error }) => {
+const Login = ({ onLogin, onNavigateToSignUp, error }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.username.value;
@@ -60,6 +61,13 @@ const Login = ({ onLogin, error }) => {
             </button>
           </div>
         </form>
+
+        <div className="signup-redirect">
+          <p>Don't have an account?</p>
+          <button onClick={onNavigateToSignUp} className="signup-button">
+            Sign Up
+          </button>
+        </div>
       </div>
     </div>
   );

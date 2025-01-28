@@ -12,19 +12,19 @@ const login = async (req, res) => {
 
     // Input validation
     if (!username || !password) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Username and password are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Username and password are required',
       });
     }
 
     // Find user in database
     const user = await userDAO.findUserByUsername(username);
-    
+
     if (!user || user.password !== password) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Invalid credentials' 
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials',
       });
     }
 
@@ -36,14 +36,61 @@ const login = async (req, res) => {
       message: 'Login successful',
       token,
     });
-
   } catch (err) {
     console.error('Error during login:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Internal server error' 
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
     });
   }
 };
 
-module.exports = { login };
+/**
+ * Handles user sign-up by creating a new user in the database
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const signup = async (req, res) => {
+  try {
+    const { firstName, lastName, email, personNumber, username, password } = req.body;
+
+    if (!firstName || !lastName || !email || !personNumber || !username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required',
+      });
+    }
+
+    const existingUser = await userDAO.findUserByUsername(username);
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Username is already taken',
+      });
+    }
+
+    const newUser = await userDAO.createUser({
+      firstName,
+      lastName,
+      email,
+      personNumber,
+      username,
+      password,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      userId: newUser.person_id,
+    });
+  } catch (err) {
+    console.error('Error during sign-up:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+
+module.exports = { login, signup };

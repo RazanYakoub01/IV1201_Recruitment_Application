@@ -26,6 +26,35 @@ const findUserByUsername = async (username) => {
   }
 };
 
-module.exports = {
-  findUserByUsername
+/**
+ * Creates a new user in the database
+ * 
+ * @param {Object} userData - The user's data
+ * @param {string} userData.username - The user's username
+ * @param {string} userData.password - The user's password
+ * @param {string} userData.email - The user's email
+ * @param {string} userData.firstName - The user's firstName
+ * @param {string} userData.lastName - The user's lastName
+ * @param {string} userData.personNumber - The user's personNumber
+ * @returns {Promise<User>} The created user
+ */
+const createUser = async ({ firstName, lastName, email, personNumber, username, password }) => {
+  const client = await pool.connect();
+  try {
+    const query = `
+      INSERT INTO public.person (name, surname, email, pnr, username, password)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const result = await client.query(query, [firstName, lastName, email, personNumber, username, password]);
+    return new User(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    throw err;
+  } finally {
+    client.release();
+  }
 };
+
+
+module.exports = { findUserByUsername, createUser };
