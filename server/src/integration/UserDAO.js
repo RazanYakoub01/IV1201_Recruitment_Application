@@ -42,11 +42,11 @@ const createUser = async ({ firstName, lastName, email, personNumber, username, 
   const client = await pool.connect();
   try {
     const query = `
-      INSERT INTO public.person (name, surname, email, pnr, username, password)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO public.person (name, surname, email, pnr, username, password, role_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
     `;
-    const result = await client.query(query, [firstName, lastName, email, personNumber, username, password]);
+    const result = await client.query(query, [firstName, lastName, email, personNumber, username, password, 2]);
     return new User(result.rows[0]);
   } catch (err) {
     console.error('Error creating user:', err);
