@@ -30,11 +30,23 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       });
       
       const data = await response.json();
+
       
       if (response.ok) {
-        alert("Login successfully!");
+        alert(`Login successful! ${data.user.username} AND ${data.user.role} AND ${data.user.person_id} `);
         localStorage.setItem('token', data.token);
-        onLoginSuccess(data.role);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        // Redirect based on role ID
+        if (data.user.role === 1) {
+          navigate('/recruiter');
+        } else if (data.user.role === 2) {
+          navigate('/applicant');
+        } else {
+          alert("Unknown role. Please contact support.");
+        }
+
+        onLoginSuccess(data.user.role);
       } else {
         throw new Error(data.error);
       }

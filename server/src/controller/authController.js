@@ -21,7 +21,8 @@ const login = async (req, res) => {
     // Find user in database
     const user = await userDAO.findUserByUsername(username);
 
-    if (!user || user.password !== password) {
+
+    if (!user || user.userPassword !== password) {
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials',
@@ -35,6 +36,12 @@ const login = async (req, res) => {
       success: true,
       message: 'Login successful',
       token,
+      user: {
+        username: user.userName,
+        person_id: user.personId,
+        role: user.roleId 
+      }
+
     });
   } catch (err) {
     console.error('Error during login:', err);
