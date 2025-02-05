@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import '../styles/SignUp.css';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = ({ onSignUp, error, success }) => {
+
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const firstName = e.target.firstName.value;
@@ -42,6 +46,11 @@ const SignUp = ({ onSignUp, error, success }) => {
 
           <button type="submit" className="submit-button">Sign Up</button>
         </form>
+       
+        <button className="submit-button" onClick={() => navigate('/')}>
+          Go back to sign in
+        </button>
+      
       </div>
     </div>
   );
