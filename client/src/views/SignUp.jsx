@@ -32,7 +32,7 @@ const SignUp = ({ onSignUp, error, success }) => {
           <input name="email" type="email" required className="input-field" />
 
           <label className="input-label">Person Number</label>
-          <input name="personNumber" type="text" required className="input-field" />
+          <input name="personNumber" type="text" pattern="\d*" required className="input-field" />
 
           <label className="input-label">Username</label>
           <input name="username" type="text" required className="input-field" />
