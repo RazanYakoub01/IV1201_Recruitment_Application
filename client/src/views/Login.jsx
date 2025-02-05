@@ -64,7 +64,7 @@ const Login = ({ onLogin, onNavigateToSignUp, error }) => {
 
         <div className="signup-redirect">
           <p>Don't have an account?</p>
-          <button onClick={onNavigateToSignUp} className="signup-button">
+          <button onClick={onNavigateToSignUp} className="submit-button">
             Sign Up
           </button>
         </div>
