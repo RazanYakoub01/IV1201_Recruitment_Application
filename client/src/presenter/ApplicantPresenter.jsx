@@ -3,7 +3,6 @@ import ApplicantForm from '../views/ApplicantView';
 
 const ApplicantFormPresenter = () => {
   const [competences, setCompetences] = useState([]);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchCompetences = async () => {
@@ -44,7 +43,7 @@ const ApplicantFormPresenter = () => {
   };
 
   return (
-    <ApplicantForm competences={competences} onSubmit={handleSubmit} onError={setError} />
+    <ApplicantForm competences={competences} onSubmit={handleSubmit} />
   );
 };
 

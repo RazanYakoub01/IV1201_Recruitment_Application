@@ -46,6 +46,15 @@ const submitApplication = async (userId, expertise, availability) => {
 
     await Promise.all([...expertisePromises, ...availabilityPromises]);
 
+    const statusUpdateQuery = `
+      UPDATE public.person
+      SET status = 'unhandled'
+      WHERE person_id = $1
+    `;
+  
+    await client.query(statusUpdateQuery, [userId]);
+
+
     await client.query('COMMIT');
   } catch (err) {
     await client.query('ROLLBACK');

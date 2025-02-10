@@ -22,7 +22,8 @@ class User {
     email,
     password,
     role_id,
-    username
+    username, 
+    status
   }) {
     this.person_id = person_id;
     this.name = name;
@@ -32,6 +33,7 @@ class User {
     this.password = password;
     this.role_id = role_id;
     this.username = username;
+    this.status = status;
   }
 
   /**
@@ -97,6 +99,12 @@ class User {
   get userName() {
     return this.username;
   }
+
+
+  get applicationStatus() {
+    return this.status;
+  }
+
 }
 
 module.exports = User;
