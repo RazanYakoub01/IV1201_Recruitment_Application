@@ -13,6 +13,8 @@ const pool = require('./db');
 const cors = require("cors");
 const authController = require('./controller/authController');
 const applicationController = require('./controller/applicationController'); 
+const recruiterController = require('./controller/recruiterController'); 
+
 
 const app = express();
 
@@ -48,9 +50,9 @@ app.get('/ping', (req, res) => {
 app.post('/users/login', authController.login);
 app.post('/users/signin')
 app.post('/users/signup', authController.signup);
-
 app.get('/competences', applicationController.getCompetences);
 app.post('/applications/submit', applicationController.submitApplication);
+app.get('/applications/fetch', recruiterController.getApplications)
 
 
 
