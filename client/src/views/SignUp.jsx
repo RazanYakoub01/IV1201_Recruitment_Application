@@ -2,10 +2,25 @@ import React, { useState } from 'react';
 import '../styles/SignUp.css';
 import { useNavigate } from 'react-router-dom';
 
+/**
+* SignUp view component that renders the user registration form.
+* Handles form submission and displays status messages.
+* 
+* @component
+* @param {Object} props Component properties
+* @param {Function} props.onSignUp Callback function for form submission
+* @param {string} props.error Error message to display
+* @param {boolean} props.success Success status for registration
+* @returns {React.ReactElement} Registration form with input fields
+*/
+
 const SignUp = ({ onSignUp, error, success }) => {
 
   const navigate = useNavigate();
-
+  /**
+  * Handles form submission by collecting input values and calling onSignUp
+  * @param {Event} e Form submission event
+  */
   const handleSubmit = (e) => {
     e.preventDefault();
     const firstName = e.target.firstName.value;
