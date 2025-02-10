@@ -4941,6 +4941,32 @@ AND (
 );
 
 --
+-- Creating or replacing the 'application_view' view to gather relevant application data
+-- This view retrieves details of applicants, their competences, and availability
+-- It includes:
+-- - Full name, email, and application status of the applicant
+-- - Competences with years of experience
+-- - Availability range (from and to dates)
+--
+
+CREATE OR REPLACE VIEW application_view AS
+SELECT
+    p.person_id AS application_id,
+    p.name,
+    p.surname,
+    p.email,
+    p.status AS application_status,
+    COALESCE(STRING_AGG(comp.name || ' (' || c.years_of_experience || ' years)', ', '), 'No Competence') AS competences,
+    COALESCE(STRING_AGG(a.from_date || ' to ' || a.to_date, ', '), 'No Availability') AS availability
+FROM person p
+LEFT JOIN competence_profile c ON p.person_id = c.person_id
+LEFT JOIN competence comp ON c.competence_id = comp.competence_id
+LEFT JOIN availability a ON p.person_id = a.person_id
+WHERE p.status != 'unsent' 
+AND p.role_id = 2        
+GROUP BY p.person_id, p.name, p.surname, p.email, p.status;
+
+--
 -- PostgreSQL database dump complete
 --
 

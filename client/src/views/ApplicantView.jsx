@@ -67,6 +67,10 @@ const ApplicantForm = ({ onSubmit, competences }) => {
 
   const handleSubmit = () => {
     if (user) {
+      if (expertise.length === 0 || availability.length === 0) {
+        setError('Please add at least one competence and one availability period before submitting.');
+        return; 
+      }  
       const { person_id } = user;
       console.log(person_id);
       onSubmit(person_id, expertise, availability);
@@ -123,7 +127,7 @@ const ApplicantForm = ({ onSubmit, competences }) => {
   };
 
   if (!user || status === null) {
-    return <div>YOU MUST BE LOGGED IN TO ACCESS THIS PAGE, PLEASE LOG IN FIRST!!!</div>;
+    return <div className="error-message">You must be logged in to access this page. Please log in first!</div>;
   }
 
   return (
