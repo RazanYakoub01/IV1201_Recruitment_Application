@@ -1,12 +1,12 @@
-const { Pool } = require('pg');
+const { Pool } = require('pg'); 
 
-// PostgreSQL connection configuration
+// Directly define PostgreSQL credentials
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  user: 'postgres',        // ✅ Set PostgreSQL username here
+  host: 'recruitment_db_container',       // ✅ Set your database host
+  database: 'recruitment', // ✅ Your database name
+  password: 'password',    // ✅ Your database password (update if needed)
+  port: 5432,              // ✅ PostgreSQL port (default: 5432)
 });
 
 module.exports = pool;
