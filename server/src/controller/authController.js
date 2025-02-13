@@ -71,6 +71,22 @@ const signup = async (req, res) => {
         message: 'All fields are required',
       });
     }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format. Please enter a valid email.',
+      });
+    }
+
+    const pnrRegex = /^\d+$/; // Ensures only digits
+    if (!pnrRegex.test(personNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Personal number must contain only numbers.',
+      });
+    }
 
     const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser) {

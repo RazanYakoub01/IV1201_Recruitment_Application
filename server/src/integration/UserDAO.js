@@ -34,6 +34,23 @@ const findUserByUsername = async (username) => {
 const createUser = async ({ firstName, lastName, email, personNumber, username, password }) => {
   const client = await pool.connect();
   try {
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format. Please enter a valid email.',
+      });
+    }
+
+    const pnrRegex = /^\d+$/;
+    if (!pnrRegex.test(personNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Personal number must contain only numbers.',
+      });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
