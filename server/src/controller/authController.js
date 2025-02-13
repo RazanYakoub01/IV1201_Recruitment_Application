@@ -9,9 +9,8 @@ const userDAO = require('../integration/UserDAO');
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(`🔐 Received login attempt from ${username}`);
+    console.log(`Received login attempt from ${username}`);
 
-    // Input validation
     if (!username || !password) {
       return res.status(400).json({
         success: false,
@@ -19,7 +18,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Find user in database
     const user = await userDAO.findUserByUsername(username);
 
     if (!user) {
@@ -29,7 +27,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Compare provided password with hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -38,7 +35,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate a token (For now, using a placeholder)
     const token = 'dummy-token';
 
     res.json({
@@ -52,7 +48,7 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('❌ Error during login:', err);
+    console.error('Error during login:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -76,7 +72,6 @@ const signup = async (req, res) => {
       });
     }
 
-    // Check if the username already exists
     const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser) {
       return res.status(409).json({
@@ -85,14 +80,13 @@ const signup = async (req, res) => {
       });
     }
 
-    // Create the new user in the database (with hashed password)
     const newUser = await userDAO.createUser({
       firstName,
       lastName,
       email,
       personNumber,
       username,
-      password, // `createUser` will hash the password
+      password,
     });
 
     res.status(201).json({
@@ -101,7 +95,7 @@ const signup = async (req, res) => {
       userId: newUser.person_id,
     });
   } catch (err) {
-    console.error('❌ Error during sign-up:', err);
+    console.error('Error during sign-up:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error',

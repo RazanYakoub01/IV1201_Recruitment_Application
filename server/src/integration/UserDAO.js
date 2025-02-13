@@ -19,7 +19,7 @@ const findUserByUsername = async (username) => {
     return result.rows[0];
 
   } catch (err) {
-    console.error('❌ Error executing query:', err);
+    console.error('Error executing query:', err);
     throw err;
   } finally {
     client.release();
@@ -34,7 +34,6 @@ const findUserByUsername = async (username) => {
 const createUser = async ({ firstName, lastName, email, personNumber, username, password }) => {
   const client = await pool.connect();
   try {
-    // 🔥 Hash the password before saving to the database
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -48,7 +47,7 @@ const createUser = async ({ firstName, lastName, email, personNumber, username, 
     return result.rows[0];
 
   } catch (err) {
-    console.error('❌ Error creating user:', err);
+    console.error('Error creating user:', err);
     throw err;
   } finally {
     client.release();

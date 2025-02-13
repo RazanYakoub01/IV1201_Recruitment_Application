@@ -37,7 +37,6 @@ const LoginPresenter = ({ onLoginSuccess }) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        // Redirect based on role ID
         if (data.user.role === 1) {
           navigate('/recruiter');
         } else if (data.user.role === 2) {
@@ -55,9 +54,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
     }
   };
 
-  /**
-   * Navigate to the Sign Up page
-   */
+
   const handleNavigateToSignUp = () => {
     navigate('/signup');
   };
