@@ -45,6 +45,7 @@ const login = async (req, res) => {
         username: user.username,
         person_id: user.person_id,
         role: user.role_id,
+        application_status: user.status,
       },
     });
   } catch (err) {

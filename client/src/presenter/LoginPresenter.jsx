@@ -33,7 +33,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
 
       
       if (response.ok) {
-        alert(`Login successful! ${data.user.username} AND ${data.user.role} AND ${data.user.person_id} `);
+        alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 

@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt'); // Import bcrypt
 const findUserByUsername = async (username) => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT person_id, username, password, role_id FROM public.person WHERE username = $1';
+    const query = 'SELECT person_id, username, password, role_id, status FROM public.person WHERE username = $1';
     const result = await client.query(query, [username]);
 
     if (result.rows.length === 0) {
@@ -55,8 +55,8 @@ const createUser = async ({ firstName, lastName, email, personNumber, username, 
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const query = `
-      INSERT INTO public.person (name, surname, email, pnr, username, password, role_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO public.person (name, surname, email, pnr, username, password, role_id, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, 'unsent')
       RETURNING person_id, username, role_id;
     `;
 
