@@ -2,6 +2,15 @@ const bcrypt = require('bcrypt');
 const userDAO = require('../integration/UserDAO');
 
 /**
+ * Validates if a password is properly hashed
+ * @param {string} password - The password to check
+ * @returns {boolean} - Whether the password is hashed
+ */
+const isPasswordHashed = (password) => {
+  return password && (password.startsWith('$2a$') || password.startsWith('$2b$'));
+};
+
+/**
  * Handles user login authentication and token generation
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -24,6 +33,14 @@ const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials',
+      });
+    }
+
+    if (!isPasswordHashed(user.password)) {
+      console.error(`User ${username} has unhashed password - this should not happen`);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error',
       });
     }
 
@@ -72,7 +89,7 @@ const signup = async (req, res) => {
         message: 'All fields are required',
       });
     }
-
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -81,15 +98,13 @@ const signup = async (req, res) => {
       });
     }
 
-    const pnrRegex = /^\d{12}$/;
+    const pnrRegex = /^\d+$/;
     if (!pnrRegex.test(personNumber)) {
       return res.status(400).json({
         success: false,
-        message: 'Personal number must be exactly 12 digits long and contain only numbers.',
+        message: 'Personal number must contain only numbers.',
       });
     }
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
-
 
     const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser) {
@@ -103,7 +118,7 @@ const signup = async (req, res) => {
       firstName,
       lastName,
       email,
-      personNumber: formattedPersonNumber,
+      personNumber,
       username,
       password,
     });
