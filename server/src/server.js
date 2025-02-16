@@ -53,6 +53,7 @@ app.post('/users/signup', authController.signup);
 app.get('/competences', applicationController.getCompetences);
 app.post('/applications/submit', applicationController.submitApplication);
 app.get('/applications/fetch', recruiterController.getApplications)
+app.post('/applications/update', recruiterController.updateApplication)
 
 
 

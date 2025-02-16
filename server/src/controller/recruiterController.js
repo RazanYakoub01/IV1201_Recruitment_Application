@@ -29,4 +29,36 @@ const getApplications = async (req, res) => {
   }
 };
 
-module.exports = { getApplications };
+/**
+ * Updates the status of an application.
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const updateApplication = async (req, res) => {
+  const { application_id, status, lastUpdated } = req.body;
+
+  if (!application_id || !status || !lastUpdated) {
+    return res.status(400).json({
+      success: false,
+      message: 'Missing required fields.',
+    });
+  }
+
+  try {
+    const result = await recruiterDAO.updateApplication(application_id, status, lastUpdated);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(409).json(result); 
+    }
+  } catch (err) {
+    console.error('Error in updating application status:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+module.exports = { getApplications, updateApplication };

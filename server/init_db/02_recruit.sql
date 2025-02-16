@@ -5,6 +5,11 @@
 ALTER TABLE public.person ADD COLUMN status TEXT DEFAULT 'unsent';
 
 --
+-- Add a new column "last_updated" to the person table, with a default value of current time
+-- 
+ALTER TABLE public.person ADD COLUMN last_updated TIMESTAMP DEFAULT now();
+
+--
 -- Update the status to 'unhandled' for all applicants (role_id = 2) who have either a competence profile or availability (or both)
 --
 
