@@ -37,10 +37,38 @@ const getApplications = async (req, res) => {
 const updateApplication = async (req, res) => {
   const { application_id, status, lastUpdated } = req.body;
 
-  if (!application_id || !status || !lastUpdated) {
+  // Validate application_id
+  if (!application_id || typeof application_id !== 'number' || application_id <= 0) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields.',
+      message: 'Invalid application_id. It must be a positive number.',
+    });
+  }
+
+  // Validate status
+  const validStatuses = ['unhandled', 'accepted', 'rejected'];
+  if (!status || !validStatuses.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: `Invalid status. Allowed values: ${validStatuses.join(', ')}`,
+    });
+  }
+
+  // Validate lastUpdated (must be a valid date and not in the future)
+  if (!lastUpdated || isNaN(Date.parse(lastUpdated))) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid lastUpdated. It must be a valid date string.',
+    });
+  }
+
+  const lastUpdatedDate = new Date(lastUpdated);
+  const now = new Date();
+
+  if (lastUpdatedDate > now) {
+    return res.status(400).json({
+      success: false,
+      message: 'lastUpdated cannot be a future date.',
     });
   }
 
@@ -60,5 +88,6 @@ const updateApplication = async (req, res) => {
     });
   }
 };
+
 
 module.exports = { getApplications, updateApplication };

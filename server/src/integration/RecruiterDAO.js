@@ -53,7 +53,7 @@ const updateApplication = async (applicationId, newStatus, lastUpdated) => {
       await client.query('ROLLBACK'); 
       return {
         success: false,
-        message: `The application has been modified by another user. Your update has been aborted. Current Last Updated: ${currentLastUpdatedISO}, Your Last Updated: ${lastUpdatedISO}`,
+        message: `The application has been modified by another user. Your update has been aborted. Refresh the page to see the new data before trying to modify it!`,
       };
     }
 

@@ -11,7 +11,7 @@ import Login from '../views/Login';
  */
 const LoginPresenter = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // React Router hook for navigation
+  const navigate = useNavigate(); 
 
   /**
    * Handles the login process when user submits credentials
