@@ -37,7 +37,6 @@ const getApplications = async (req, res) => {
 const updateApplication = async (req, res) => {
   const { application_id, status, lastUpdated } = req.body;
 
-  // Validate application_id
   if (!application_id || typeof application_id !== 'number' || application_id <= 0) {
     return res.status(400).json({
       success: false,
@@ -45,7 +44,6 @@ const updateApplication = async (req, res) => {
     });
   }
 
-  // Validate status
   const validStatuses = ['unhandled', 'accepted', 'rejected'];
   if (!status || !validStatuses.includes(status)) {
     return res.status(400).json({
@@ -54,7 +52,6 @@ const updateApplication = async (req, res) => {
     });
   }
 
-  // Validate lastUpdated (must be a valid date and not in the future)
   if (!lastUpdated || isNaN(Date.parse(lastUpdated))) {
     return res.status(400).json({
       success: false,
@@ -88,6 +85,5 @@ const updateApplication = async (req, res) => {
     });
   }
 };
-
 
 module.exports = { getApplications, updateApplication };
