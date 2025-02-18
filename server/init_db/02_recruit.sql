@@ -5,6 +5,11 @@
 ALTER TABLE public.person ADD COLUMN status TEXT DEFAULT 'unsent';
 
 --
+-- Add a new column "last_updated" to the person table, with a default value of current time
+-- 
+ALTER TABLE public.person ADD COLUMN last_updated TIMESTAMP DEFAULT now();
+
+--
 -- Update the status to 'unhandled' for all applicants (role_id = 2) who have either a competence profile or availability (or both)
 --
 
@@ -62,6 +67,7 @@ SELECT
     p.surname,
     p.email,
     p.status AS application_status,
+    p.last_updated, 
     COALESCE(STRING_AGG(comp.name || ' (' || c.years_of_experience || ' years)', ', '), 'No Competence') AS competences,
     COALESCE(STRING_AGG(a.from_date || ' to ' || a.to_date, ', '), 'No Availability') AS availability
 FROM public.person p
@@ -70,4 +76,4 @@ LEFT JOIN public.competence comp ON c.competence_id = comp.competence_id
 LEFT JOIN public.availability a ON p.person_id = a.person_id
 WHERE p.status != 'unsent' 
 AND p.role_id = 2        
-GROUP BY p.person_id, p.name, p.surname, p.email, p.status;
+GROUP BY p.person_id, p.name, p.surname, p.email, p.status, p.last_updated;

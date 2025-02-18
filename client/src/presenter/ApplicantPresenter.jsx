@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import ApplicantForm from '../views/ApplicantView';
 
+/**
+ * The ApplicantFormPresenter component handles fetching competences
+ * and submitting job applications. It acts as a bridge between the 
+ * ApplicantForm view and backend logic.
+ * 
+ * @component
+ */
 const ApplicantFormPresenter = () => {
   const [competences, setCompetences] = useState([]);
 
+  /**
+   * Fetches a list of competences from the backend when the component mounts.
+   * Updates the state with the retrieved competences.
+   */
   useEffect(() => {
     const fetchCompetences = async () => {
       try {
@@ -21,6 +32,13 @@ const ApplicantFormPresenter = () => {
     fetchCompetences();
   }, []);
 
+  /**
+   * Handles the submission of an application.
+   * 
+   * @param {number} userId - The ID of the applicant.
+   * @param {Array} expertise - List of competences and expertise levels.
+   * @param {Array} availability - List of available time periods.
+   */
   const handleSubmit = async (userId, expertise, availability) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/submit`, {

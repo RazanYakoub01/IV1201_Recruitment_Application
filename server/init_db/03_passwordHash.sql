@@ -12,4 +12,8 @@ AND password IS NOT NULL
 AND NOT (password LIKE '$2a$%' OR password LIKE '$2b$%');
 
 -- Add a comment to log that the script ran
-COMMENT ON TABLE person IS 'Passwords hashed by initialization script at ' || current_timestamp;
+DO $$ 
+BEGIN 
+  EXECUTE format('COMMENT ON TABLE person IS %L', 
+    'Passwords hashed by initialization script at ' || current_timestamp);
+END $$;

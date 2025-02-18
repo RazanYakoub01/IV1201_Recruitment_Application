@@ -90,3 +90,73 @@
     cursor: not-allowed;
   }
   
+  /* Single Application View */
+.application-details-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.application-details-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.application-details-container p {
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+.application-details-container strong {
+  color: #007bff;
+}
+
+.application-details-container select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.update-status-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  margin-top: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.update-status-button:hover {
+  background-color: #218838;
+}
+
+.back-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #c82333;
+}

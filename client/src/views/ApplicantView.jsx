@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Applicant.css';
 
+/**
+ * ApplicantForm Component
+ * 
+ * This component handles the job application process, allowing users to select their area of expertise,
+ * specify years of experience, and define availability periods before submitting their application.
+ * 
+ * @param {function} onSubmit - Function to handle form submission.
+ * @param {Array} competences - List of available competences.
+ */
 const ApplicantForm = ({ onSubmit, competences }) => {
   const [user, setUser] = useState(null);
   const [selectedCompetence, setSelectedCompetence] = useState('');
@@ -12,15 +21,21 @@ const ApplicantForm = ({ onSubmit, competences }) => {
   const [error, setError] = useState('');
   const [status, setStatus] = useState(null);
 
+  /**
+   * useEffect hook to retrieve user data from localStorage upon component mount.
+   */
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-      setStatus(parsedUser.application_status); 
+      setStatus(parsedUser.application_status);
     }
   }, []);
 
+  /**
+   * Adds a selected competence and years of experience to the expertise list.
+   */
   const handleAddExpertise = () => {
     if (!selectedCompetence || !yearsOfExperience) {
       setError('Please select a competence and years of experience.');
@@ -41,6 +56,9 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     setError('');
   };
 
+  /**
+   * Adds an availability period with a start and end date to the availability list.
+   */
   const handleAddAvailability = () => {
     if (!fromDate || !toDate) {
       setError('Please provide both start and end dates.');
@@ -65,6 +83,9 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     setToDate('');
   };
 
+  /**
+   * Handles form submission, validating inputs and sending data to the onSubmit function.
+   */
   const handleSubmit = () => {
     if (user) {
       if (expertise.length === 0 || availability.length === 0) {
@@ -72,7 +93,6 @@ const ApplicantForm = ({ onSubmit, competences }) => {
         return; 
       }  
       const { person_id } = user;
-      console.log(person_id);
       onSubmit(person_id, expertise, availability);
       setError('');
       setExpertise([]);
@@ -83,6 +103,9 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     }
   };
 
+  /**
+   * Cancels the form input, resetting all selections.
+   */
   const handleCancel = () => {
     setSelectedCompetence('');
     setYearsOfExperience('');
@@ -94,6 +117,11 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     setError('');
   };
 
+  /**
+   * Renders appropriate status messages based on the application's current state.
+   * 
+   * @returns {JSX.Element} Status message component.
+   */
   const renderStatusMessage = () => {
     if (status === 'accepted') {
       return (
