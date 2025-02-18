@@ -67,7 +67,7 @@ SELECT
     p.surname,
     p.email,
     p.status AS application_status,
-    p.last_updated  
+    p.last_updated, 
     COALESCE(STRING_AGG(comp.name || ' (' || c.years_of_experience || ' years)', ', '), 'No Competence') AS competences,
     COALESCE(STRING_AGG(a.from_date || ' to ' || a.to_date, ', '), 'No Availability') AS availability
 FROM public.person p
