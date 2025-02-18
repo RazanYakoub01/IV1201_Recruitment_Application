@@ -7,17 +7,13 @@ const pool = require('../db');
 const getApplications = async () => {
   const client = await pool.connect();
   try {
-    await client.query('BEGIN');
 
     const query = 'SELECT application_id, name, surname, email, application_status, competences, availability, last_updated FROM application_view';
     const { rows } = await client.query(query);
 
-    await client.query('COMMIT'); 
-
     return rows;
   } catch (error) {
     console.error('Error fetching applications:', error);
-    await client.query('ROLLBACK'); 
     throw error;
   } finally {
     client.release(); 
@@ -34,13 +30,11 @@ const getApplications = async () => {
 const updateApplication = async (applicationId, newStatus, lastUpdated) => {
   const client = await pool.connect();
   try {
-    await client.query('BEGIN'); 
 
     const query = 'SELECT last_updated FROM public.person WHERE person_id = $1';
     const result = await client.query(query, [applicationId]);
 
     if (result.rowCount === 0) {
-      await client.query('ROLLBACK'); 
       return { success: false, message: 'Application not found.' };
     }
 
@@ -50,7 +44,6 @@ const updateApplication = async (applicationId, newStatus, lastUpdated) => {
     const lastUpdatedISO = new Date(lastUpdated).toISOString();
 
     if (currentLastUpdatedISO !== lastUpdatedISO) {
-      await client.query('ROLLBACK'); 
       return {
         success: false,
         message: `The application has been modified by another user. Your update has been aborted. Refresh the page to see the new data before trying to modify it!`,
@@ -62,7 +55,6 @@ const updateApplication = async (applicationId, newStatus, lastUpdated) => {
 
     const updatedLastUpdated = updatedResult.rows[0].last_updated;
 
-    await client.query('COMMIT'); 
 
     return { 
       success: true, 
@@ -71,7 +63,6 @@ const updateApplication = async (applicationId, newStatus, lastUpdated) => {
     };
   } catch (error) {
     console.error('Error updating application:', error);
-    await client.query('ROLLBACK');
     return { success: false, message: 'Internal server error' };
   } finally {
     client.release(); 
