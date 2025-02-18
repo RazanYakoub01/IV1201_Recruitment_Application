@@ -27,7 +27,7 @@ const Header = () => {
     navigate('/');
   };
 
-  const showNavigation = location.pathname !== '/' && location.pathname !== '/signup';
+  const showNavigation = location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/restore';
 
   return (
     <header className="header">

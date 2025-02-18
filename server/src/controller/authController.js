@@ -10,6 +10,86 @@ const isPasswordHashed = (password) => {
   return password && (password.startsWith('$2a$') || password.startsWith('$2b$'));
 };
 
+
+/**
+ * Verifies if the provided personal number exists in the system.
+ * 
+ * This function checks if the personal number is valid (only contains digits) and if it exists
+ * in the database. If the person number is invalid or not found, it returns an appropriate error message.
+ * 
+ * @param {Object} req - The request object containing the body with the personal number.
+ * @param {Object} res - The response object used to send a response back to the client.
+ * @returns {void} Sends a response indicating whether the verification succeeded or failed.
+ */
+const verifyPersonNumber = async (req, res) => {
+  try {
+    const { personNumber } = req.body;
+
+    const pnrRegex = /^\d{8}-\d{4}$/; 
+    if (!pnrRegex.test(personNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Personal number must be in the format yyyyMMdd-xxxx.',
+      });
+    }
+
+    const user = await userDAO.findUserByPersonNumber(personNumber);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Personal number not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Personal number verified' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+/**
+ * Updates the credentials (username and password) for a user based on their personal number.
+ * 
+ * This function ensures that the personal number is valid, checks if the new username is available,
+ * and then updates the user's credentials (username and password). Password is hashed before storing.
+ * 
+ * @param {Object} req - The request object containing the body with the personal number, new username, and new password.
+ * @param {Object} res - The response object used to send a response back to the client.
+ * @returns {void} Sends a response indicating whether the update succeeded or failed.
+ */
+const updateCredentials = async (req, res) => {
+  try {
+    const { personNumber, userName, newPassword } = req.body;
+
+    const pnrRegex = /^\d{8}-\d{4}$/; 
+    if (!pnrRegex.test(personNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Personal number must be in the format yyyyMMdd-xxxx.',
+      });
+    }
+
+    const existingUser = await userDAO.findUserByUsername(userName);
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Username is already taken',
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const result = await userDAO.updateUserCredentials(personNumber, userName, hashedPassword);
+    if (!result) {
+      return res.status(400).json({ success: false, message: 'Failed to update credentials' });
+    }
+
+    res.status(200).json({ success: true, message: 'Credentials updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
 /**
  * Handles user login authentication and token generation
  * @param {Object} req - Express request object
@@ -74,6 +154,7 @@ const login = async (req, res) => {
   }
 };
 
+
 /**
  * Handles user sign-up by creating a new user in the database
  * @param {Object} req - Express request object
@@ -137,4 +218,4 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup };
+module.exports = { login, signup, verifyPersonNumber, updateCredentials };

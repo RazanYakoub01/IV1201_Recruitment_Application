@@ -11,7 +11,7 @@ import '../styles/Login.css';
  * @param {string} props.error Error message to display if login fails
  * @returns {React.ReactElement} Renders the login form with username and password fields
  */
-const Login = ({ onLogin, onNavigateToSignUp, error }) => {
+const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.username.value;
@@ -67,6 +67,11 @@ const Login = ({ onLogin, onNavigateToSignUp, error }) => {
           <button onClick={onNavigateToSignUp} className="submit-button">
             Sign Up
           </button>
+
+          <button onClick={onNavigateToRestore}className="submit-button">
+            Forgot Username or Password?
+          </button>
+
         </div>
       </div>
     </div>
