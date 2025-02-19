@@ -98,13 +98,14 @@ const signup = async (req, res) => {
       });
     }
 
-    const pnrRegex = /^\d+$/;
+    const pnrRegex = /^\d{12}$/;
     if (!pnrRegex.test(personNumber)) {
       return res.status(400).json({
         success: false,
-        message: 'Personal number must contain only numbers.',
+        message: 'Personal number must be exactly 12 digits long and contain only numbers.',
       });
     }
+    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser) {
@@ -118,7 +119,7 @@ const signup = async (req, res) => {
       firstName,
       lastName,
       email,
-      personNumber,
+      personNumber: formattedPersonNumber,
       username,
       password,
     });
