@@ -59,6 +59,8 @@ const RestorePresenter = () => {
     setSuccessMessage('');
     setShowMessage(false);
 
+    console.log('personNumber:', personNumber, 'userName:', username, 'password:', newPassword);
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update-credentials`, {
         method: 'POST',

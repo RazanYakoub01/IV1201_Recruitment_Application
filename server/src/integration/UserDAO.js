@@ -93,6 +93,7 @@ const updateUserCredentials = async (personNumber, newUsername, newPassword) => 
       SET username = $1, password = $2 
       WHERE pnr = $3
     `;
+    console.log('Query:', query)
     const result = await client.query(query, [newUsername, newPassword, personNumber]);
 
     return result.rowCount > 0;

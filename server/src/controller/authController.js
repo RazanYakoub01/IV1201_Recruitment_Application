@@ -58,7 +58,9 @@ const verifyPersonNumber = async (req, res) => {
  */
 const updateCredentials = async (req, res) => {
   try {
-    const { personNumber, userName, newPassword } = req.body;
+    const { personNumber, username, newPassword } = req.body;
+
+    console.log('personNumber:', personNumber, 'username:', username, 'password:', newPassword);
 
     const pnrRegex = /^\d{8}-\d{4}$/; 
     if (!pnrRegex.test(personNumber)) {
@@ -68,7 +70,7 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    const existingUser = await userDAO.findUserByUsername(userName);
+    const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -78,7 +80,7 @@ const updateCredentials = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    const result = await userDAO.updateUserCredentials(personNumber, userName, hashedPassword);
+    const result = await userDAO.updateUserCredentials(personNumber, username, hashedPassword);
     if (!result) {
       return res.status(400).json({ success: false, message: 'Failed to update credentials' });
     }
