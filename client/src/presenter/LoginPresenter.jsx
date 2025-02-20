@@ -59,7 +59,11 @@ const LoginPresenter = ({ onLoginSuccess }) => {
     navigate('/signup');
   };
 
-  return <Login onLogin={handleLogin} onNavigateToSignUp={handleNavigateToSignUp} error={error} />;
+  const handleNavigateToRestore = () => {
+    navigate('/restore');
+  }
+
+  return <Login onLogin={handleLogin} onNavigateToSignUp={handleNavigateToSignUp} onNavigateToRestore={handleNavigateToRestore} error={error} />;
 };
 
 export default LoginPresenter;
