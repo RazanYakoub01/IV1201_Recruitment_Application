@@ -36,8 +36,14 @@ const getCompetences = async (req, res) => {
  */
 const submitApplication = async (req, res) => {
   const { userId, expertise, availability } = req.body;
+  console.log('1. Initial request data:', {
+    userId: userId,
+    expertiseCount: expertise?.length || 0,
+    availabilityCount: availability?.length || 0,
+  });
 
   if (!userId || typeof userId !== 'number' || userId <= 0) {
+    console.log('2. Failed at userId validation:', { userId });
     return res.status(400).json({
       success: false,
       message: 'Invalid userId. It must be a positive number.',
@@ -45,6 +51,7 @@ const submitApplication = async (req, res) => {
   }
 
   if (!Array.isArray(expertise) || expertise.length === 0) {
+    console.log('3. Failed at expertise array validation:', { expertise });
     return res.status(400).json({
       success: false,
       message: 'Expertise must be a non-empty array.',
@@ -52,15 +59,18 @@ const submitApplication = async (req, res) => {
   }
 
   for (const item of expertise) {
+    console.log('4. Checking expertise item:', item);
+    const competenceId = Number(item.competence_id);
+    const yearsExperience = Number(item.years_of_experience);
+
     if (
-      !item.competence_id ||
-      typeof item.competence_id !== 'number' ||
-      item.competence_id <= 0 ||
-      !item.years_of_experience ||
-      typeof item.years_of_experience !== 'number' ||
-      item.years_of_experience < 0 ||
-      item.years_of_experience > 99
+      isNaN(competenceId) || 
+      competenceId <= 0 ||
+      isNaN(yearsExperience) ||
+      yearsExperience < 0 ||
+      yearsExperience > 99
     ) {
+      console.log('5. Failed at expertise item validation:', item);
       return res.status(400).json({
         success: false,
         message: 'Each expertise item must have a valid competence_id and years_of_experience (0-99).',
@@ -69,6 +79,7 @@ const submitApplication = async (req, res) => {
   }
 
   if (!Array.isArray(availability) || availability.length === 0) {
+    console.log('6. Failed at availability array validation:', { availability });
     return res.status(400).json({
       success: false,
       message: 'Availability must be a non-empty array.',
@@ -76,9 +87,12 @@ const submitApplication = async (req, res) => {
   }
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0); 
 
   for (const period of availability) {
+    console.log('7. Checking availability period:', period);
     if (!period.from_date || !period.to_date) {
+      console.log('8. Failed at date existence check:', period);
       return res.status(400).json({
         success: false,
         message: 'Each availability period must have a from_date and to_date.',
@@ -86,23 +100,28 @@ const submitApplication = async (req, res) => {
     }
 
     const fromDate = new Date(period.from_date);
+    fromDate.setHours(0, 0, 0, 0); 
     const toDate = new Date(period.to_date);
+    toDate.setHours(0, 0, 0, 0);
 
     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      console.log('9. Failed at date format check:', { fromDate, toDate });
       return res.status(400).json({
         success: false,
         message: 'Invalid date format. Please provide valid dates.',
       });
     }
 
-    if (fromDate < today || toDate < today) {
+    if (fromDate < today) {
+      console.log('10. Failed at past date check:', { fromDate, today });
       return res.status(400).json({
         success: false,
-        message: 'Dates cannot be in the past.',
+        message: 'Start date cannot be in the past.',
       });
     }
 
     if (fromDate > toDate) {
+      console.log('11. Failed at date order check:', { fromDate, toDate });
       return res.status(400).json({
         success: false,
         message: 'from_date cannot be later than to_date.',
@@ -110,12 +129,24 @@ const submitApplication = async (req, res) => {
     }
   }
 
+  console.log('12. Passed all validations, attempting to submit');
   try {
+    console.log('Submitting application:', {
+      userId: userId,
+      expertiseCount: expertise?.length || 0,
+      availabilityCount: availability?.length || 0,
+      timestamp: new Date().toISOString()
+    });
     await applicantDAO.submitApplication(userId, expertise, availability);
-
     res.status(201).json({
       success: true,
       message: 'Application submitted successfully',
+    });
+    console.log('Submited application successfully', {
+      userId: userId,
+      expertiseCount: expertise?.length || 0,
+      availabilityCount: availability?.length || 0,
+      timestamp: new Date().toISOString()
     });
   } catch (err) {
     console.error('Error submitting application:', err);

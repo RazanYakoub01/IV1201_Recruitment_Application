@@ -10,6 +10,7 @@ import ApplicantForm from '../views/ApplicantView';
  */
 const ApplicantFormPresenter = () => {
   const [competences, setCompetences] = useState([]);
+  const [error, setError] = useState('');
 
   /**
    * Fetches a list of competences from the backend when the component mounts.
@@ -41,16 +42,40 @@ const ApplicantFormPresenter = () => {
    */
   const handleSubmit = async (userId, expertise, availability) => {
     try {
+      const formattedExpertise = expertise.map(item => ({
+        competence_id: Number(item.competence_id),
+        years_of_experience: Number(item.years_of_experience)
+      }));
+  
+      console.log('Formatted expertise data:', formattedExpertise);
+
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, expertise, availability }),
+        body: JSON.stringify({ userId, expertise: formattedExpertise, availability }),
+      });
+
+      console.log('Sending application submission request:', {
+        endpoint: `${import.meta.env.VITE_BACKEND_URL}/applications/submit`,
+        method: 'POST',
+        userId: userId,
+        expertiseCount: expertise?.length || 0,
+        availabilityCount: availability?.length || 0,
+        timestamp: new Date().toISOString()
       });
 
       const data = await response.json();
       if (response.ok) {
+
+        console.log('Application submission response:', {
+          status: response.status,
+          success: response.ok,
+          data: data,
+          timestamp: new Date().toISOString()
+        });
+
         alert('Application submitted successfully');
       } else {
         setError(data.message || 'Error submitting application');

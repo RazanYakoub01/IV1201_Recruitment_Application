@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/Login.css';
 
 /**
@@ -12,10 +12,35 @@ import '../styles/Login.css';
  * @returns {React.ReactElement} Renders the login form with username and password fields
  */
 const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
+
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const validateForm = (username, password) => {
+    const errors = {};
+    
+    if (!username.trim()) {
+      errors.username = 'Username is required';
+    }
+    
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    }
+
+    return errors;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.username.value;
     const password = e.target.password.value;
+
+    const errors = validateForm(username, password);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setValidationErrors({});
     onLogin(username, password);
   };
 
@@ -40,6 +65,9 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
               required
               className="input-field"
             />
+            {validationErrors.username && (
+              <span className="error-message">{validationErrors.username}</span>
+            )}
           </div>
           
           <div className="mt-4">
@@ -53,6 +81,9 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
               required
               className="input-field"
             />
+            {validationErrors.password && (
+              <span className="error-message">{validationErrors.password}</span>
+            )}
           </div>
 
           <div className="mt-6">

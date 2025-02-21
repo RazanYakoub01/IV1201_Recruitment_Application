@@ -25,23 +25,42 @@ const verifyPersonNumber = async (req, res) => {
   try {
     const { personNumber } = req.body;
 
-    const pnrRegex = /^\d{8}-\d{4}$/; 
-    if (!pnrRegex.test(personNumber)) {
+    // First check if it's a 12-digit number
+    const digitOnlyRegex = /^\d{12}$/;
+    if (!digitOnlyRegex.test(personNumber)) {
       return res.status(400).json({
         success: false,
-        message: 'Personal number must be in the format yyyyMMdd-xxxx.',
+        message: 'Personal number must be exactly 12 digits'
       });
     }
 
-    const user = await userDAO.findUserByPersonNumber(personNumber);
+    // Format it to yyyyMMdd-XXXX
+    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
+
+    const user = await userDAO.findUserByPersonNumber(formattedPersonNumber);
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Personal number not found' });
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Personal number not found' 
+      });
     }
 
-    res.status(200).json({ success: true, message: 'Personal number verified' });
+    console.log('Person number verified:', {
+      personNumber: '***',
+      timestamp: new Date().toISOString()
+    });
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Personal number verified' 
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error('Error verifying person number:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
   }
 };
 
@@ -60,13 +79,37 @@ const updateCredentials = async (req, res) => {
   try {
     const { personNumber, username, newPassword } = req.body;
 
-    console.log('personNumber:', personNumber, 'username:', username, 'password:', newPassword);
+    console.log('Processing credential update request:', {
+      personNumber: personNumber ? '***' : 'missing',
+      username,
+      timestamp: new Date().toISOString()
+    });
 
-    const pnrRegex = /^\d{8}-\d{4}$/; 
-    if (!pnrRegex.test(personNumber)) {
+    // Check all required fields
+    if (!personNumber || !username || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: 'Personal number must be in the format yyyyMMdd-xxxx.',
+        code: 'MISSING_FIELDS',
+        message: 'All fields are required',
+      });
+    }
+
+    const digitOnlyRegex = /^\d{12}$/;
+    if (!digitOnlyRegex.test(personNumber)) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PNR',
+        message: 'Personal number must be exactly 12 digits'
+      });
+    }
+
+    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
+
+    if (username.length < 3) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_USERNAME',
+        message: 'Username must be at least 3 characters long',
       });
     }
 
@@ -74,20 +117,47 @@ const updateCredentials = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
+        code: 'USERNAME_TAKEN',
         message: 'Username is already taken',
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    const result = await userDAO.updateUserCredentials(personNumber, username, hashedPassword);
-    if (!result) {
-      return res.status(400).json({ success: false, message: 'Failed to update credentials' });
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PASSWORD',
+        message: 'Password must be at least 8 characters long',
+      });
     }
 
-    res.status(200).json({ success: true, message: 'Credentials updated successfully' });
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const result = await userDAO.updateUserCredentials(formattedPersonNumber, username, hashedPassword);
+
+    if (!result) {
+      return res.status(404).json({ 
+        success: false, 
+        code: 'UPDATE_FAILED',
+        message: 'User not found or update failed' 
+      });
+    }
+
+    console.log('Credentials updated successfully:', {
+      username,
+      timestamp: new Date().toISOString()
+    });
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Credentials updated successfully' 
+    });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error('Error updating credentials:', err);
+    res.status(500).json({ 
+      success: false, 
+      code: 'SERVER_ERROR',
+      message: 'Internal server error' 
+    });
   }
 };
 
@@ -100,46 +170,61 @@ const updateCredentials = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(`Received login attempt from ${username}`);
+    console.log('Login attempt received:', {
+      username,
+      timestamp: new Date().toISOString()
+    });
 
-    if (!username || !password) {
+    if (!username?.trim() || !password?.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Username and password are required',
+        code: 'MISSING_CREDENTIALS'
       });
     }
 
     const user = await userDAO.findUserByUsername(username);
 
     if (!user) {
+      console.log('Login failed: User not found:', { username });
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid username or password',
+        code: 'INVALID_CREDENTIALS'
       });
     }
 
     if (!isPasswordHashed(user.password)) {
-      console.error(`User ${username} has unhashed password - this should not happen`);
+      console.error('Security issue: Unhashed password:', { username });
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
+        message: 'Security error. Please contact support.',
+        code: 'SECURITY_ERROR'
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log('Login failed: Invalid password:', { username });
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid username or password',
+        code: 'INVALID_CREDENTIALS'
       });
     }
+
+    console.log('Login successful:', {
+      username,
+      userId: user.person_id,
+      timestamp: new Date().toISOString()
+    });
 
     const token = 'dummy-token';
 
     res.json({
       success: true,
       message: 'Login successful',
-      token,
+      token: 'dummy-token',
       user: {
         username: user.username,
         person_id: user.person_id,
@@ -148,10 +233,11 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error during login:', err);
+    console.error('Login error:', err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Server error. Please try again later.',
+      code: 'SERVER_ERROR'
     });
   }
 };
@@ -166,37 +252,38 @@ const signup = async (req, res) => {
   try {
     const { firstName, lastName, email, personNumber, username, password } = req.body;
 
-    if (!firstName || !lastName || !email || !personNumber || !username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required',
-      });
-    }
+    const validationErrors = [];
     
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!firstName?.trim()) validationErrors.push('First name is required');
+    if (!lastName?.trim()) validationErrors.push('Last name is required');
+    if (!email?.trim()) validationErrors.push('Email is required');
+    if (!personNumber?.trim()) validationErrors.push('Person number is required');
+    if (!username?.trim()) validationErrors.push('Username is required');
+    if (!password?.trim()) validationErrors.push('Password is required');
+
+    if (validationErrors.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid email format. Please enter a valid email.',
+        code: 'MISSING_FIELDS',
+        message: 'All fields are required',
+        errors: validationErrors
       });
     }
 
-    const pnrRegex = /^\d{12}$/;
-    if (!pnrRegex.test(personNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Personal number must be exactly 12 digits long and contain only numbers.',
-      });
-    }
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
+    const [existingUsername] = await Promise.all([
+      userDAO.findUserByUsername(username)
+    ]);
 
-    const existingUser = await userDAO.findUserByUsername(username);
-    if (existingUser) {
+
+    if (existingUsername) {
       return res.status(409).json({
         success: false,
-        message: 'Username is already taken',
+        code: 'USERNAME_TAKEN',
+        message: 'Username is already taken'
       });
     }
+
+    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const newUser = await userDAO.createUser({
       firstName,
@@ -212,11 +299,20 @@ const signup = async (req, res) => {
       message: 'User created successfully',
       userId: newUser.person_id,
     });
+
   } catch (err) {
     console.error('Error during sign-up:', err);
+
+    if (err.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'Username or email already exists'
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Internal Server Error. Registration failed. Please try again later.',
     });
   }
 };

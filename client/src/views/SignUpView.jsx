@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/SignUp.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,22 +14,97 @@ import { useNavigate } from 'react-router-dom';
 * @returns {React.ReactElement} Registration form with input fields
 */
 
+<<<<<<< HEAD
 const SignUpView = ({ onSignUp, error, success }) => {
+=======
+const SignUp = ({ onSignUp, error, success }) => {
+>>>>>>> cf5e60926318c7b3fae38a16608c47eac445ba65
 
   const navigate = useNavigate();
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const [backendError, setBackendError] = useState('');
+
+  useEffect(() => {
+    if (error && error.toLowerCase().includes('username')) {
+      setBackendError(error);
+    } else {
+      setBackendError('');
+    }
+  }, [error]);
+
+  const validateForm = (formData) => {
+    const errors = {};
+    
+    if (!formData.firstName.trim()) {
+      errors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+
+    const pnrRegex = /^\d{12}$/;
+    if (!pnrRegex.test(formData.personNumber)) {
+      errors.personNumber = 'Personal number must be exactly 12 digits long and contain only numbers.';
+    }
+
+    if (formData.username.length < 3) {
+      errors.username = 'Username must be at least 3 characters';
+    }
+
+    if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    }
+
+    return errors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name } = e.target;
+    setValidationErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+    if (name === 'username') {
+      setBackendError('');
+    }
+  };
+
   /**
   * Handles form submission by collecting input values and calling onSignUp
   * @param {Event} e Form submission event
   */
   const handleSubmit = (e) => {
     e.preventDefault();
-    const firstName = e.target.firstName.value;
-    const lastName = e.target.lastName.value;
-    const email = e.target.email.value;
-    const personNumber = e.target.personNumber.value;
-    const username = e.target.username.value;
-    const password = e.target.password.value;
-    onSignUp({ firstName, lastName, email, personNumber, username, password });
+    const formData = {
+      firstName: e.target.firstName.value,
+      lastName: e.target.lastName.value,
+      email: e.target.email.value,
+      personNumber: e.target.personNumber.value,
+      username: e.target.username.value,
+      password: e.target.password.value
+    };
+    console.log('Form submission data:', {
+      ...formData,
+      password: '[REDACTED]',
+      personNumber: '[REDACTED]'
+    });
+
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      console.log('errors are detected in the register form:', errors)
+      setValidationErrors(errors);
+      return;
+    }
+
+    setValidationErrors({});
+    onSignUp(formData);
   };
 
   return (
@@ -42,22 +117,28 @@ const SignUpView = ({ onSignUp, error, success }) => {
 
         <form className="form-group" onSubmit={handleSubmit}>
           <label className="input-label">First Name</label>
-          <input name="firstName" type="text" required className="input-field" />
+          <input name="firstName" type="text" required className="input-field" onChange={handleInputChange} />
+          {validationErrors.firstName && <span className="error-message">{validationErrors.firstName}</span>}
 
           <label className="input-label">Last Name</label>
-          <input name="lastName" type="text" required className="input-field" />
+          <input name="lastName" type="text" required className="input-field" onChange={handleInputChange} />
+          {validationErrors.lastName && <span className="error-message">{validationErrors.lastName}</span>}
 
           <label className="input-label">Email Address</label>
-          <input name="email" type="email" required className="input-field" />
+          <input name="email" type="email" required className="input-field" onChange={handleInputChange}/>
+          {validationErrors.email && <span className="error-message">{validationErrors.email}</span>}
 
           <label className="input-label">Person Number</label>
-          <input name="personNumber" type="text" pattern="\d*" required className="input-field" />
+          <input name="personNumber" type="text" pattern="\d*" required className="input-field" onChange={handleInputChange} />
+          {validationErrors.personNumber && <span className="error-message">{validationErrors.personNumber}</span>}
 
           <label className="input-label">Username</label>
-          <input name="username" type="text" required className="input-field" />
+          <input name="username" type="text" required className="input-field" onChange={handleInputChange} />
+          {validationErrors.username || backendError && <span className="error-message">{validationErrors.username || backendError}</span>}
 
           <label className="input-label">Password</label>
-          <input name="password" type="password" required className="input-field" />
+          <input name="password" type="password" required className="input-field" onChange={handleInputChange}/>
+          {validationErrors.password && <span className="error-message">{validationErrors.password}</span>}
 
           <button type="submit" className="submit-button">Sign Up</button>
         </form>
@@ -71,4 +152,8 @@ const SignUpView = ({ onSignUp, error, success }) => {
   );
 };
 
+<<<<<<< HEAD
 export default SignUpView;
+=======
+export default SignUp;
+>>>>>>> cf5e60926318c7b3fae38a16608c47eac445ba65
