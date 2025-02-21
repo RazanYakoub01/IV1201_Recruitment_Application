@@ -100,46 +100,61 @@ const updateCredentials = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(`Received login attempt from ${username}`);
+    console.log('Login attempt received:', {
+      username,
+      timestamp: new Date().toISOString()
+    });
 
-    if (!username || !password) {
+    if (!username?.trim() || !password?.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Username and password are required',
+        code: 'MISSING_CREDENTIALS'
       });
     }
 
     const user = await userDAO.findUserByUsername(username);
 
     if (!user) {
+      console.log('Login failed: User not found:', { username });
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid username or password',
+        code: 'INVALID_CREDENTIALS'
       });
     }
 
     if (!isPasswordHashed(user.password)) {
-      console.error(`User ${username} has unhashed password - this should not happen`);
+      console.error('Security issue: Unhashed password:', { username });
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
+        message: 'Security error. Please contact support.',
+        code: 'SECURITY_ERROR'
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log('Login failed: Invalid password:', { username });
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid username or password',
+        code: 'INVALID_CREDENTIALS'
       });
     }
+
+    console.log('Login successful:', {
+      username,
+      userId: user.person_id,
+      timestamp: new Date().toISOString()
+    });
 
     const token = 'dummy-token';
 
     res.json({
       success: true,
       message: 'Login successful',
-      token,
+      token: 'dummy-token',
       user: {
         username: user.username,
         person_id: user.person_id,
@@ -148,10 +163,11 @@ const login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error during login:', err);
+    console.error('Login error:', err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Server error. Please try again later.',
+      code: 'SERVER_ERROR'
     });
   }
 };
@@ -166,37 +182,38 @@ const signup = async (req, res) => {
   try {
     const { firstName, lastName, email, personNumber, username, password } = req.body;
 
-    if (!firstName || !lastName || !email || !personNumber || !username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required',
-      });
-    }
+    const validationErrors = [];
     
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!firstName?.trim()) validationErrors.push('First name is required');
+    if (!lastName?.trim()) validationErrors.push('Last name is required');
+    if (!email?.trim()) validationErrors.push('Email is required');
+    if (!personNumber?.trim()) validationErrors.push('Person number is required');
+    if (!username?.trim()) validationErrors.push('Username is required');
+    if (!password?.trim()) validationErrors.push('Password is required');
+
+    if (validationErrors.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid email format. Please enter a valid email.',
+        code: 'MISSING_FIELDS',
+        message: 'All fields are required',
+        errors: validationErrors
       });
     }
 
-    const pnrRegex = /^\d{12}$/;
-    if (!pnrRegex.test(personNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Personal number must be exactly 12 digits long and contain only numbers.',
-      });
-    }
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
+    const [existingUsername] = await Promise.all([
+      userDAO.findUserByUsername(username)
+    ]);
 
-    const existingUser = await userDAO.findUserByUsername(username);
-    if (existingUser) {
+
+    if (existingUsername) {
       return res.status(409).json({
         success: false,
-        message: 'Username is already taken',
+        code: 'USERNAME_TAKEN',
+        message: 'Username is already taken'
       });
     }
+
+    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const newUser = await userDAO.createUser({
       firstName,
@@ -212,11 +229,20 @@ const signup = async (req, res) => {
       message: 'User created successfully',
       userId: newUser.person_id,
     });
+
   } catch (err) {
     console.error('Error during sign-up:', err);
+
+    if (err.code === '23505') {
+      return res.status(409).json({
+        success: false,
+        message: 'Username or email already exists'
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Internal Server Error. Registration failed. Please try again later.',
     });
   }
 };
