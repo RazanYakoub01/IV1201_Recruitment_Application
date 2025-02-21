@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SignUp from '../views/signUp';
+import SignUpView from '../views/signUp';
 
 /**
  * Presenter component for handling sign-up logic and backend integration.
@@ -43,7 +43,7 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
     }
   };
 
-  return <SignUp onSignUp={handleSignUp} error={error} success={success} />;
+  return <SignUpView onSignUp={handleSignUp} error={error} success={success} />;
 };
 
 export default SignUpPresenter;

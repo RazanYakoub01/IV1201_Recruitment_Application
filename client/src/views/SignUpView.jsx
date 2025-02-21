@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 * @returns {React.ReactElement} Registration form with input fields
 */
 
-const SignUp = ({ onSignUp, error, success }) => {
+const SignUpView = ({ onSignUp, error, success }) => {
 
   const navigate = useNavigate();
   /**
@@ -71,4 +71,4 @@ const SignUp = ({ onSignUp, error, success }) => {
   );
 };
 
-export default SignUp;
+export default SignUpView;
