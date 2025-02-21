@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SignUpView from '../views/signUp';
+import SignUpView from '../views/SignUpView';
 
 /**
  * Presenter component for handling sign-up logic and backend integration.
