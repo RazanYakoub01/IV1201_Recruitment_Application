@@ -26,6 +26,30 @@ const findUserByUsername = async (username) => {
 };
 
 /**
+ * Finds a user by email in the database
+ * @param {string} email - Email address to search for
+ * @returns {Promise<Object|null>} User object if found, null otherwise
+ */
+const findUserByEmail = async (email) => {
+  const client = await pool.connect();
+  try {
+    const query = `
+      SELECT person_id, email, username, role_id, status 
+      FROM public.person 
+      WHERE email = $1
+    `;
+    const result = await client.query(query, [email]);
+
+    return result.rows.length ? result.rows[0] : null;
+  } catch (err) {
+    console.error('Error executing query:', err);
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+/**
  * Finds a user by personal number in the database
  * @param {string} personNumber - Personal number to search for
  * @returns {Promise<Object|null>} User object if found, null otherwise
@@ -105,4 +129,4 @@ const updateUserCredentials = async (personNumber, newUsername, newPassword) => 
   }
 };
 
-module.exports = { findUserByUsername, findUserByPersonNumber, createUser, updateUserCredentials };
+module.exports = { findUserByUsername, findUserByEmail, findUserByPersonNumber, createUser, updateUserCredentials };

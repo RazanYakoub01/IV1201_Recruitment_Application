@@ -19,6 +19,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
    * @param {string} password - The password entered by the user
    */
   const handleLogin = async (username, password) => {
+    setError('');
     try {
       let endpoint = `${import.meta.env.VITE_BACKEND_URL}/users/login`;
       console.log(`Sending POST to ${endpoint} for user ${username}`);
@@ -26,31 +27,50 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        signal: AbortSignal.timeout(10000)
       });
       
       const data = await response.json();
 
-      
-      if (response.ok) {
-        alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-
-        if (data.user.role === 1) {
-          navigate('/recruiter');
-        } else if (data.user.role === 2) {
-          navigate('/applicant');
-        } else {
-          alert("Unknown role. Please contact support.");
+      if (!response.ok) {
+        // Handle specific error cases
+        switch (response.status) {
+          case 400:
+            throw new Error('Please enter both username and password');
+          case 401:
+            throw new Error('Invalid username or password');
+          case 500:
+            throw new Error('Server error. Please try again later');
+          default:
+            throw new Error(data.message || 'Login failed');
         }
-
-        onLoginSuccess(data.user.role);
-      } else {
-        throw new Error(data.error);
       }
+
+      alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      if (data.user.role === 1) {
+        navigate('/recruiter');
+      } else if (data.user.role === 2) {
+        navigate('/applicant');
+      } else {
+        alert("Unknown role. Please contact support.");
+      }
+
+      onLoginSuccess(data.user.role); 
     } catch (err) {
-      setError(err.message);
+      console.error('Login error:', {
+        error: err.message,
+        timestamp: new Date().toISOString()
+      });
+
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError(err.message || 'Login failed. Please try again.');
+      }
     }
   };
 
