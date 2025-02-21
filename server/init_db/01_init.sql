@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: availability; Type: TABLE; Schema: public; Owner: postgres
+-- Name: availability; Type: TABLE; Schema: public; Owner: recruitment_0z13_user
 --
 
 CREATE TABLE public.availability (
@@ -32,10 +32,10 @@ CREATE TABLE public.availability (
 );
 
 
-ALTER TABLE public.availability OWNER TO postgres;
+ALTER TABLE public.availability OWNER TO recruitment_0z13_user;
 
 --
--- Name: availability_availability_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: availability_availability_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE public.availability ALTER COLUMN availability_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -49,7 +49,7 @@ ALTER TABLE public.availability ALTER COLUMN availability_id ADD GENERATED ALWAY
 
 
 --
--- Name: competence; Type: TABLE; Schema: public; Owner: postgres
+-- Name: competence; Type: TABLE; Schema: public; Owner: recruitment_0z13_user
 --
 
 CREATE TABLE public.competence (
@@ -58,10 +58,10 @@ CREATE TABLE public.competence (
 );
 
 
-ALTER TABLE public.competence OWNER TO postgres;
+ALTER TABLE public.competence OWNER TO recruitment_0z13_user;
 
 --
--- Name: competence_competence_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: competence_competence_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE public.competence ALTER COLUMN competence_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -75,7 +75,7 @@ ALTER TABLE public.competence ALTER COLUMN competence_id ADD GENERATED ALWAYS AS
 
 
 --
--- Name: competence_profile; Type: TABLE; Schema: public; Owner: postgres
+-- Name: competence_profile; Type: TABLE; Schema: public; Owner: recruitment_0z13_user
 --
 
 CREATE TABLE public.competence_profile (
@@ -86,10 +86,10 @@ CREATE TABLE public.competence_profile (
 );
 
 
-ALTER TABLE public.competence_profile OWNER TO postgres;
+ALTER TABLE public.competence_profile OWNER TO recruitment_0z13_user;
 
 --
--- Name: competence_profile_competence_profile_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: competence_profile_competence_profile_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE public.competence_profile ALTER COLUMN competence_profile_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -103,7 +103,7 @@ ALTER TABLE public.competence_profile ALTER COLUMN competence_profile_id ADD GEN
 
 
 --
--- Name: person; Type: TABLE; Schema: public; Owner: postgres
+-- Name: person; Type: TABLE; Schema: public; Owner: recruitment_0z13_user
 --
 
 CREATE TABLE public.person (
@@ -118,10 +118,10 @@ CREATE TABLE public.person (
 );
 
 
-ALTER TABLE public.person OWNER TO postgres;
+ALTER TABLE public.person OWNER TO recruitment_0z13_user;
 
 --
--- Name: person_person_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: person_person_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE public.person ALTER COLUMN person_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -135,7 +135,7 @@ ALTER TABLE public.person ALTER COLUMN person_id ADD GENERATED ALWAYS AS IDENTIT
 
 
 --
--- Name: role; Type: TABLE; Schema: public; Owner: postgres
+-- Name: role; Type: TABLE; Schema: public; Owner: recruitment_0z13_user
 --
 
 CREATE TABLE public.role (
@@ -144,10 +144,10 @@ CREATE TABLE public.role (
 );
 
 
-ALTER TABLE public.role OWNER TO postgres;
+ALTER TABLE public.role OWNER TO recruitment_0z13_user;
 
 --
--- Name: role_role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: role_role_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE public.role ALTER COLUMN role_id ADD GENERATED ALWAYS AS IDENTITY (
@@ -161,7 +161,7 @@ ALTER TABLE public.role ALTER COLUMN role_id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- Data for Name: availability; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: availability; Type: TABLE DATA; Schema: public; Owner: recruitment_0z13_user
 --
 
 COPY public.availability (availability_id, person_id, from_date, to_date) FROM stdin;
@@ -2493,7 +2493,7 @@ COPY public.availability (availability_id, person_id, from_date, to_date) FROM s
 
 
 --
--- Data for Name: competence; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: competence; Type: TABLE DATA; Schema: public; Owner: recruitment_0z13_user
 --
 
 COPY public.competence (competence_id, name) FROM stdin;
@@ -2504,7 +2504,7 @@ COPY public.competence (competence_id, name) FROM stdin;
 
 
 --
--- Data for Name: competence_profile; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: competence_profile; Type: TABLE DATA; Schema: public; Owner: recruitment_0z13_user
 --
 
 COPY public.competence_profile (competence_profile_id, person_id, competence_id, years_of_experience) FROM stdin;
@@ -3869,7 +3869,7 @@ COPY public.competence_profile (competence_profile_id, person_id, competence_id,
 
 
 --
--- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: recruitment_0z13_user
 --
 
 COPY public.person (person_id, name, surname, pnr, email, password, role_id, username) FROM stdin;
@@ -4777,7 +4777,7 @@ COPY public.person (person_id, name, surname, pnr, email, password, role_id, use
 
 
 --
--- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: recruitment_0z13_user
 --
 
 COPY public.role (role_id, name) FROM stdin;
@@ -4787,42 +4787,42 @@ COPY public.role (role_id, name) FROM stdin;
 
 
 --
--- Name: availability_availability_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: availability_availability_id_seq; Type: SEQUENCE SET; Schema: public; Owner: recruitment_0z13_user
 --
 
 SELECT pg_catalog.setval('public.availability_availability_id_seq', 20862, true);
 
 
 --
--- Name: competence_competence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: competence_competence_id_seq; Type: SEQUENCE SET; Schema: public; Owner: recruitment_0z13_user
 --
 
 SELECT pg_catalog.setval('public.competence_competence_id_seq', 3, true);
 
 
 --
--- Name: competence_profile_competence_profile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: competence_profile_competence_profile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: recruitment_0z13_user
 --
 
 SELECT pg_catalog.setval('public.competence_profile_competence_profile_id_seq', 6487, true);
 
 
 --
--- Name: person_person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: person_person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: recruitment_0z13_user
 --
 
 SELECT pg_catalog.setval('public.person_person_id_seq', 1010, true);
 
 
 --
--- Name: role_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: role_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: recruitment_0z13_user
 --
 
 SELECT pg_catalog.setval('public.role_role_id_seq', 2, true);
 
 
 --
--- Name: availability availability_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: availability availability_pkey; Type: CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.availability
@@ -4830,7 +4830,7 @@ ALTER TABLE ONLY public.availability
 
 
 --
--- Name: competence competence_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: competence competence_pkey; Type: CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.competence
@@ -4838,7 +4838,7 @@ ALTER TABLE ONLY public.competence
 
 
 --
--- Name: competence_profile competence_profile_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: competence_profile competence_profile_pkey; Type: CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.competence_profile
@@ -4846,7 +4846,7 @@ ALTER TABLE ONLY public.competence_profile
 
 
 --
--- Name: person person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: person person_pkey; Type: CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.person
@@ -4854,7 +4854,7 @@ ALTER TABLE ONLY public.person
 
 
 --
--- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.role
@@ -4862,7 +4862,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: availability availability_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: availability availability_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.availability
@@ -4870,7 +4870,7 @@ ALTER TABLE ONLY public.availability
 
 
 --
--- Name: competence_profile competence_profile_competence_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: competence_profile competence_profile_competence_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.competence_profile
@@ -4878,7 +4878,7 @@ ALTER TABLE ONLY public.competence_profile
 
 
 --
--- Name: competence_profile competence_profile_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: competence_profile competence_profile_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.competence_profile
@@ -4886,7 +4886,7 @@ ALTER TABLE ONLY public.competence_profile
 
 
 --
--- Name: person person_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: person person_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: recruitment_0z13_user
 --
 
 ALTER TABLE ONLY public.person
