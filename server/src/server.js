@@ -75,9 +75,9 @@ app.use((err, req, res, next) => {
 /**
  * Start the server
  */
-const port = process.env.SERVER_PORT;
+const port = process.env.SERVER_PORT || 3001;
 const server = app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
 
 module.exports = { server };
