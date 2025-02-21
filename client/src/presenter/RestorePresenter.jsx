@@ -11,7 +11,6 @@ import RestoreView from '../views/RestoreView';
 const RestorePresenter = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [showMessage, setShowMessage] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -22,28 +21,38 @@ const RestorePresenter = () => {
   const handleVerify = async (personNumber) => {
     setError('');
     setSuccessMessage('');
-    setShowMessage(false);
 
     try {
+      console.log('Verifying person number:', { personNumber });
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/verify-person-number`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ personNumber }),
+        signal: AbortSignal.timeout(10000)
       });
 
       const data = await response.json();
-      if (response.ok) {
-        setSuccessMessage('Personal number verified successfully.');
-        setShowMessage(true);
-        return true;
-      } else {
-        setError(data.message || 'Verification failed.');
-        setShowMessage(true);
-        return false;
+      if (!response.ok) {
+        switch (response.status) {
+          case 400:
+            throw new Error('Invalid personal number format');
+          case 404:
+            throw new Error('Personal number not found');
+          default:
+            throw new Error(data.message || 'Verification failed');
+        }
       }
+
+      setSuccessMessage('Personal number verified successfully.');
+      return true;
+
     } catch (err) {
-      setError('Server error. Please try again later.');
-      setShowMessage(true);
+      console.error('Verification error:', err);
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError(err.message || 'Server error. Please try again later.');
+      }
       return false;
     }
   };
@@ -57,29 +66,45 @@ const RestorePresenter = () => {
   const handleRestore = async (personNumber, username, newPassword) => {
     setError('');
     setSuccessMessage('');
-    setShowMessage(false);
 
     console.log('personNumber:', personNumber, 'userName:', username, 'password:', newPassword);
 
     try {
+      console.log('Updating credentials for:', { 
+        personNumber, 
+        username,
+        timestamp: new Date().toISOString()
+      });
+
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update-credentials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ personNumber, username, newPassword }),
+        signal: AbortSignal.timeout(10000)
       });
 
       const data = await response.json();
-      if (response.ok) {
-        setSuccessMessage('Your credentials have been updated. You can now log in. You will be sent back to the login page in a few seconds, so please wait.');
-        setShowMessage(true);
-        setTimeout(() => navigate('/'), 4000);
-      } else {
-        setError(data.message || 'Failed to update credentials.');
-        setShowMessage(true);
+      if (!response.ok) {
+        switch (response.status) {
+          case 409:
+            throw new Error('Username is already taken');
+          case 400:
+            throw new Error(data.message || 'Invalid input');
+          default:
+            throw new Error('Failed to update credentials');
+        }
       }
+
+      setSuccessMessage('Credentials updated successfully. Redirecting to login...');
+      setTimeout(() => navigate('/'), 3000);
+
     } catch (err) {
-      setError('Server error. Please try again later.');
-      setShowMessage(true);
+      console.error('Restore error:', err);
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError(err.message);
+      }
     }
   };
 
@@ -89,7 +114,6 @@ const RestorePresenter = () => {
       onRestore={handleRestore}
       error={error}
       successMessage={successMessage}
-      showMessage={showMessage}
     />
   );
 };
