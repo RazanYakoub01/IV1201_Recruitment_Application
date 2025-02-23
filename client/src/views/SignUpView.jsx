@@ -148,4 +148,8 @@ const SignUpView = ({ onSignUp, error, success }) => {
   );
 };
 
+<<<<<<< HEAD
 export default SignUpView;
+=======
+export default SignUpView;
+>>>>>>> ace32ee196174cff1efc96136fa9fe8bc6f56b1f
