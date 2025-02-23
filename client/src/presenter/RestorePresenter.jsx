@@ -27,8 +27,7 @@ const RestorePresenter = () => {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/verify-person-number`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ personNumber }),
-        signal: AbortSignal.timeout(10000)
+        body: JSON.stringify({ personNumber })
       });
 
       const data = await response.json();
@@ -79,8 +78,7 @@ const RestorePresenter = () => {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update-credentials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ personNumber, username, newPassword }),
-        signal: AbortSignal.timeout(10000)
+        body: JSON.stringify({ personNumber, username, newPassword })
       });
 
       const data = await response.json();

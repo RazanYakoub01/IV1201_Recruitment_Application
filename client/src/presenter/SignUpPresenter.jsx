@@ -49,8 +49,7 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-        signal: AbortSignal.timeout(10000)
+        body: JSON.stringify(userData)
       });
 
       const data = await response.json();

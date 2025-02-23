@@ -27,8 +27,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        signal: AbortSignal.timeout(10000)
+        body: JSON.stringify({ username, password })
       });
       
       const data = await response.json();
