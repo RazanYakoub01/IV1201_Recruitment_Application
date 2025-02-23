@@ -34,7 +34,6 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle specific error cases
         switch (response.status) {
           case 400:
             throw new Error('Please enter both username and password');

@@ -25,7 +25,6 @@ const verifyPersonNumber = async (req, res) => {
   try {
     const { personNumber } = req.body;
 
-    // First check if it's a 12-digit number
     const digitOnlyRegex = /^\d{12}$/;
     if (!digitOnlyRegex.test(personNumber)) {
       return res.status(400).json({
@@ -34,7 +33,6 @@ const verifyPersonNumber = async (req, res) => {
       });
     }
 
-    // Format it to yyyyMMdd-XXXX
     const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const user = await userDAO.findUserByPersonNumber(formattedPersonNumber);
@@ -85,7 +83,6 @@ const updateCredentials = async (req, res) => {
       timestamp: new Date().toISOString()
     });
 
-    // Check all required fields
     if (!personNumber || !username || !newPassword) {
       return res.status(400).json({
         success: false,
