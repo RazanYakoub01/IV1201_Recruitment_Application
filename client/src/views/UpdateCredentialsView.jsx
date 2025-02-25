@@ -1,16 +1,37 @@
 import React, { useState } from 'react';
+import '../styles/updateCredentials.css';
 
+/**
+ * UpdateCredentialsView Component - Allows users to update their credentials.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Function} props.onUpdate - Function to handle credential update.
+ * @param {string} [props.error] - Error message (if any).
+ * @param {string} [props.successMessage] - Success message (if any).
+ * @returns {JSX.Element} The rendered UpdateCredentialsView component.
+ */
 const UpdateCredentialsView = ({ onUpdate, error, successMessage }) => {
   const [username, setUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [validationError, setValidationError] = useState('');
 
+  /**
+   * Validates the input fields.
+   *
+   * @returns {string} An error message if validation fails, otherwise an empty string.
+   */
   const validateInputs = () => {
     if (!username.trim()) return 'Username is required';
     if (newPassword.length < 6) return 'Password must be at least 6 characters';
     return '';
   };
 
+  /**
+   * Handles the update process by validating inputs and calling onUpdate.
+   *
+   * @returns {void}
+   */
   const handleUpdate = () => {
     const error = validateInputs();
     if (error) {

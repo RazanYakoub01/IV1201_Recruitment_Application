@@ -1,10 +1,27 @@
 import React, { useState } from 'react';
 import '../styles/Restore.css';
 
+/**
+ * RestoreView Component - Allows users to request a credential reset link.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Function} props.onVerify - Function to handle email verification.
+ * @param {string} [props.error] - Error message (if any).
+ * @param {string} [props.successMessage] - Success message (if any).
+ * @param {string} [props.emailContent] - Preview content of the email (if available).
+ * @returns {JSX.Element} The rendered RestoreView component.
+ */
 const RestoreView = ({ onVerify, error, successMessage, emailContent }) => {
   const [email, setEmail] = useState('');
   const [validationError, setValidationError] = useState('');
 
+  /**
+   * Validates the email input.
+   *
+   * @param {string} email - The email entered by the user.
+   * @returns {string} An error message if invalid, otherwise an empty string.
+   */
   const validateEmail = (email) => {
     if (!email.trim()) {
       return 'Email is required';
@@ -18,6 +35,11 @@ const RestoreView = ({ onVerify, error, successMessage, emailContent }) => {
     return '';
   };
 
+  /**
+   * Handles the email verification process.
+   *
+   * @returns {void}
+   */
   const handleVerify = async () => {
     const emailError = validateEmail(email);
     if (emailError) {

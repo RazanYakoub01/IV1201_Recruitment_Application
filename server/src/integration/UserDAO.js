@@ -104,7 +104,7 @@ const createUser = async ({ firstName, lastName, email, personNumber, username, 
 
 /**
  * Updates a user's username and password in the database
- * @param {string} personNumber - The user's personal number
+ * @param {string} email - The user's email
  * @param {string} newUsername - The new username
  * @param {string} newPassword - The new hashed password
  * @returns {Promise<boolean>} True if update was successful, false otherwise
@@ -121,7 +121,7 @@ const updateUserCredentials = async (email, newUsername, newPassword) => {
     
     const result = await client.query(query, [newUsername, newPassword, email]);
 
-    return result.rowCount > 0; // Returns true if a row was updated
+    return result.rowCount > 0; 
   } catch (err) {
     console.error('Error updating user credentials:', err);
     throw err;

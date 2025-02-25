@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import RestoreView from '../views/RestoreView';
 
+/**
+ * RestorePresenter handles the logic for verifying a user's email
+ * and sending an update credentials email.
+ *
+ * @component
+ */
 const RestorePresenter = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [emailContent, setEmailContent] = useState('');
 
+  /**
+   * Handles email verification by sending a request to the backend.
+   *
+   * @param {string} email - The email address to verify.
+   * @returns {Promise<void>}
+   */
   const handleVerifyEmail = async (email) => {
     setError('');
     setSuccessMessage('');
@@ -39,15 +51,20 @@ const RestorePresenter = () => {
     }
   };
 
+  /**
+   * Sends an email containing an update credentials link.
+   *
+   * @param {string} email - The email address to send the update credentials email.
+   * @returns {Promise<void>}
+   */
   const sendUpdateEmail = async (email) => {
-    setError(''); // Clear any previous errors
-    setSuccessMessage(''); // Clear any previous success messages
-    setEmailContent(''); // Clear email content field
+    setError(''); 
+    setSuccessMessage(''); 
+    setEmailContent('');
   
     try {
       console.log('Sending update credentials email to:', email);
   
-      // Make the POST request to the backend to generate the update email text
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/send-update-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,10 +77,7 @@ const RestorePresenter = () => {
         throw new Error(data.message || 'Failed to generate update email.');
       }
   
-      // Set the success message
       setSuccessMessage('Update credentials link generated successfully.');
-  
-      // Set the email content from the backend's response
       setEmailContent(data.emailText);
   
     } catch (err) {
@@ -71,7 +85,6 @@ const RestorePresenter = () => {
       setError(err.message || 'Failed to generate update email.');
     }
   };
-  
 
   return (
     <RestoreView
