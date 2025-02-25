@@ -109,18 +109,19 @@ const createUser = async ({ firstName, lastName, email, personNumber, username, 
  * @param {string} newPassword - The new hashed password
  * @returns {Promise<boolean>} True if update was successful, false otherwise
  */
-const updateUserCredentials = async (personNumber, newUsername, newPassword) => {
+const updateUserCredentials = async (email, newUsername, newPassword) => {
   const client = await pool.connect();
   try {
     const query = `
       UPDATE public.person 
       SET username = $1, password = $2 
-      WHERE pnr = $3
+      WHERE email = $3
     `;
-    console.log('Query:', query)
-    const result = await client.query(query, [newUsername, newPassword, personNumber]);
+    console.log('Executing Query:', query, 'with values:', newUsername, newPassword, email);
+    
+    const result = await client.query(query, [newUsername, newPassword, email]);
 
-    return result.rowCount > 0;
+    return result.rowCount > 0; // Returns true if a row was updated
   } catch (err) {
     console.error('Error updating user credentials:', err);
     throw err;

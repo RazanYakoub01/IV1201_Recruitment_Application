@@ -6,6 +6,7 @@ import SignUpPresenter from './presenter/SignUpPresenter';
 import RecruiterPresenter from './presenter/RecruiterPresenter';
 import ApplicantPresenter from './presenter/ApplicantPresenter';
 import RestorePresenter from './presenter/RestorePresenter';
+import UpdateCredentialsPresenter from './presenter/UpdateCredentialsPresenter';
 
 
 const App = () => {
@@ -24,6 +25,8 @@ const App = () => {
       <Route path="/recruiter" element={<Layout showHeader={true}> <RecruiterPresenter /> </Layout>} />
       <Route path="/applicant" element={<Layout showHeader={true}> <ApplicantPresenter /> </Layout>} />
       <Route path="/restore" element={<Layout showHeader={true}> <RestorePresenter /> </Layout>} />
+      <Route path="/update-credentials" element={<Layout showHeader={true}> <UpdateCredentialsPresenter /> </Layout>} />
+
     </Routes>
   );
 };

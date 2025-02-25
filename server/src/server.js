@@ -51,7 +51,8 @@ app.post('/users/login', authController.login);
 app.post('/users/signin')
 app.post('/users/signup', authController.signup);
 
-app.post('/users/verify-person-number', authController.verifyPersonNumber);
+app.post('/users/verify-email', authController.verifyEmail);
+app.post('/users/send-update-email', authController.sendUpdateCredentialsEmail);
 app.post('/users/update-credentials', authController.updateCredentials);
 
 app.get('/competences', applicationController.getCompetences);

@@ -27,6 +27,7 @@ services:
       - DB_HOST=recruitment_db
       - DB_NAME=recruitment
       - DB_PORT=5432
+      - JWT_SECRET=MySuperSecretKey123!
     ports:
       - "3001:3001"
     depends_on:

@@ -1,117 +1,84 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import RestoreView from '../views/RestoreView';
 
-/**
- * The RestorePresenter component handles restoring user credentials.
- * It manages user data and communicates with the RestoreView component.
- * 
- * @component
- */
 const RestorePresenter = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
+  const [emailContent, setEmailContent] = useState('');
 
-  /**
-   * Verifies if the personal number exists in the database.
-   * @param {string} personNumber - The personal number entered by the user
-   * @returns {boolean} - Returns true if verification is successful
-   */
-  const handleVerify = async (personNumber) => {
+  const handleVerifyEmail = async (email) => {
     setError('');
     setSuccessMessage('');
+    setEmailContent('');
 
     try {
-      console.log('Verifying person number:', { personNumber });
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/verify-person-number`, {
+      console.log('Verifying email:', email);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ personNumber })
+        body: JSON.stringify({ email })
       });
 
       const data = await response.json();
       if (!response.ok) {
         switch (response.status) {
           case 400:
-            throw new Error('Invalid personal number format');
+            throw new Error('Invalid email format');
           case 404:
-            throw new Error('Personal number not found');
+            throw new Error('Email not found');
           default:
             throw new Error(data.message || 'Verification failed');
         }
       }
 
-      setSuccessMessage('Personal number verified successfully.');
-      return true;
-
+      setSuccessMessage('Email verified successfully. Sending update link...');
+      sendUpdateEmail(email);
     } catch (err) {
       console.error('Verification error:', err);
-      if (err.name === 'AbortError') {
-        setError('Request timed out. Please try again.');
-      } else {
-        setError(err.message || 'Server error. Please try again later.');
-      }
-      return false;
+      setError(err.message || 'Server error. Please try again later.');
     }
   };
 
-  /**
-   * Handles restoring username and password.
-   * @param {string} personNumber - The verified personal number
-   * @param {string} username - The new username
-   * @param {string} newPassword - The new password
-   */
-  const handleRestore = async (personNumber, username, newPassword) => {
-    setError('');
-    setSuccessMessage('');
-
-    console.log('personNumber:', personNumber, 'userName:', username, 'password:', newPassword);
-
+  const sendUpdateEmail = async (email) => {
+    setError(''); // Clear any previous errors
+    setSuccessMessage(''); // Clear any previous success messages
+    setEmailContent(''); // Clear email content field
+  
     try {
-      console.log('Updating credentials for:', { 
-        personNumber, 
-        username,
-        timestamp: new Date().toISOString()
-      });
-
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update-credentials`, {
+      console.log('Sending update credentials email to:', email);
+  
+      // Make the POST request to the backend to generate the update email text
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/send-update-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ personNumber, username, newPassword })
+        body: JSON.stringify({ email })
       });
-
+  
       const data = await response.json();
+  
       if (!response.ok) {
-        switch (response.status) {
-          case 409:
-            throw new Error('Username is already taken');
-          case 400:
-            throw new Error(data.message || 'Invalid input');
-          default:
-            throw new Error('Failed to update credentials');
-        }
+        throw new Error(data.message || 'Failed to generate update email.');
       }
-
-      setSuccessMessage('Credentials updated successfully. Redirecting to login...');
-      setTimeout(() => navigate('/'), 3000);
-
+  
+      // Set the success message
+      setSuccessMessage('Update credentials link generated successfully.');
+  
+      // Set the email content from the backend's response
+      setEmailContent(data.emailText);
+  
     } catch (err) {
-      console.error('Restore error:', err);
-      if (err.name === 'AbortError') {
-        setError('Request timed out. Please try again.');
-      } else {
-        setError(err.message);
-      }
+      console.error('Email sending error:', err);
+      setError(err.message || 'Failed to generate update email.');
     }
   };
+  
 
   return (
     <RestoreView
-      onVerify={handleVerify}
-      onRestore={handleRestore}
+      onVerify={handleVerifyEmail}
       error={error}
       successMessage={successMessage}
+      emailContent={emailContent}
     />
   );
 };

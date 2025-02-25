@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const userDAO = require('../integration/UserDAO');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
 
 /**
  * Validates if a password is properly hashed
@@ -21,40 +24,30 @@ const isPasswordHashed = (password) => {
  * @param {Object} res - The response object used to send a response back to the client.
  * @returns {void} Sends a response indicating whether the verification succeeded or failed.
  */
-const verifyPersonNumber = async (req, res) => {
+const verifyEmail = async (req, res) => {
   try {
-    const { personNumber } = req.body;
+    const { email } = req.body;
 
-    const digitOnlyRegex = /^\d{12}$/;
-    if (!digitOnlyRegex.test(personNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Personal number must be exactly 12 digits'
-      });
-    }
-
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
-
-    const user = await userDAO.findUserByPersonNumber(formattedPersonNumber);
+    const user = await userDAO.findUserByEmail(email);
 
     if (!user) {
       return res.status(404).json({ 
         success: false, 
-        message: 'Personal number not found' 
+        message: 'email not found' 
       });
     }
 
-    console.log('Person number verified:', {
+    console.log('email verified:', {
       personNumber: '***',
       timestamp: new Date().toISOString()
     });
 
     res.status(200).json({ 
       success: true, 
-      message: 'Personal number verified' 
+      message: 'email verified' 
     });
   } catch (err) {
-    console.error('Error verifying person number:', err);
+    console.error('Error verifying email:', err);
     res.status(500).json({ 
       success: false, 
       message: 'Internal server error' 
@@ -73,89 +66,105 @@ const verifyPersonNumber = async (req, res) => {
  * @param {Object} res - The response object used to send a response back to the client.
  * @returns {void} Sends a response indicating whether the update succeeded or failed.
  */
+
 const updateCredentials = async (req, res) => {
   try {
-    const { personNumber, username, newPassword } = req.body;
+    const { token, username, newPassword } = req.body;
 
-    console.log('Processing credential update request:', {
-      personNumber: personNumber ? '***' : 'missing',
-      username,
-      timestamp: new Date().toISOString()
-    });
-
-    // Check all required fields
-    if (!personNumber || !username || !newPassword) {
+    if (!token || !username || !newPassword) {
       return res.status(400).json({
         success: false,
-        code: 'MISSING_FIELDS',
-        message: 'All fields are required',
+        message: 'Missing required fields',
       });
     }
 
-    const digitOnlyRegex = /^\d{12}$/;
-    if (!digitOnlyRegex.test(personNumber)) {
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
       return res.status(400).json({
         success: false,
-        code: 'INVALID_PNR',
-        message: 'Personal number must be exactly 12 digits'
+        message: 'Invalid or expired token',
       });
     }
 
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
+    const email = decoded.email; // Get email from token
 
-    if (username.length < 3) {
-      return res.status(400).json({
+    // Ensure email exists
+    const user = await userDAO.findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        code: 'INVALID_USERNAME',
-        message: 'Username must be at least 3 characters long',
+        message: 'User not found',
       });
     }
 
+    // Check if username is already taken (excluding current user)
     const existingUser = await userDAO.findUserByUsername(username);
-    if (existingUser) {
+    if (existingUser && existingUser.email !== email) {
       return res.status(409).json({
         success: false,
-        code: 'USERNAME_TAKEN',
-        message: 'Username is already taken',
+        message: 'Username already taken',
       });
     }
 
-    if (newPassword.length < 8) {
-      return res.status(400).json({
-        success: false,
-        code: 'INVALID_PASSWORD',
-        message: 'Password must be at least 8 characters long',
-      });
-    }
-
+    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const result = await userDAO.updateUserCredentials(formattedPersonNumber, username, hashedPassword);
+
+    // Update credentials
+    const result = await userDAO.updateUserCredentials(email, username, hashedPassword);
 
     if (!result) {
-      return res.status(404).json({ 
-        success: false, 
-        code: 'UPDATE_FAILED',
-        message: 'User not found or update failed' 
-      });
+      return res.status(500).json({ success: false, message: 'Failed to update credentials' });
     }
 
-    console.log('Credentials updated successfully:', {
-      username,
-      timestamp: new Date().toISOString()
-    });
-
-    res.status(200).json({ 
-      success: true, 
-      message: 'Credentials updated successfully' 
-    });
+    res.status(200).json({ success: true, message: 'Credentials updated successfully' });
 
   } catch (err) {
     console.error('Error updating credentials:', err);
-    res.status(500).json({ 
-      success: false, 
-      code: 'SERVER_ERROR',
-      message: 'Internal server error' 
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+
+const sendUpdateCredentialsEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await userDAO.findUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        code: 'EMAIL_NOT_FOUND',
+        message: 'No account found with this email',
+      });
+    }
+
+    // Generate a signed JWT token (valid for 15 minutes)
+    const token = jwt.sign(
+      { personId: user.person_id, email },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    // Create update credentials link
+    const updateLink = `${process.env.FRONTEND_URL}/update-credentials?token=${token}`;
+
+    // Prepare the email content (but don't send it)
+    const emailText = `Click the link to update your credentials:\n\n${updateLink}\n\nThis link is valid for 15 minutes.`;
+
+    // Return the email text as part of the response
+    res.status(200).json({
+      success: true,
+      message: 'Update credentials link generated successfully',
+      emailText,  // Return the generated email text in the response
     });
+
+  } catch (err) {
+    console.error('Error generating update credentials link:', err);
+    res.status(500).json({ success: false, message: 'Failed to generate update link' });
   }
 };
 
@@ -315,4 +324,4 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, verifyPersonNumber, updateCredentials };
+module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail };
