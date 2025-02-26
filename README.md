@@ -55,7 +55,7 @@ docker ps
 ### **Access the PostgreSQL Database**
 To manually inspect the database, connect using:
 ```sh
-docker exec -it recruitment_db_container
+docker exec -it recruitment_db_container bash
 
 psql -U postgres
 
