@@ -26,7 +26,8 @@ This is a recruitment management system built using **React (Vite) for the front
 ## **Setup and Installation**
 ### **1. Clone the Repository**
 ```sh
-git clone <git@github.com:RazanYakoub01/IV1201_Recruitment_Application.git>
+git clone https://github.com/RazanYakoub01/IV1201_Recruitment_Application.git
+
 cd IV1201_Recruitment_Application
 ```
 
@@ -54,17 +55,27 @@ docker ps
 ### **Access the PostgreSQL Database**
 To manually inspect the database, connect using:
 ```sh
-docker exec -it recruitment_db_container psql -U postgres -d recruitment
+docker exec -it recruitment_db_container
+
+psql -U postgres
+
+\c recruitment
 ```
-To list tables:
+For example to list tables you can run the following:
 ```sql
 \dt;
 ```
 
-## **Stopping the Application**
-To stop the running containers:
+## **Rebuilding the Application**
+To rebuild the whole application:
 ```sh
-docker-compose down
+docker compose down -v
+
+rm -rf ./postgres-data
+
+docker volume prune -f
+
+docker compose up --build
 ```
 
 ## **Development Notes**
