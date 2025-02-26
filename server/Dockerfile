@@ -12,6 +12,8 @@ COPY package*.json ./
 
 RUN npm install 
 RUN npm install bcrypt
+RUN npm install jsonwebtoken
+RUN npm install nodemailer
 
 COPY . .
 

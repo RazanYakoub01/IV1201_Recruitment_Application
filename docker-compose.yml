@@ -27,6 +27,10 @@ services:
       - DB_HOST=recruitment_db
       - DB_NAME=recruitment
       - DB_PORT=5432
+      - JWT_SECRET=MySuperSecretKey123!
+      - FRONTEND_URL=http://localhost:8080 
+      - EMAIL_USER=hire.flow.help@gmail.com
+      - EMAIL_PASS=leah jqfk sxtv brqy
     ports:
       - "3001:3001"
     depends_on:

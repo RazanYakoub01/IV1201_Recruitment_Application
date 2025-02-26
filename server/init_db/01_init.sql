@@ -4896,4 +4896,3 @@ ALTER TABLE ONLY public.person
 --
 -- PostgreSQL database dump complete
 --
-
