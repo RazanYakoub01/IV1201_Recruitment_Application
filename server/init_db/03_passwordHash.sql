@@ -1,5 +1,5 @@
 -- First make sure we're using the correct database
-\c recruitment
+\c recruitment_0z13
 
 -- Create extension if not exists
 CREATE EXTENSION IF NOT EXISTS pgcrypto;

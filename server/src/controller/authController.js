@@ -92,9 +92,8 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    const email = decoded.email; // Get email from token
+    const email = decoded.email; 
 
-    // Ensure email exists 
     const user = await userDAO.findUserByEmail(email);
     if (!user) {
       return res.status(404).json({
@@ -103,7 +102,6 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    // Check if username is already taken (excluding current user)
     const existingUser = await userDAO.findUserByUsername(username);
     if (existingUser && existingUser.email !== email) {
       return res.status(409).json({
@@ -112,10 +110,8 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update credentials
     const result = await userDAO.updateUserCredentials(email, username, hashedPassword);
 
     if (!result) {
@@ -169,10 +165,8 @@ const sendUpdateCredentialsEmail = async (req, res) => {
       { expiresIn: '15m' }
     );
 
-    // Create update credentials link
     const updateLink = `${process.env.FRONTEND_URL}/update-credentials?token=${token}`;
 
-    // Prepare the email content
     const emailText = `
     Hello,
     
@@ -218,7 +212,6 @@ const sendUpdateCredentialsEmail = async (req, res) => {
     await transporter.sendMail(mailOptions);
 
 
-    // Return the email text as part of the response
     res.status(200).json({
       success: true,
       message: 'Update credentials link generated successfully',
