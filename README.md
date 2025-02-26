@@ -82,4 +82,7 @@ docker-compose down
 
 ## **Contributing**
 
-
+@18alba1- Alex Barhado
+@Seemamian- Seema Bashir
+@Lellalu- Siyu Lu
+@RazanYakoub01- Razan Yakoub
