@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Restore.css';
 
 /**
  * RestoreView component provides the UI for restoring username and password.
- *
- * @param {Object} props Component properties
- * @param {Function} props.onVerify Callback for verifying personal number
- * @param {Function} props.onRestore Callback for restoring username & password
- * @param {string} props.error Error message to display if restore fails
- * @param {string} props.successMessage Success message to display if restore is successful
- * @returns {React.ReactElement} Restore credentials form
  */
 const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
+  const { t } = useTranslation(); // Import translation function
+
   const [personNumber, setPersonNumber] = useState('');
   const [username, setUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -20,11 +16,11 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
 
   const validatePersonNumber = (pnr) => {
     if (!pnr.trim()) {
-      return 'Personal number is required';
+      return t('restore.error.required_person_number');
     }
     const pnrRegex = /^\d{12}$/;
     if (!pnrRegex.test(pnr)) {
-      return 'Personal number must be exactly 12 digits';
+      return t('restore.error.invalid_person_number');
     }
     return '';
   };
@@ -33,15 +29,15 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
     const errors = {};
     
     if (!username.trim()) {
-      errors.username = 'Username is required';
+      errors.username = t('restore.error.required_username');
     } else if (username.length < 3) {
-      errors.username = 'Username must be at least 3 characters';
+      errors.username = t('restore.error.short_username');
     }
 
     if (!newPassword.trim()) {
-      errors.password = 'Password is required';
+      errors.password = t('restore.error.required_password');
     } else if (newPassword.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
+      errors.password = t('restore.error.short_password');
     }
 
     return errors;
@@ -76,7 +72,7 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
   return (
     <div className="restore-container">
       <div className="restore-box">
-        <h2 className="restore-header">Restore Credentials</h2>
+        <h2 className="restore-header">{t('restore.title')}</h2>
 
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
@@ -84,7 +80,7 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
         {!isVerified ? (
           <div className="input-group">
             <label className="input-label" htmlFor="personNumber">
-              Enter your personal number:
+              {t('restore.enter_person_number')}
             </label>
             <input
               type="text"
@@ -101,14 +97,14 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
               <span className="error-message">{validationErrors.personNumber}</span>
             )}
             <button className="submit-button mt-4" onClick={handleVerify}>
-              Verify
+              {t('restore.verify_button')}
             </button>
           </div>
         ) : (
           <form onSubmit={handleRestore}>
             <div className="input-group">
               <label className="input-label" htmlFor="username">
-                New Username:
+                {t('restore.new_username')}
               </label>
               <input
                 type="text"
@@ -128,7 +124,7 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
 
             <div className="input-group">
               <label className="input-label" htmlFor="newPassword">
-                New Password:
+                {t('restore.new_password')}
               </label>
               <input
                 type="password"
@@ -147,7 +143,7 @@ const RestoreView = ({ onVerify, onRestore, error, successMessage }) => {
             </div>
 
             <button type="submit" className="submit-button mt-6">
-              Update Credentials
+              {t('restore.update_credentials')}
             </button>
           </form>
         )}

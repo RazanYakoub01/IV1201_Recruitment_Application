@@ -1,0 +1,89 @@
+{
+    "header": {
+      "title": "HireFlow",
+      "logout": "Logga ut"
+    },
+    "footer": {
+      "copyright": "© 2025 HireFlow. Alla rättigheter förbehållna."
+    },
+    "language_switcher": {
+      "choose_language": "Välj språk"
+    },
+    "applicant": {
+      "title": "Jobbansökan",
+      "greeting": "Hej, {username}!",
+      "select_expertise": "Välj kompetensområde",
+      "select_expertise_placeholder": "Välj expertis",
+      "years_of_experience": "År av erfarenhet",
+      "add_expertise": "Lägg till expertis",
+      "your_expertise": "Din expertis",
+      "select_availability": "Välj tillgänglighet",
+      "from": "Från",
+      "to": "Till",
+      "add_availability": "Lägg till tillgänglighet",
+      "your_availability": "Din tillgänglighet",
+      "submit_application": "Skicka ansökan",
+      "cancel": "Avbryt",
+      "error": {
+        "select_competence": "Vänligen välj en kompetens och antal år av erfarenhet.",
+        "valid_experience": "Ange ett giltigt antal år av erfarenhet mellan 0 och 99.",
+        "select_dates": "Ange både start- och slutdatum.",
+        "past_dates": "Datum kan inte vara i det förflutna.",
+        "invalid_date_range": "Från-datumet kan inte vara efter till-datumet.",
+        "missing_data": "Lägg till minst en kompetens och en tillgänglighetsperiod innan du skickar in.",
+        "user_not_found": "Användare hittades inte."
+      },
+      "status": {
+        "accepted": {
+          "title": "Din ansökan har blivit accepterad!",
+          "message": "Vi kontaktar dig snart!"
+        },
+        "rejected": {
+          "title": "Tyvärr valde vi andra kandidater denna gång.",
+          "message": "Vi informerar dig när den nya ansökningsperioden öppnas."
+        },
+        "unhandled": {
+          "title": "Din ansökan granskas!",
+          "message": "Vi behandlar dina uppgifter och återkommer snart."
+        },
+        "error": {
+          "title": "Något gick fel.",
+          "message": "Logga ut och försök igen. Om problemet kvarstår, kontakta supporten."
+        }
+      }
+    },
+    "login": {
+      "title": "Logga in på ditt konto",
+      "username": "Användarnamn",
+      "password": "Lösenord",
+      "forgot_password": "Glömt användarnamn eller lösenord?",
+      "sign_in": "Logga in",
+      "no_account": "Har du inget konto?",
+      "sign_up": "Registrera dig",
+      "error": {
+        "required_username": "Användarnamn krävs.",
+        "required_password": "Lösenord krävs."
+      }
+    },
+    "signup": {
+      "title": "Skapa ett konto",
+      "first_name": "Förnamn",
+      "last_name": "Efternamn",
+      "email": "E-postadress",
+      "person_number": "Personnummer",
+      "username": "Användarnamn",
+      "password": "Lösenord",
+      "sign_up": "Registrera",
+      "go_back": "Gå tillbaka till inloggning",
+      "success_message": "Konto skapades framgångsrikt!",
+      "error": {
+        "required_first_name": "Förnamn är obligatoriskt.",
+        "required_last_name": "Efternamn är obligatoriskt.",
+        "invalid_email": "Ogiltigt e-postformat.",
+        "invalid_person_number": "Personnummer måste vara exakt 12 siffror långt och endast innehålla siffror.",
+        "short_username": "Användarnamnet måste vara minst 3 tecken långt.",
+        "short_password": "Lösenordet måste vara minst 8 tecken långt."
+      }
+    }
+  }
+  

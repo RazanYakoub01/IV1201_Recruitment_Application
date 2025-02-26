@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Login.css';
 
 /**
@@ -8,27 +9,39 @@ import '../styles/Login.css';
  * @param {Object} props Component properties
  * @param {Function} props.onLogin Callback function to handle login submission
  * @param {Function} props.onNavigateToSignUp Callback function to navigate to the Sign Up page
+ * @param {Function} props.onNavigateToRestore Callback function to navigate to the Restore page
  * @param {string} props.error Error message to display if login fails
  * @returns {React.ReactElement} Renders the login form with username and password fields
  */
-const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
+const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore, error }) => {
+  const { t } = useTranslation(); // Import translation function
 
   const [validationErrors, setValidationErrors] = useState({});
 
+  /**
+   * Validates the form inputs for login.
+   * @param {string} username - The username entered by the user.
+   * @param {string} password - The password entered by the user.
+   * @returns {Object} An object containing validation error messages.
+   */
   const validateForm = (username, password) => {
     const errors = {};
     
     if (!username.trim()) {
-      errors.username = 'Username is required';
+      errors.username = t('login.error.required_username'); // "Username is required"
     }
     
     if (!password.trim()) {
-      errors.password = 'Password is required';
+      errors.password = t('login.error.required_password'); // "Password is required"
     }
 
     return errors;
   };
 
+  /**
+   * Handles form submission.
+   * @param {Event} e - The form submission event.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.username.value;
@@ -47,16 +60,16 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2 className="login-title">Sign in to your account</h2>
-        
+        <h2 className="login-title">{t('login.title')}</h2> 
+
         {error && (
           <div className="error-message">{error}</div>
         )}
-        
+
         <form className="form-group" onSubmit={handleSubmit}>
           <div>
             <label className="input-label" htmlFor="username">
-              Username
+              {t('login.username')}
             </label>
             <input
               id="username"
@@ -72,7 +85,7 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
           
           <div className="mt-4">
             <label className="input-label" htmlFor="password">
-              Password
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -88,21 +101,20 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
 
           <div className="mt-6">
             <button type="submit" className="submit-button">
-              Sign in
+              {t('login.sign_in')}
             </button>
           </div>
         </form>
 
         <div className="signup-redirect">
-          <p>Don't have an account?</p>
+          <p>{t('login.no_account')}</p>
           <button onClick={onNavigateToSignUp} className="submit-button">
-            Sign Up
+            {t('login.sign_up')}
           </button>
 
-          <button onClick={onNavigateToRestore}className="submit-button">
-            Forgot Username or Password?
+          <button onClick={onNavigateToRestore} className="submit-button">
+            {t('login.forgot_password')}
           </button>
-
         </div>
       </div>
     </div>

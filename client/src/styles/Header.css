@@ -18,6 +18,12 @@
   font-weight: bold;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adds spacing between logout button and language switcher */
+}
+
 .logout-button {
   background-color: #f44336;
   color: white;
@@ -30,4 +36,12 @@
 
 .logout-button:hover {
   background-color: #d32f2f;
+}
+
+/* Style for Language Switcher */
+.language-switcher-container select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
 }

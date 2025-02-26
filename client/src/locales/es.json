@@ -1,0 +1,105 @@
+{
+    "header": {
+      "title": "HireFlow",
+      "logout": "Cerrar sesión"
+    },
+    "footer": {
+      "copyright": "© 2025 HireFlow. Todos los derechos reservados."
+    },
+    "language_switcher": {
+      "choose_language": "Elige idioma"
+    },
+    "applicant": {
+      "title": "Solicitud de empleo",
+      "greeting": "Hola, {username}!",
+      "select_expertise": "Seleccionar área de experiencia",
+      "select_expertise_placeholder": "Seleccionar experiencia",
+      "years_of_experience": "Años de experiencia",
+      "add_expertise": "Agregar experiencia",
+      "your_expertise": "Tu experiencia",
+      "select_availability": "Seleccionar disponibilidad",
+      "from": "Desde",
+      "to": "Hasta",
+      "add_availability": "Agregar disponibilidad",
+      "your_availability": "Tu disponibilidad",
+      "submit_application": "Enviar solicitud",
+      "cancel": "Cancelar",
+      "error": {
+        "select_competence": "Por favor, selecciona una competencia y años de experiencia.",
+        "valid_experience": "Introduce un número válido de años de experiencia entre 0 y 99.",
+        "select_dates": "Proporciona ambas fechas de inicio y final.",
+        "past_dates": "Las fechas no pueden estar en el pasado.",
+        "invalid_date_range": "La fecha de inicio no puede ser posterior a la fecha de finalización.",
+        "missing_data": "Añade al menos una competencia y un período de disponibilidad antes de enviar.",
+        "user_not_found": "Usuario no encontrado."
+      },
+      "status": {
+        "accepted": {
+          "title": "¡Tu solicitud ha sido aceptada!",
+          "message": "Nos pondremos en contacto contigo pronto."
+        },
+        "rejected": {
+          "title": "Lo sentimos, esta vez elegimos a otros candidatos.",
+          "message": "Te informaremos cuando se abra un nuevo período de solicitud."
+        },
+        "unhandled": {
+          "title": "Tu solicitud está en revisión.",
+          "message": "Estamos procesando tu información y nos pondremos en contacto contigo en breve."
+        },
+        "error": {
+          "title": "Algo salió mal.",
+          "message": "Cierra sesión e inténtalo de nuevo. Si el problema persiste, contacta con soporte."
+        }
+      }
+    },
+    "login": {
+      "title": "Inicia sesión en tu cuenta",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "forgot_password": "¿Olvidaste tu nombre de usuario o contraseña?",
+      "sign_in": "Iniciar sesión",
+      "no_account": "¿No tienes una cuenta?",
+      "sign_up": "Regístrate",
+      "error": {
+        "required_username": "El nombre de usuario es obligatorio.",
+        "required_password": "La contraseña es obligatoria."
+      }
+    },
+    "signup": {
+      "title": "Crear una cuenta",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "email": "Correo electrónico",
+      "person_number": "Número de identificación",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "sign_up": "Registrarse",
+      "go_back": "Volver a iniciar sesión",
+      "success_message": "¡Cuenta creada con éxito!",
+      "error": {
+        "required_first_name": "El nombre es obligatorio.",
+        "required_last_name": "El apellido es obligatorio.",
+        "invalid_email": "Formato de correo electrónico no válido.",
+        "invalid_person_number": "El número de identificación debe tener exactamente 12 dígitos y contener solo números.",
+        "short_username": "El nombre de usuario debe tener al menos 3 caracteres.",
+        "short_password": "La contraseña debe tener al menos 8 caracteres."
+      }
+    },
+    "restore": {
+      "title": "Restaurar credenciales",
+      "enter_person_number": "Introduce tu número de identificación:",
+      "verify_button": "Verificar",
+      "new_username": "Nuevo nombre de usuario:",
+      "new_password": "Nueva contraseña:",
+      "update_credentials": "Actualizar credenciales",
+      "error": {
+        "required_person_number": "El número de identificación es obligatorio.",
+        "invalid_person_number": "El número de identificación debe tener exactamente 12 dígitos.",
+        "required_username": "El nombre de usuario es obligatorio.",
+        "short_username": "El nombre de usuario debe tener al menos 3 caracteres.",
+        "required_password": "La contraseña es obligatoria.",
+        "short_password": "La contraseña debe tener al menos 8 caracteres."
+      }
+    }
+  }
+  

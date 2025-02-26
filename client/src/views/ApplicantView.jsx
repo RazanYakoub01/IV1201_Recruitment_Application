@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // Import i18n
 import '../styles/Applicant.css';
 
-/**
- * ApplicantForm Component
- * 
- * This component handles the job application process, allowing users to select their area of expertise,
- * specify years of experience, and define availability periods before submitting their application.
- * 
- * @param {function} onSubmit - Function to handle form submission.
- * @param {Array} competences - List of available competences.
- */
 const ApplicantForm = ({ onSubmit, competences }) => {
+  const { t } = useTranslation(); // Initialize translation
   const [user, setUser] = useState(null);
   const [selectedCompetence, setSelectedCompetence] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
@@ -21,9 +14,6 @@ const ApplicantForm = ({ onSubmit, competences }) => {
   const [error, setError] = useState('');
   const [status, setStatus] = useState(null);
 
-  /**
-   * useEffect hook to retrieve user data from localStorage upon component mount.
-   */
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -33,47 +23,38 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     }
   }, []);
 
-  /**
-   * Adds a selected competence and years of experience to the expertise list.
-   */
   const handleAddExpertise = () => {
     if (!selectedCompetence || !yearsOfExperience) {
-      setError('Please select a competence and years of experience.');
+      setError(t('applicant.error.select_competence'));
       return;
     }
 
     const experience = parseInt(yearsOfExperience, 10);
     if (isNaN(experience) || experience < 0 || experience > 99) {
-      setError('Please enter a valid number of years of experience between 0 and 99.');
+      setError(t('applicant.error.valid_experience'));
       return;
     }
-  
-    setExpertise([ 
-      ...expertise,
-      { competence_id: selectedCompetence, years_of_experience: yearsOfExperience },
-    ]);
+
+    setExpertise([...expertise, { competence_id: selectedCompetence, years_of_experience: yearsOfExperience }]);
     setYearsOfExperience('');
     setError('');
   };
 
-  /**
-   * Adds an availability period with a start and end date to the availability list.
-   */
   const handleAddAvailability = () => {
     if (!fromDate || !toDate) {
-      setError('Please provide both start and end dates.');
+      setError(t('applicant.error.select_dates'));
       return;
     }
 
-    const today = new Date().toISOString().split('T')[0]; 
+    const today = new Date().toISOString().split('T')[0];
 
     if (new Date(fromDate) < new Date(today) || new Date(toDate) < new Date(today)) {
-      setError('Dates cannot be in the past.');
+      setError(t('applicant.error.past_dates'));
       return;
     }
 
     if (new Date(fromDate) > new Date(toDate)) {
-      setError('From date cannot be later than To date.');
+      setError(t('applicant.error.invalid_date_range'));
       return;
     }
 
@@ -83,15 +64,12 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     setToDate('');
   };
 
-  /**
-   * Handles form submission, validating inputs and sending data to the onSubmit function.
-   */
   const handleSubmit = () => {
     if (user) {
       if (expertise.length === 0 || availability.length === 0) {
-        setError('Please add at least one competence and one availability period before submitting.');
-        return; 
-      }  
+        setError(t('applicant.error.missing_data'));
+        return;
+      }
       const { person_id } = user;
       onSubmit(person_id, expertise, availability);
       setError('');
@@ -99,13 +77,10 @@ const ApplicantForm = ({ onSubmit, competences }) => {
       setAvailability([]);
       setStatus('unhandled');
     } else {
-      setError('User not found');
+      setError(t('applicant.error.user_not_found'));
     }
   };
 
-  /**
-   * Cancels the form input, resetting all selections.
-   */
   const handleCancel = () => {
     setSelectedCompetence('');
     setYearsOfExperience('');
@@ -117,67 +92,61 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     setError('');
   };
 
-  /**
-   * Renders appropriate status messages based on the application's current state.
-   * 
-   * @returns {JSX.Element} Status message component.
-   */
   const renderStatusMessage = () => {
     if (status === 'accepted') {
       return (
         <div className="success-message">
-          <h3>Your application has been accepted!</h3>
-          <p>We will contact you soon!</p>
+          <h3>{t('applicant.status.accepted.title')}</h3>
+          <p>{t('applicant.status.accepted.message')}</p>
         </div>
       );
     } else if (status === 'rejected') {
       return (
         <div className="error-message">
-          <h3>Sorry, this time we chose to go with other candidates.</h3>
-          <p>We will inform you when the new application period opens up.</p>
+          <h3>{t('applicant.status.rejected.title')}</h3>
+          <p>{t('applicant.status.rejected.message')}</p>
         </div>
       );
     } else if (status === 'unhandled' || status === 'Missing Availability' || status === 'Missing Competence') {
       return (
         <div className="success-message">
-          <h3>Your application is under review!</h3>
-          <p>We are processing your details and will get back to you shortly.</p>
+          <h3>{t('applicant.status.unhandled.title')}</h3>
+          <p>{t('applicant.status.unhandled.message')}</p>
         </div>
       );
     } else {
-      return (  
+      return (
         <div className="error-message">
-          <h3>Something went wrong.</h3>
-          <p>Please log out and try again. If the issue persists, contact support.</p>
+          <h3>{t('applicant.status.error.title')}</h3>
+          <p>{t('applicant.status.error.message')}</p>
         </div>
       );
     }
   };
 
   if (!user || status === null) {
-    return <div className="error-message">You must be logged in to access this page. Please log in first!</div>;
+    return <div className="error-message">{t('applicant.error.user_not_found')}</div>;
   }
 
   return (
     <div className="applicant-container">
       <div className="applicant-box">
-        <h2 className="applicant-header">Job Application</h2>
-
-        <h3>Hello, {user.username}!</h3>
+        <h2 className="applicant-header">{t('applicant.title')}</h2>
+        <h3>{t('applicant.greeting', { username: user.username })}</h3>
 
         {error && <div className="error-message"><p>{error}</p></div>}
 
         {status === 'unsent' ? (
           <>
             <div className="expertise-section">
-              <h3 className="applicant-title">Select Area of Expertise</h3>
+              <h3 className="applicant-title">{t('applicant.select_expertise')}</h3>
               <div className="applicant-input-group">
                 <select
                   className="expertise-dropdown"
                   onChange={(e) => setSelectedCompetence(e.target.value)}
                   value={selectedCompetence}
                 >
-                  <option value="">Select Expertise</option>
+                  <option value="">{t('applicant.select_expertise_placeholder')}</option>
                   {competences.map((competence) => (
                     <option key={competence.competence_id} value={competence.competence_id}>
                       {competence.name}
@@ -188,31 +157,24 @@ const ApplicantForm = ({ onSubmit, competences }) => {
                 <input
                   className="expertise-dropdown"
                   type="number"
-                  placeholder="Years of Experience"
+                  placeholder={t('applicant.years_of_experience')}
                   value={yearsOfExperience}
                   onChange={(e) => setYearsOfExperience(e.target.value)}
                 />
                 <button className="submit-button" onClick={handleAddExpertise}>
-                  Add Expertise
+                  {t('applicant.add_expertise')}
                 </button>
               </div>
             </div>
 
             <div className="expertise-list">
-              <h3>Your Expertise</h3>
+              <h3>{t('applicant.your_expertise')}</h3>
               <ul>
                 {expertise.map((expert, idx) => {
-                  const competence = competences
-                    .map((competence) => {
-                      if (competence.competence_id == expert.competence_id) {
-                        return competence.name;
-                      }
-                      return null;
-                    })
-                    .filter((name) => name !== null);
+                  const competence = competences.find((c) => c.competence_id == expert.competence_id);
                   return (
                     <li key={idx}>
-                      {competence.length > 0 ? competence[0] : 'Competence not found'}: {expert.years_of_experience} years
+                      {competence ? competence.name : t('applicant.error.user_not_found')}: {expert.years_of_experience} {t('applicant.years_of_experience')}
                     </li>
                   );
                 })}
@@ -220,42 +182,21 @@ const ApplicantForm = ({ onSubmit, competences }) => {
             </div>
 
             <div className="availability-section">
-              <h3 className="applicant-title">Select Availability</h3>
+              <h3 className="applicant-title">{t('applicant.select_availability')}</h3>
               <div className="applicant-input-group">
-                <input
-                  className="expertise-dropdown"
-                  type="date"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
-                />
-                <input
-                  className="expertise-dropdown"
-                  type="date"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
-                />
+                <input className="expertise-dropdown" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                <input className="expertise-dropdown" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
                 <button className="submit-button" onClick={handleAddAvailability}>
-                  Add Availability
+                  {t('applicant.add_availability')}
                 </button>
               </div>
             </div>
 
-            <div className="availability-list">
-              <h3>Your Availability</h3>
-              <ul>
-                {availability.map((period, idx) => (
-                  <li key={idx}>
-                    From: {period.from_date}, To: {period.to_date}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             <button className="submit-button" onClick={handleSubmit}>
-              Submit Application
+              {t('applicant.submit_application')}
             </button>
             <button className="cancel-button" onClick={handleCancel}>
-              Cancel
+              {t('applicant.cancel')}
             </button>
           </>
         ) : (
