@@ -26,7 +26,7 @@ This is a recruitment management system built using **React (Vite) for the front
 ## **Setup and Installation**
 ### **1. Clone the Repository**
 ```sh
-git clone <>
+git clone <git@github.com:RazanYakoub01/IV1201_Recruitment_Application.git>
 cd IV1201_Recruitment_Application
 ```
 
