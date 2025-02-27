@@ -31,6 +31,15 @@ const updateApplication = async (applicationId, newStatus, lastUpdated) => {
   const client = await pool.connect();
   try {
 
+    if (!Number.isInteger(applicationId) || applicationId <= 0) {
+      return { success: false, message: 'Invalid application ID. Must be a valid positive integer.' };
+    }
+
+    const validStatuses = ['unhandled', 'accepted', 'rejected'];
+    if (!validStatuses.includes(newStatus)) {
+      return { success: false, message: 'Invalid status. Allowed values: unhandled, accepted, rejected.' };
+    }
+
     const query = 'SELECT last_updated FROM public.person WHERE person_id = $1';
     const result = await client.query(query, [applicationId]);
 
