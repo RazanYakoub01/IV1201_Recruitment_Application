@@ -1,11 +1,23 @@
 import { defineConfig } from 'vite';
-import reactJsxPlugin from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [
-    reactJsxPlugin(),
-  ],
+  plugins: [react()],
   server: {
     port: 8080,
+  },
+  preview: {
+    port: 8080,
+  },
+  build: {
+    outDir: 'dist',
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
+  define: {
+    'process.env': {},
   },
 });
