@@ -224,6 +224,29 @@ const sendUpdateCredentialsEmail = async (req, res) => {
   }
 };
 
+/**
+ * Generates a JWT token for user authentication
+ * 
+ * @param {Object} user - User object containing person_id, role_id, etc.
+ * @param {boolean} rememberMe - Whether to extend token expiry
+ * @returns {string} - Generated JWT token
+ */
+const generateToken = (user, rememberMe = false) => {
+  const payload = {
+    personId: user.person_id,
+    role: user.role_id,
+    username: user.username
+  };
+
+  // Set token expiry to 24 hours by default or 30 days if remember me is checked
+  const expiresIn = rememberMe ? '30d' : '24h';
+  
+  return jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    { expiresIn }
+  );
+};
 
 /**
  * Handles user login authentication and token generation
@@ -232,7 +255,7 @@ const sendUpdateCredentialsEmail = async (req, res) => {
  */
 const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body;
     console.log('Login attempt received:', {
       username,
       timestamp: new Date().toISOString()
@@ -276,18 +299,18 @@ const login = async (req, res) => {
       });
     }
 
+    const token = generateToken(user, rememberMe);
+
     console.log('Login successful:', {
       username,
       userId: user.person_id,
       timestamp: new Date().toISOString()
     });
 
-    const token = 'dummy-token';
-
     res.json({
       success: true,
       message: 'Login successful',
-      token: 'dummy-token',
+      token,
       user: {
         username: user.username,
         person_id: user.person_id,
@@ -357,10 +380,18 @@ const signup = async (req, res) => {
       password,
     });
 
+    // Generate token for the new user
+    const token = generateToken({
+      person_id: newUser.person_id,
+      role_id: 2, // Assuming new signups are always applicants (role_id 2)
+      username
+    });
+
     res.status(201).json({
       success: true,
       message: 'User created successfully',
       userId: newUser.person_id,
+      token
     });
 
   } catch (err) {
@@ -380,4 +411,34 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail };
+/**
+ * Refreshes the JWT token if the current token is valid
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const refreshToken = (req, res) => {
+  try {
+    // User data is already attached to req by the verifyToken middleware
+    const { user } = req;
+    
+    // Generate a new token
+    const token = jwt.sign(
+      { personId: user.personId, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    
+    res.status(200).json({
+      success: true,
+      token
+    });
+  } catch (err) {
+    console.error('Error refreshing token:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail, refreshToken };
