@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from '../views/Login';
+import { setAuthToken, setCurrentUser } from '../util/auth';
 
 /**
  * Presenter component for handling login business logic and state management.
@@ -49,6 +50,9 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
+
+      setAuthToken(data.token);
+      setCurrentUser(data.user);
 
       if (data.user.role === 1) {
         navigate('/recruiter');

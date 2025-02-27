@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ApplicantForm from '../views/ApplicantView';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUser, createAuthHeaders, isApplicant } from '../util/auth';
 
 /**
  * The ApplicantFormPresenter component handles fetching competences
@@ -11,6 +13,16 @@ import ApplicantForm from '../views/ApplicantView';
 const ApplicantFormPresenter = () => {
   const [competences, setCompetences] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  /**
+   * Check if user is authenticated and is an applicant
+   */
+  useEffect(() => {
+    if (!isApplicant()) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   /**
    * Fetches a list of competences from the backend when the component mounts.
@@ -19,7 +31,16 @@ const ApplicantFormPresenter = () => {
   useEffect(() => {
     const fetchCompetences = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/competences`);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/competences`, {
+          headers: createAuthHeaders()
+        });
+        
+        // If token is invalid or expired, redirect to login
+        if (response.status === 401) {
+          navigate('/');
+          return;
+        }
+        
         const data = await response.json();
         if (data.success) {
           setCompetences(data.competences);
@@ -30,8 +51,9 @@ const ApplicantFormPresenter = () => {
         setError('Error fetching competences');
       }
     };
+    
     fetchCompetences();
-  }, []);
+  }, [navigate]);
 
   /**
    * Handles the submission of an application.
@@ -42,6 +64,15 @@ const ApplicantFormPresenter = () => {
    */
   const handleSubmit = async (userId, expertise, availability) => {
     try {
+      const currentUser = getCurrentUser();
+      
+      if (!currentUser) {
+        navigate('/');
+        return;
+      }
+      
+      const userId = currentUser.person_id;
+
       const formattedExpertise = expertise.map(item => ({
         competence_id: Number(item.competence_id),
         years_of_experience: Number(item.years_of_experience)
@@ -51,11 +82,15 @@ const ApplicantFormPresenter = () => {
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/submit`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: createAuthHeaders(),
         body: JSON.stringify({ userId, expertise: formattedExpertise, availability }),
       });
+
+      // Handle authentication errors
+      if (response.status === 401) {
+        navigate('/');
+        return;
+      }
 
       console.log('Sending application submission request:', {
         endpoint: `${import.meta.env.VITE_BACKEND_URL}/applications/submit`,
@@ -86,7 +121,7 @@ const ApplicantFormPresenter = () => {
   };
 
   return (
-    <ApplicantForm competences={competences} onSubmit={handleSubmit} />
+    <ApplicantForm competences={competences} onSubmit={handleSubmit} error={error}/>
   );
 };
 

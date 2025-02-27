@@ -14,7 +14,7 @@ const cors = require("cors");
 const authController = require('./controller/authController');
 const applicationController = require('./controller/applicationController'); 
 const recruiterController = require('./controller/recruiterController'); 
-
+const { verifyToken, requireApplicant, requireRecruiter} = require('./middleware/auth');
 
 const app = express();
 
@@ -48,17 +48,16 @@ app.get('/ping', (req, res) => {
  * Define authentication routes
  */
 app.post('/users/login', authController.login);
-app.post('/users/signin')
 app.post('/users/signup', authController.signup);
-
 app.post('/users/verify-email', authController.verifyEmail);
 app.post('/users/send-update-email', authController.sendUpdateCredentialsEmail);
 app.post('/users/update-credentials', authController.updateCredentials);
 
-app.get('/competences', applicationController.getCompetences);
-app.post('/applications/submit', applicationController.submitApplication);
-app.get('/applications/fetch', recruiterController.getApplications)
-app.post('/applications/update', recruiterController.updateApplication)
+app.post('/users/refresh-token', verifyToken, authController.refreshToken);
+app.get('/competences', verifyToken, applicationController.getCompetences);
+app.post('/applications/submit', verifyToken, requireApplicant, applicationController.submitApplication);
+app.get('/applications/fetch', verifyToken, requireRecruiter, recruiterController.getApplications);
+app.post('/applications/update', verifyToken, requireRecruiter, recruiterController.updateApplication);
 
 
 

@@ -1,20 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Header.css';
-
-/**
-* Header component that provides navigation and user authentication controls.
-* This component handles the application header, logout functionality, and conditional navigation display.
-* 
-* @component
-* @param {Object} props Component properties
-* @returns {React.ReactElement} Renders the header with title and conditional logout button
-* 
-* Uses:
-* - useNavigate: For navigation after logout
-* - useLocation: To determine current route for conditional rendering
-* - localStorage: For user authentication state management
-*/
+import { logout } from '../util/auth';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -22,8 +9,7 @@ const Header = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    logout();
     navigate('/');
   };
 
