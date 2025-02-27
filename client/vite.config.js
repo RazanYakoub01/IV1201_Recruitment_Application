@@ -17,6 +17,7 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  base: '/',  
   define: {
     'process.env': {},
   },
