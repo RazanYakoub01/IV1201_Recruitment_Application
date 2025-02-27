@@ -68,20 +68,12 @@ SELECT
     p.email,
     p.status AS application_status,
     p.last_updated, 
-    -- Pre-aggregated competence
-    COALESCE((
-        SELECT STRING_AGG(comp.name || ' (' || c.years_of_experience || ' years)', ', ') 
-        FROM public.competence_profile c
-        JOIN public.competence comp ON c.competence_id = comp.competence_id
-        WHERE c.person_id = p.person_id
-    ), 'No Competence') AS competences,
-    -- Pre-aggregated availability
-    COALESCE((
-        SELECT STRING_AGG(a.from_date || ' to ' || a.to_date, ', ') 
-        FROM public.availability a
-        WHERE a.person_id = p.person_id
-    ), 'No Availability') AS availability
+    COALESCE(STRING_AGG(comp.name || ' (' || c.years_of_experience || ' years)', ', '), 'No Competence') AS competences,
+    COALESCE(STRING_AGG(a.from_date || ' to ' || a.to_date, ', '), 'No Availability') AS availability
 FROM public.person p
+LEFT JOIN public.competence_profile c ON p.person_id = c.person_id
+LEFT JOIN public.competence comp ON c.competence_id = comp.competence_id
+LEFT JOIN public.availability a ON p.person_id = a.person_id
 WHERE p.status != 'unsent' 
-AND p.role_id = 2
+AND p.role_id = 2        
 GROUP BY p.person_id, p.name, p.surname, p.email, p.status, p.last_updated;
