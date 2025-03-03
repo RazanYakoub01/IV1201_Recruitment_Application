@@ -369,13 +369,12 @@ const signup = async (req, res) => {
       });
     }
 
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const newUser = await userDAO.createUser({
       firstName,
       lastName,
       email,
-      personNumber: formattedPersonNumber,
+      personNumber,
       username,
       password,
     });

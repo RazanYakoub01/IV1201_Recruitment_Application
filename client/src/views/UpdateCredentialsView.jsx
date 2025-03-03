@@ -23,7 +23,9 @@ const UpdateCredentialsView = ({ onUpdate, error, successMessage }) => {
    */
   const validateInputs = () => {
     if (!username.trim()) return 'Username is required';
-    if (newPassword.length < 6) return 'Password must be at least 6 characters';
+    const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+    if (!usernameRegex.test(username)) return 'Username must be 3-20 characters and contain only letters and numbers.';
+    if (newPassword.length < 8) return 'Password must be at least 8 characters';
     return '';
   };
 
