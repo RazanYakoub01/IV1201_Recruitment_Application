@@ -2,12 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../styles/Recruiter.css';
 
-/**
- * RecruiterView component allows a recruiter to view and manage job applications.
- * It provides functionality for listing, paginating, and updating the status of applications.
- */
 const RecruiterView = ({ applications, error, updateApplicationStatus, fetchApplications }) => {
-  const { t } = useTranslation(); // Import translation function
+  const { t } = useTranslation();
 
   const [user, setUser] = useState(null);
   const [paginatedApplications, setPaginatedApplications] = useState([]);
@@ -124,9 +120,12 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
       <div className="recruiter-box">
         {user.role === 1 ? (
           <>
-            <h2 className="recruiter-header">{t('recruiter.welcome')}, {user.username}!</h2>
+            <h2 className="recruiter-header">
+              {t('recruiter.welcome', { username: user?.username || '' })}
+            </h2>
+
             <button onClick={fetchApplications} className="fetch-applications-button">
-              {t('recruiter.list_applications')}
+              {t('recruiter.list_all_applications')}
             </button>
 
             {message && (
@@ -142,7 +141,7 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
                 <table className="applications-table">
                   <thead>
                     <tr>
-                      <th>{t('recruiter.full_name')}</th>
+                      <th>{t('recruiter.name')}</th>
                       <th>{t('recruiter.email')}</th>
                       <th>{t('recruiter.status')}</th>
                       <th>{t('recruiter.competences')}</th>

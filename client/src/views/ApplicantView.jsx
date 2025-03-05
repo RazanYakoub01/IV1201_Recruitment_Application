@@ -167,20 +167,6 @@ const ApplicantForm = ({ onSubmit, competences }) => {
               </div>
             </div>
 
-            <div className="expertise-list">
-              <h3>{t('applicant.your_expertise')}</h3>
-              <ul>
-                {expertise.map((expert, idx) => {
-                  const competence = competences.find((c) => c.competence_id == expert.competence_id);
-                  return (
-                    <li key={idx}>
-                      {competence ? competence.name : t('applicant.error.user_not_found')}: {expert.years_of_experience} {t('applicant.years_of_experience')}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
             <div className="availability-section">
               <h3 className="applicant-title">{t('applicant.select_availability')}</h3>
               <div className="applicant-input-group">

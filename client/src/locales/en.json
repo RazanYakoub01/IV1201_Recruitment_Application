@@ -1,107 +1,123 @@
 {
-    "header": {
-      "title": "HireFlow",
-      "logout": "Logout"
+  "header": {
+    "title": "HireFlow",
+    "logout": "Log out"
+  },
+  "footer": {
+    "copyright": "© 2025 HireFlow. All rights reserved."
+  },
+  "language_switcher": {
+    "choose_language": "Choose language"
+  },
+  "applicant": {
+    "title": "Job Application",
+    "greeting": "Welcome, {{username}}",
+    "select_expertise": "Select area of expertise",
+    "select_expertise_placeholder": "Choose expertise",
+    "years_of_experience": "Years of experience",
+    "add_expertise": "Add expertise",
+    "select_availability": "Select availability",
+    "add_availability": "Add availability",
+    "submit_application": "Submit application",
+    "cancel": "Cancel",
+    "error": {
+      "select_competence": "Please select a competence and number of years of experience.",
+      "valid_experience": "Enter a valid number of years of experience between 0 and 99.",
+      "select_dates": "Enter both start and end dates.",
+      "past_dates": "Dates cannot be in the past.",
+      "invalid_date_range": "The start date cannot be after the end date.",
+      "missing_data": "Add at least one competence and one availability period before submitting.",
+      "user_not_found": "User not found."
     },
-    "footer": {
-      "copyright": "© 2025 HireFlow. All rights reserved."
-    },
-    "language_switcher": {
-      "choose_language": "Choose Language"
-    },
-    "applicant": {
-      "title": "Job Application",
-      "greeting": "Hello, {username}!",
-      "select_expertise": "Select Area of Expertise",
-      "select_expertise_placeholder": "Select Expertise",
-      "years_of_experience": "Years of Experience",
-      "add_expertise": "Add Expertise",
-      "your_expertise": "Your Expertise",
-      "select_availability": "Select Availability",
-      "from": "From",
-      "to": "To",
-      "add_availability": "Add Availability",
-      "your_availability": "Your Availability",
-      "submit_application": "Submit Application",
-      "cancel": "Cancel",
-      "error": {
-        "select_competence": "Please select a competence and years of experience.",
-        "valid_experience": "Please enter a valid number of years of experience between 0 and 99.",
-        "select_dates": "Please provide both start and end dates.",
-        "past_dates": "Dates cannot be in the past.",
-        "invalid_date_range": "From date cannot be later than To date.",
-        "missing_data": "Please add at least one competence and one availability period before submitting.",
-        "user_not_found": "User not found."
+    "status": {
+      "accepted": {
+        "title": "Your application has been accepted!",
+        "message": "We will contact you soon!"
       },
-      "status": {
-        "accepted": {
-          "title": "Your application has been accepted!",
-          "message": "We will contact you soon!"
-        },
-        "rejected": {
-          "title": "Sorry, this time we chose to go with other candidates.",
-          "message": "We will inform you when the new application period opens up."
-        },
-        "unhandled": {
-          "title": "Your application is under review!",
-          "message": "We are processing your details and will get back to you shortly."
-        },
-        "error": {
-          "title": "Something went wrong.",
-          "message": "Please log out and try again. If the issue persists, contact support."
-        }
-      }
-    },
-    "login": {
-      "title": "Sign in to your account",
-      "username": "Username",
-      "password": "Password",
-      "forgot_password": "Forgot Username or Password?",
-      "sign_in": "Sign in",
-      "no_account": "Don't have an account?",
-      "sign_up": "Sign Up",
+      "rejected": {
+        "title": "Unfortunately, we selected other candidates this time.",
+        "message": "We will inform you when the new application period opens."
+      },
+      "unhandled": {
+        "title": "Your application is under review!",
+        "message": "We are processing your information and will get back to you soon."
+      },
       "error": {
-        "required_username": "Username is required",
-        "required_password": "Password is required"
+        "title": "Something went wrong.",
+        "message": "Log out and try again. If the problem persists, contact support."
       }
-    },
-   "signup": {
-  "title": "Create an Account",
-  "first_name": "First Name",
-  "last_name": "Last Name",
-  "email": "Email Address",
-  "person_number": "Person Number",
-  "username": "Username",
-  "password": "Password",
-  "sign_up": "Sign Up",
-  "go_back": "Go back to sign in",
-  "success_message": "Account created successfully!",
-  "error": {
-    "required_first_name": "First name is required.",
-    "required_last_name": "Last name is required.",
-    "invalid_email": "Invalid email format.",
-    "invalid_person_number": "Personal number must be exactly 12 digits long and contain only numbers.",
-    "short_username": "Username must be at least 3 characters.",
-    "short_password": "Password must be at least 8 characters."
-  }
-},
-
-    "restore": {
-  "title": "Restore Credentials",
-  "enter_person_number": "Enter your personal number:",
-  "verify_button": "Verify",
-  "new_username": "New Username:",
-  "new_password": "New Password:",
-  "update_credentials": "Update Credentials",
-  "error": {
-    "required_person_number": "Personal number is required.",
-    "invalid_person_number": "Personal number must be exactly 12 digits.",
-    "required_username": "Username is required.",
-    "short_username": "Username must be at least 3 characters.",
-    "required_password": "Password is required.",
-    "short_password": "Password must be at least 8 characters."
-  }
-}
-
-  }
+    }
+  },
+  "login": {
+    "title": "Log in to your account",
+    "username": "Username",
+    "password": "Password",
+    "forgot_password": "Forgot username or password?",
+    "sign_in": "Sign in",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
+    "error": {
+      "required_username": "Username is required.",
+      "required_password": "Password is required."
+    }
+  },
+  "signup": {
+    "title": "Create an account",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "email": "Email address",
+    "person_number": "Personal number",
+    "username": "Username",
+    "password": "Password",
+    "sign_up": "Sign up",
+    "go_back": "Go back to login",
+    "success_message": "Account successfully created!",
+    "error": {
+      "required_first_name": "First name is required.",
+      "required_last_name": "Last name is required.",
+      "invalid_email": "Invalid email format.",
+      "invalid_person_number": "The personal number must be exactly 12 digits long and contain only numbers.",
+      "short_username": "Username must be at least 3 characters long.",
+      "short_password": "Password must be at least 8 characters long."
+    }
+  },
+  "recruiter": {
+    "welcome": "Welcome, {{username}}!",
+    "list_all_applications": "List all applications",
+    "no_applications": "No applications found.",
+    "application_details": "Application details",
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "competences": "Competences",
+    "availability": "Availability",
+    "update_status": "Update status",
+    "status_unhandled": "Unhandled",
+    "status_accepted": "Accepted",
+    "status_rejected": "Rejected",
+    "update_button": "Update status",
+    "back_button": "Back to applications",
+    "previous": "Previous",
+    "next": "Next",
+    "login_required": "You must be logged in to view this page.",
+    "access_denied": "Access denied. Only recruiters can view this page.",
+    "update_error": "Failed to update status. Please try again later."
+  },
   
+    "restore": {
+      "title": "Restore Account",
+      "enter_person_number": "Enter your personal identification number",
+      "verify_button": "Verify",
+      "new_username": "Enter new username",
+      "new_password": "Enter new password",
+      "update_credentials": "Update Credentials",
+      "error": {
+        "required_person_number": "Personal identification number is required.",
+        "invalid_person_number": "Personal identification number must be exactly 12 digits long.",
+        "required_username": "Username is required.",
+        "short_username": "Username must be at least 3 characters long.",
+        "required_password": "Password is required.",
+        "short_password": "Password must be at least 8 characters long."
+      }
+    }
+}

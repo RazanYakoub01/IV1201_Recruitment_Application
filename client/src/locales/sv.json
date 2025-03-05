@@ -9,49 +9,48 @@
     "language_switcher": {
       "choose_language": "Välj språk"
     },
-    "applicant": {
-      "title": "Jobbansökan",
-      "greeting": "Hej, {username}!",
-      "select_expertise": "Välj kompetensområde",
-      "select_expertise_placeholder": "Välj expertis",
-      "years_of_experience": "År av erfarenhet",
-      "add_expertise": "Lägg till expertis",
-      "your_expertise": "Din expertis",
-      "select_availability": "Välj tillgänglighet",
-      "from": "Från",
-      "to": "Till",
-      "add_availability": "Lägg till tillgänglighet",
-      "your_availability": "Din tillgänglighet",
-      "submit_application": "Skicka ansökan",
-      "cancel": "Avbryt",
-      "error": {
-        "select_competence": "Vänligen välj en kompetens och antal år av erfarenhet.",
-        "valid_experience": "Ange ett giltigt antal år av erfarenhet mellan 0 och 99.",
-        "select_dates": "Ange både start- och slutdatum.",
-        "past_dates": "Datum kan inte vara i det förflutna.",
-        "invalid_date_range": "Från-datumet kan inte vara efter till-datumet.",
-        "missing_data": "Lägg till minst en kompetens och en tillgänglighetsperiod innan du skickar in.",
-        "user_not_found": "Användare hittades inte."
-      },
-      "status": {
-        "accepted": {
-          "title": "Din ansökan har blivit accepterad!",
-          "message": "Vi kontaktar dig snart!"
-        },
-        "rejected": {
-          "title": "Tyvärr valde vi andra kandidater denna gång.",
-          "message": "Vi informerar dig när den nya ansökningsperioden öppnas."
-        },
-        "unhandled": {
-          "title": "Din ansökan granskas!",
-          "message": "Vi behandlar dina uppgifter och återkommer snart."
-        },
+    
+    
+      "applicant": {
+        "title": "Jobbansökan",
+        "greeting": "Välkommen, {{username}}",
+        "select_expertise": "Välj kompetensområde",
+        "select_expertise_placeholder": "Välj expertis",
+        "years_of_experience": "År av erfarenhet",
+        "add_expertise": "Lägg till expertis",
+        "select_availability": "Välj tillgänglighet",
+        "add_availability": "Lägg till tillgänglighet",
+        "submit_application": "Skicka ansökan",
+        "cancel": "Avbryt",
         "error": {
-          "title": "Något gick fel.",
-          "message": "Logga ut och försök igen. Om problemet kvarstår, kontakta supporten."
+          "select_competence": "Vänligen välj en kompetens och antal år av erfarenhet.",
+          "valid_experience": "Ange ett giltigt antal år av erfarenhet mellan 0 och 99.",
+          "select_dates": "Ange både start- och slutdatum.",
+          "past_dates": "Datum kan inte vara i det förflutna.",
+          "invalid_date_range": "Från-datumet kan inte vara efter till-datumet.",
+          "missing_data": "Lägg till minst en kompetens och en tillgänglighetsperiod innan du skickar in.",
+          "user_not_found": "Användare hittades inte."
+        },
+        "status": {
+          "accepted": {
+            "title": "Din ansökan har blivit accepterad!",
+            "message": "Vi kontaktar dig snart!"
+          },
+          "rejected": {
+            "title": "Tyvärr valde vi andra kandidater denna gång.",
+            "message": "Vi informerar dig när den nya ansökningsperioden öppnas."
+          },
+          "unhandled": {
+            "title": "Din ansökan granskas!",
+            "message": "Vi behandlar dina uppgifter och återkommer snart."
+          },
+          "error": {
+            "title": "Något gick fel.",
+            "message": "Logga ut och försök igen. Om problemet kvarstår, kontakta supporten."
+          }
         }
-      }
-    },
+      },
+    
     "login": {
       "title": "Logga in på ditt konto",
       "username": "Användarnamn",
@@ -75,7 +74,7 @@
       "password": "Lösenord",
       "sign_up": "Registrera",
       "go_back": "Gå tillbaka till inloggning",
-      "success_message": "Konto skapades framgångsrikt!",
+      "success_message": "Konto skapades!",
       "error": {
         "required_first_name": "Förnamn är obligatoriskt.",
         "required_last_name": "Efternamn är obligatoriskt.",
@@ -84,6 +83,51 @@
         "short_username": "Användarnamnet måste vara minst 3 tecken långt.",
         "short_password": "Lösenordet måste vara minst 8 tecken långt."
       }
-    }
-  }
+    },
+    
+      "recruiter": {
+        "welcome": "Välkommen, {{username}}!",
+        "list_all_applications": "Lista alla ansökningar",
+        "no_applications": "Inga ansökningar hittades.",
+        "application_details": "Ansökningsdetaljer",
+        "name": "Namn",
+        "email": "E-post",
+        "status": "Status",
+        "competences": "Kompetenser",
+        "availability": "Tillgänglighet",
+        "update_status": "Uppdatera status",
+        "status_unhandled": "Ej behandlad",
+        "status_accepted": "Accepterad",
+        "status_rejected": "Avvisad",
+        "update_button": "Uppdatera status",
+        "back_button": "Tillbaka till ansökningar",
+        "previous": "Föregående",
+        "next": "Nästa",
+        "login_required": "Du måste vara inloggad för att se denna sida.",
+        "access_denied": "Åtkomst nekad. Endast rekryterare kan se denna sida.",
+        "update_error": "Det gick inte att uppdatera statusen. Försök igen senare."
+      },
+
+      
+        "restore": {
+          "title": "Återställ konto",
+          "enter_person_number": "Ange ditt personnummer",
+          "verify_button": "Verifiera",
+          "new_username": "Ange nytt användarnamn",
+          "new_password": "Ange nytt lösenord",
+          "update_credentials": "Uppdatera inloggningsuppgifter",
+          "error": {
+            "required_person_number": "Personnummer krävs.",
+            "invalid_person_number": "Personnumret måste vara exakt 12 siffror långt.",
+            "required_username": "Användarnamn krävs.",
+            "short_username": "Användarnamnet måste vara minst 3 tecken långt.",
+            "required_password": "Lösenord krävs.",
+            "short_password": "Lösenordet måste vara minst 8 tecken långt."
+          }
+        }
+      }
+      
+    
+    
+  
   

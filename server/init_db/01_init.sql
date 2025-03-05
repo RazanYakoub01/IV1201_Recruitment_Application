@@ -32,7 +32,7 @@ CREATE TABLE public.availability (
 );
 
 
-ALTER TABLE public.availability OWNER TO recruitment_0z13_user;
+ALTER TABLE public.availability OWNER TO postgres;
 
 --
 -- Name: availability_availability_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
@@ -58,7 +58,7 @@ CREATE TABLE public.competence (
 );
 
 
-ALTER TABLE public.competence OWNER TO recruitment_0z13_user;
+ALTER TABLE public.competence OWNER TO postgres;
 
 --
 -- Name: competence_competence_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
@@ -86,7 +86,7 @@ CREATE TABLE public.competence_profile (
 );
 
 
-ALTER TABLE public.competence_profile OWNER TO recruitment_0z13_user;
+ALTER TABLE public.competence_profile OWNER TO postgres;
 
 --
 -- Name: competence_profile_competence_profile_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
@@ -118,7 +118,7 @@ CREATE TABLE public.person (
 );
 
 
-ALTER TABLE public.person OWNER TO recruitment_0z13_user;
+ALTER TABLE public.person OWNER TO postgres;
 
 --
 -- Name: person_person_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
@@ -144,7 +144,7 @@ CREATE TABLE public.role (
 );
 
 
-ALTER TABLE public.role OWNER TO recruitment_0z13_user;
+ALTER TABLE public.role OWNER TO postgres;
 
 --
 -- Name: role_role_id_seq; Type: SEQUENCE; Schema: public; Owner: recruitment_0z13_user
