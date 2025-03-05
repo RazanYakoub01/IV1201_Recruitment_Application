@@ -1,7 +1,7 @@
 # Recruitment Application
 
 ## Overview
-This is a recruitment management system built using **React (Vite) for the frontend**, **Node.js with Express for the backend**, and **PostgreSQL as the database**. The system is containerized using **Docker** and can be deployed locally with `docker-compose`.
+This is a recruitment management system built using **React (Vite) for the frontend**, **Node.js with Express for the backend**, and **PostgreSQL as the database**. The system is containerized using **Docker** and can be deployed locally with `docker-compose`. The **frontend** is also deployed live on **Render**.
 
 ## **Technologies Used**
 ### **Frontend**
@@ -90,6 +90,8 @@ docker compose up --build
 - Runs on port 3001
 - Handles authentication with bcrypt and PostgreSQL
 
+### **Render**
+This application is deployed on Render. https://iv1201-recruitment-application-frontend.onrender.com
 
 ## **Contributing**
 
