@@ -62,7 +62,6 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
               id="username"
               name="username"
               type="text"
-              required
               className="input-field"
             />
             {validationErrors.username && (
@@ -78,7 +77,6 @@ const Login = ({ onLogin, onNavigateToSignUp, onNavigateToRestore,error }) => {
               id="password"
               name="password"
               type="password"
-              required
               className="input-field"
             />
             {validationErrors.password && (
