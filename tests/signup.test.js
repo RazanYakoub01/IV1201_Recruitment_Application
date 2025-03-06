@@ -1,5 +1,7 @@
 const { Builder, By, until } = require('selenium-webdriver');
 
+const baseUrl = 'http://localhost:8080/';
+
 /**
  * Function to test the sign-up functionality of the web application.
  */
@@ -8,7 +10,7 @@ async function testSignUp() {
   
   try {
     console.log(`\n🔹 Running Sign-Up Tests`);
-    await driver.get('http://localhost:8080/signup');
+    await driver.get(`${baseUrl}signup`);
 
     /**
      * Fills the sign-up form dynamically with given user details.
@@ -206,7 +208,7 @@ async function testSignUp() {
     let loginTitle = await driver.findElement(By.css('.login-title'));
     let titleText = await loginTitle.getText();
 
-    if (currentUrl === 'http://localhost:8080/' && titleText === 'Sign in to your account') {
+    if (currentUrl === baseUrl && titleText === 'Sign in to your account') {
       console.log('✅ Test Passed: Successfully navigated to the login page and Login title is displayed correctly.');
     } else {
       console.error(`❌ Test Failed: Incorrect URL after clicking the "Go back to sign in" button. Expected "/" but got ${currentUrl}. And Incorrect login title. Expected 'Sign in to your account' but got ${titleText}`);
