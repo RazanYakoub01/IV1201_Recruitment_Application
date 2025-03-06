@@ -113,33 +113,33 @@ const SignUpView = ({ onSignUp, error, success }) => {
 
         <form className="form-group" onSubmit={handleSubmit}>
           <label className="input-label">First Name</label>
-          <input name="firstName" type="text" required className="input-field" onChange={handleInputChange} />
+          <input name="firstName" type="text"  className="input-field" onChange={handleInputChange} />
           {validationErrors.firstName && <span className="error-message">{validationErrors.firstName}</span>}
 
           <label className="input-label">Last Name</label>
-          <input name="lastName" type="text" required className="input-field" onChange={handleInputChange} />
+          <input name="lastName" type="text"  className="input-field" onChange={handleInputChange} />
           {validationErrors.lastName && <span className="error-message">{validationErrors.lastName}</span>}
 
           <label className="input-label">Email Address</label>
-          <input name="email" type="email" required className="input-field" onChange={handleInputChange}/>
+          <input name="email" className="input-field" onChange={handleInputChange}/>
           {validationErrors.email && <span className="error-message">{validationErrors.email}</span>}
 
           <label className="input-label">Person Number</label>
-          <input name="personNumber" type="text" pattern="\d*" required className="input-field" onChange={handleInputChange} />
+          <input name="personNumber" type="text" className="input-field" onChange={handleInputChange} />
           {validationErrors.personNumber && <span className="error-message">{validationErrors.personNumber}</span>}
 
           <label className="input-label">Username</label>
-          <input name="username" type="text" required className="input-field" onChange={handleInputChange} />
-          {validationErrors.username || backendError && <span className="error-message">{validationErrors.username || backendError}</span>}
+          <input name="username" type="text"  className="input-field" onChange={handleInputChange} />
+          {validationErrors.username  && <span className="error-message">{validationErrors.username || backendError} </span>}
 
           <label className="input-label">Password</label>
-          <input name="password" type="password" required className="input-field" onChange={handleInputChange}/>
+          <input name="password" type="password"  className="input-field" onChange={handleInputChange}/>
           {validationErrors.password && <span className="error-message">{validationErrors.password}</span>}
 
           <button type="submit" className="submit-button">Sign Up</button>
         </form>
        
-        <button className="submit-button" onClick={() => navigate('/')}>
+        <button className="submit-button" name="goBackToSignIn" onClick={() => navigate('/')}>
           Go back to sign in
         </button>
       

@@ -8,8 +8,7 @@ const { Builder, By, until } = require('selenium-webdriver');
  * @param {string} expectedWelcomeMessage - The expected welcome message if login is successful.
  * @param {string} expectedPageUrl - The expected page URL after login.
  */
-async function testLogin(username, password, expectedError, expectedWelcomeMessage, expectedPageUrl) {
-  let driver = await new Builder().forBrowser('chrome').build();
+async function testLogin(driver, username, password, expectedError, expectedWelcomeMessage, expectedPageUrl) {
   try {
     console.log(`\n🔹 Running test with username: '${username}' | password: '${password}'`);
     await driver.get('http://localhost:8080/');
@@ -63,16 +62,13 @@ async function testLogin(username, password, expectedError, expectedWelcomeMessa
     }
   } catch (error) {
     console.error('❌ Test Failed:', error);
-  } finally {
-    await driver.quit();
   }
 }
 
 /**
  * Test the "Sign Up" button by checking if it navigates to the sign-up page.
  */
-async function testSignUp() {
-  let driver = await new Builder().forBrowser('chrome').build();
+async function testSignUp(driver) {
   try {
     console.log(`\n🔹 Running test for "Sign Up" button`);
     await driver.get('http://localhost:8080/');
@@ -96,16 +92,13 @@ async function testSignUp() {
     }
   } catch (error) {
     console.error('❌ Test Failed:', error);
-  } finally {
-    await driver.quit();
   }
 }
 
 /**
  * Test the "Forgot Username or Password?" button by checking if it navigates to the restore page.
  */
-async function testRestore() {
-  let driver = await new Builder().forBrowser('chrome').build();
+async function testRestore(driver) {
   try {
     console.log(`\n🔹 Running test for "Forgot Username or Password?" button`);
     await driver.get('http://localhost:8080/');
@@ -129,8 +122,6 @@ async function testRestore() {
     }
   } catch (error) {
     console.error('❌ Test Failed:', error);
-  } finally {
-    await driver.quit();
   }
 }
 
@@ -138,27 +129,36 @@ async function testRestore() {
  * Run all the defined test cases for login, sign-up, and password restore functionality.
  */
 (async function runTests() {
-  // Test invalid credentials
-  await testLogin('invalidUser', 'wrongPassword', 'Invalid username or password', null, null); 
+  let driver = await new Builder().forBrowser('chrome').build();
 
-  // Test missing username
-  await testLogin('', 'somePassword', 'Username is required', null, null); 
-  
-  // Test missing password
-  await testLogin('validUser', '', 'Password is required', null, null); 
-  
-  // Test missing both username and password
-  await testLogin('', '', 'Username is required', null, null); 
+  try {
+    // Test invalid credentials
+    await testLogin(driver, 'invalidUser', 'wrongPassword', 'Invalid username or password', null, null); 
 
-  // Test successful login for JoelleWilkinson
-  await testLogin('JoelleWilkinson', 'LiZ98qvL8Lw', null, 'Welcome, JoelleWilkinson!', '/recruiter');
+    // Test missing username
+    await testLogin(driver, '', 'somePassword', 'Username is required', null, null); 
+    
+    // Test missing password
+    await testLogin(driver, 'validUser', '', 'Password is required', null, null); 
+    
+    // Test missing both username and password
+    await testLogin(driver, '', '', 'Username is required', null, null); 
 
-  // Test successful login for testuserselenium with applicant page
-  await testLogin('testuserselenium', 'password123', null, 'Hello, testuserselenium!', '/applicant');
+    // Test successful login for JoelleWilkinson
+    await testLogin(driver, 'JoelleWilkinson', 'LiZ98qvL8Lw', null, 'Welcome, JoelleWilkinson!', '/recruiter');
 
-  // Test "Sign Up" button
-  await testSignUp();
+    // Test successful login for testuserselenium with applicant page
+    await testLogin(driver, 'testuserselenium', 'password123', null, 'Hello, testuserselenium!', '/applicant');
 
-  // Test "Forgot Username or Password?" button
-  await testRestore();
+    // Test "Sign Up" button
+    await testSignUp(driver);
+
+    // Test "Forgot Username or Password?" button
+    await testRestore(driver);
+
+  } catch (error) {
+    console.error('❌ Test Failed:', error);
+  } finally {
+    await driver.quit();
+  }
 })();
