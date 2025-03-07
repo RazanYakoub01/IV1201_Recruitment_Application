@@ -8,6 +8,7 @@ const { exec } = require('child_process');
  * @type {string[]}
  */
 const testFiles = [
+  './tests/auth.test.js', 
   './tests/login.test.js',  
   './tests/signup.test.js', 
   './tests/applicant.test.js',  
