@@ -93,6 +93,29 @@ docker compose up --build
 ### **Render**
 This application is deployed on Render. https://iv1201-recruitment-application-frontend.onrender.com
 
+
+## **Testing**
+### **Technologies Used for Testing**
+- **Selenium WebDriver**: For running browser-based tests.
+- **Node.js**: For executing test files.
+
+### **Installing Dependencies**
+To run the tests, you need to install the required dependencies:
+
+```sh
+npm install selenium-webdriver chromedriver mocha chai
+```
+
+### **Running All Tests**
+To run all tests sequentially, execute the following command:
+
+```sh
+node tests/all.tests.js
+```
+
+This will run all the test files listed in `tests/all.tests.js`.
+
+
 ## **Contributing**
 
 @18alba1- Alex Barhado
