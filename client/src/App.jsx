@@ -9,7 +9,6 @@ import RestorePresenter from './presenter/RestorePresenter';
 import UpdateCredentialsPresenter from './presenter/UpdateCredentialsPresenter';
 
 import ProtectedRoute from './components/ProtectedRoute';
-import Unauthorized from './views/Unauthorized';
 import { isAuthenticated, isRecruiter, isApplicant } from './util/auth';
 
 
@@ -111,15 +110,6 @@ const App = () => {
         } 
       />
 
-      {/* Unauthorized access route */}
-      <Route 
-        path="/unauthorized" 
-        element={
-          <Layout showHeader={true}>
-            <Unauthorized />
-          </Layout>
-        } 
-      />
       {/* Catch all other routes and redirect */}
       <Route 
         path="*" 

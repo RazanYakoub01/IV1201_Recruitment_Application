@@ -13,20 +13,34 @@ import { getCurrentUser, createAuthHeaders, isApplicant } from '../util/auth';
 const ApplicantFormPresenter = () => {
   const [competences, setCompetences] = useState([]);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
+  const [accessError, setAccessError] = useState(false);
   const navigate = useNavigate();
 
   /**
    * Check if user is authenticated and is an applicant
    */
   useEffect(() => {
-    if (!isApplicant()) {
-      navigate('/');
+    const storedUser = localStorage.getItem('user');
+    
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        
+        if (parsedUser.role !== 2) {
+          setAccessError(true);
+        }
+      } catch (e) {
+        console.error('Error parsing user:', e);
+        setUser(null);
+      }
     }
-  }, [navigate]);
+    
+  }, []);
 
   /**
    * Fetches a list of competences from the backend when the component mounts.
-   * Updates the state with the retrieved competences.
    */
   useEffect(() => {
     const fetchCompetences = async () => {
@@ -35,9 +49,9 @@ const ApplicantFormPresenter = () => {
           headers: createAuthHeaders()
         });
         
-        // If token is invalid or expired, redirect to login
-        if (response.status === 401) {
-          navigate('/');
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('user');
+          setUser(null);
           return;
         }
         
@@ -52,8 +66,10 @@ const ApplicantFormPresenter = () => {
       }
     };
     
-    fetchCompetences();
-  }, [navigate]);
+    if (user && !accessError) {
+      fetchCompetences();
+    }
+  }, [user, accessError]);
 
   /**
    * Handles the submission of an application.
@@ -67,12 +83,10 @@ const ApplicantFormPresenter = () => {
       const currentUser = getCurrentUser();
       
       if (!currentUser) {
-        navigate('/');
+        setUser(null);
         return;
       }
       
-      const userId = currentUser.person_id;
-
       const formattedExpertise = expertise.map(item => ({
         competence_id: Number(item.competence_id),
         years_of_experience: Number(item.years_of_experience)
@@ -86,9 +100,9 @@ const ApplicantFormPresenter = () => {
         body: JSON.stringify({ userId, expertise: formattedExpertise, availability }),
       });
 
-      // Handle authentication errors
-      if (response.status === 401) {
-        navigate('/');
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem('user'); 
+        setUser(null);
         return;
       }
 
@@ -103,7 +117,6 @@ const ApplicantFormPresenter = () => {
 
       const data = await response.json();
       if (response.ok) {
-
         console.log('Application submission response:', {
           status: response.status,
           success: response.ok,
@@ -121,7 +134,13 @@ const ApplicantFormPresenter = () => {
   };
 
   return (
-    <ApplicantForm competences={competences} onSubmit={handleSubmit} error={error}/>
+    <ApplicantForm 
+      user={user}
+      accessError={accessError}
+      competences={competences} 
+      onSubmit={handleSubmit} 
+      error={error}
+    />
   );
 };
 

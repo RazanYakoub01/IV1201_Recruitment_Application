@@ -47,8 +47,6 @@ const submitApplication = async (req, res) => {
     availabilityCount: availability?.length || 0,
   });
 
-  // Verify that the authenticated user is the same as the userId in the request
-  // This ensures users can only submit applications for themselves
   if (req.user.personId !== userId) {
     console.log('Unauthorized application submission attempt:', { 
       tokenUserId: req.user.personId, 

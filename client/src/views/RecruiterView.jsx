@@ -4,37 +4,24 @@ import '../styles/Recruiter.css';
 /**
  * RecruiterView component allows a recruiter to view and manage job applications.
  * It provides functionality for listing, paginating, and updating the status of applications.
- * 
- * @param {Array} applications - List of applications to be displayed.
- * @param {string} error - Error message to display, if any.
- * @param {function} updateApplicationStatus - Function to update the status of an application.
- * @param {function} fetchApplications - Function to fetch all applications.
  */
-const RecruiterView = ({ applications, error, updateApplicationStatus, fetchApplications }) => {
-  const [user, setUser] = useState(null);
+const RecruiterView = ({ 
+  user, 
+  accessError, 
+  applications, 
+  error, 
+  updateApplicationStatus, 
+  fetchApplications, 
+  showApplications: initialShowApplications = false 
+}) => {
   const [paginatedApplications, setPaginatedApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [applicationsPerPage] = useState(10);
-  const [showApplications, setShowApplications] = useState(false);
+  const [showApplications, setShowApplications] = useState(initialShowApplications);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [newStatus, setNewStatus] = useState('');
-  const [accessError, setAccessError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [message, setMessage] = useState(null);
-
-  /**
-   * useEffect hook to fetch the user from localStorage and check their role.
-   */
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      if (parsedUser.role === 2) {
-        setAccessError(true);
-      }
-    }
-  }, []);
 
   /**
    * useEffect hook to fetch applications when they are available and when the current page changes.
@@ -64,7 +51,6 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
 
   /**
    * Sets the selected application and its current status.
-   * @param {Object} app - The application to be selected.
    */
   const handleApplicationClick = (app) => {
     setSelectedApplication(app);
@@ -81,7 +67,6 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
 
   /**
    * Handles the change of the application status.
-   * @param {Event} e - The event triggered by changing the status.
    */
   const handleStatusChange = (e) => {
     setNewStatus(e.target.value);
@@ -96,11 +81,9 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
 
       updateApplicationStatus(application_id, newStatus, last_updated, setSelectedApplication, setMessage)
         .then(() => {
-          fetchApplications();
         })
         .catch((err) => {
           console.error('Error updating status:', err);
-          setMessage({ type: 'error', text: 'Error updating application status' });
         });
     }
   };
@@ -172,6 +155,7 @@ const RecruiterView = ({ applications, error, updateApplicationStatus, fetchAppl
               </div>
             )}
 
+            {error && <div className="error-message">{error}</div>}
             {errorMessage && <div className="error-message">{errorMessage}</div>}
 
             {showApplications && (

@@ -45,7 +45,6 @@ const getApplications = async (req, res) => {
 const updateApplication = async (req, res) => {
   const { application_id, status, lastUpdated } = req.body;
 
-  // Log the update attempt with the recruiter's ID for audit purposes
   console.log('Application status update attempt:', {
     recruiterId: req.user.personId,
     applicationId: application_id,
@@ -90,7 +89,7 @@ const updateApplication = async (req, res) => {
       application_id, 
       status, 
       lastUpdated,
-      req.user.personId // Pass the recruiter's ID for tracking
+      req.user.personId
     );
 
     if (result.success) {
