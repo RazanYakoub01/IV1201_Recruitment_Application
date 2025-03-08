@@ -93,28 +93,29 @@ docker compose up --build
 ### **Render**
 This application is deployed on Render. https://iv1201-recruitment-application-frontend.onrender.com
 
-
 ## **Testing**
+
 ### **Technologies Used for Testing**
-- **Selenium WebDriver**: For running browser-based tests.
-- **Node.js**: For executing test files.
+- **Jest**: A JavaScript testing framework for running and organizing tests.
+- **Selenium WebDriver**: A tool for automating web browsers.
 
 ### **Installing Dependencies**
-To run the tests, you need to install the required dependencies:
+To install the required dependencies, run:
 
 ```sh
-npm install selenium-webdriver chromedriver mocha chai
+npm install --save-dev jest selenium-webdriver
 ```
+
+### **Test Folder Structure**
+- Place all test files in the `tests` folder.
+- Test files should be named in the format `name.test.js`.
 
 ### **Running All Tests**
-To run all tests sequentially, execute the following command:
+To run all tests sequentially, use:
 
 ```sh
-node tests/all.tests.js
+npx jest --runInBand
 ```
-
-This will run all the test files listed in `tests/all.tests.js`.
-
 
 ## **Contributing**
 
