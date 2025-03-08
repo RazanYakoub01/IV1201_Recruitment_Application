@@ -98,6 +98,17 @@ describe('Recruiter Page Tests', () => {
 
     expect(currentStatus).not.toBe('unknown');
 
+    const statusDropdown = await driver.findElement(By.css('select'));
+    const newStatus = currentStatus === 'accepted' ? 'rejected' : 'accepted';
+    await statusDropdown.findElement(By.css(`option[value="${newStatus}"]`)).click();
+
+    const updateButton = await driver.findElement(By.css('.update-status-button'));
+    await updateButton.click();
+
+    const successMessage = await driver.wait(until.elementLocated(By.css('.success-message, .message')), 5000);
+    const messageText = await successMessage.getText();
+    expect(messageText.toLowerCase()).toContain('success');
+
     let secondDriver = await new Builder().forBrowser('chrome').build();
     await login(secondDriver, 'MartinCummings', 'QkK48drV2Da');
     
@@ -117,16 +128,21 @@ describe('Recruiter Page Tests', () => {
     const firstApp = await secondDriver.findElement(By.css('.applications-table tbody tr:first-child'));
     await firstApp.click();
 
-    const statusDropdown = await driver.findElement(By.css('select'));
-    const newStatus = currentStatus === 'accepted' ? 'rejected' : 'accepted';
-    await statusDropdown.findElement(By.css(`option[value="${newStatus}"]`)).click();
+    // Second recruiter attempts to update the same application
+    const statusDropdown2 = await secondDriver.findElement(By.css('select'));
+    const secondRecruiterStatus = newStatus === 'accepted' ? 'rejected' : 'accepted';
+    await statusDropdown2.findElement(By.css(`option[value="${secondRecruiterStatus}"]`)).click();
 
-    const updateButton = await driver.findElement(By.css('.update-status-button'));
-    await updateButton.click();
+    const updateButton2 = await secondDriver.findElement(By.css('.update-status-button'));
+    await updateButton2.click();
 
-    const successMessage = await driver.wait(until.elementLocated(By.css('.success-message, .message')), 5000);
-    const messageText = await successMessage.getText();
-    expect(messageText.toLowerCase()).toContain('success');
+    // Check for error message
+    const errorMessage = await secondDriver.wait(until.elementLocated(By.css('.error-message, .message')), 5000);
+    const errorText = await errorMessage.getText();
+    expect(errorText.toLowerCase()).toContain('error');
+
+    // Close the second browser session
+    await secondDriver.quit();
   });
 
   test('Back to applications button', async () => {
