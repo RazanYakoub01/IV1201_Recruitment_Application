@@ -3,12 +3,10 @@ const { login } = require('./loginHelper');
 const { expect } = require('@jest/globals');
 
 
-jest.setTimeout(30000); 
+jest.setTimeout(30000); // Set a global timeout for all the tests
 
 /**
  * Test the recruiter page functionality
- * This test suite includes various tests for functionality on the recruiter page,
- * such as listing applications, selecting and updating an application, and checking pagination.
  */
 describe('Recruiter Page Tests', () => {
   let driver;
@@ -71,48 +69,103 @@ describe('Recruiter Page Tests', () => {
     expect(detailsElements.length).toBeGreaterThanOrEqual(4);
   });
 
-  test('Update application status', async () => {
-    const detailsParagraphs = await driver.findElements(By.css('.application-details-container p'));
-    let currentStatus = '';
-    let applicationId = '';
-
+  test('Update application status - concurrent update scenario', async () => {
+    await driver.get('http://localhost:8080/recruiter'); 
+    
+    const firstListButton = await driver.wait(until.elementLocated(By.css('.fetch-applications-button')), 5000);
+    await firstListButton.click();
+    await driver.wait(until.elementLocated(By.css('.applications-table')), 8000);
+    
+    const firstRecruiterApp = await driver.findElement(By.css('.applications-table tbody tr:first-child'));
+    await firstRecruiterApp.click();
+    await driver.wait(until.elementLocated(By.css('.application-details-container')), 5000);
+    
     const currentUrl = await driver.getCurrentUrl();
     const urlMatch = currentUrl.match(/application[\/=](\d+)/i);
+    let applicationId = '';
     if (urlMatch) {
       applicationId = urlMatch[1];
+      console.log(`First recruiter viewing application ID: ${applicationId}`);
     }
-
-    for (let i = 0; i < detailsParagraphs.length; i++) {
-      const text = await detailsParagraphs[i].getText();
-      if (text.toLowerCase().includes('status')) {
-        currentStatus = text.split(':')[1]?.trim().toLowerCase() || 'unknown';
-        break;
-      }
-    }
-
-    expect(currentStatus).not.toBe('unknown');
-
+    
     let secondDriver = await new Builder().forBrowser('chrome').build();
-    await login(secondDriver, 'MartinCummings', 'QkK48drV2Da');
-    await secondDriver.wait(until.urlContains('/recruiter'), 5000);
-
-    const listButton = await secondDriver.wait(until.elementLocated(By.css('.fetch-applications-button')), 5000);
-    await listButton.click();
-    await secondDriver.wait(until.elementLocated(By.css('.applications-table')), 8000);
-
-    const firstApp = await secondDriver.findElement(By.css('.applications-table tbody tr:first-child'));
-    await firstApp.click();
-
-    const statusDropdown = await driver.findElement(By.css('select'));
-    const newStatus = currentStatus === 'accepted' ? 'rejected' : 'accepted';
-    await statusDropdown.findElement(By.css(`option[value="${newStatus}"]`)).click();
-
-    const updateButton = await driver.findElement(By.css('.update-status-button'));
-    await updateButton.click();
-
-    const successMessage = await driver.wait(until.elementLocated(By.css('.success-message, .message')), 5000);
-    const messageText = await successMessage.getText();
-    expect(messageText.toLowerCase()).toContain('success');
+    try {
+      await login(secondDriver, 'MartinCummings', 'QkK48drV2Da');
+      
+      try {
+        await secondDriver.wait(until.alertIsPresent(), 3000);
+        const alert = await secondDriver.switchTo().alert();
+        await alert.accept();
+      } catch (error) {
+        console.log('No alert present for second recruiter, continuing...');
+      }
+      await secondDriver.wait(until.urlContains('/recruiter'), 5000);
+      
+      const listButton = await secondDriver.wait(until.elementLocated(By.css('.fetch-applications-button')), 5000);
+      await listButton.click();
+      await secondDriver.wait(until.elementLocated(By.css('.applications-table')), 8000);
+      
+      const firstApp = await secondDriver.findElement(By.css('.applications-table tbody tr:first-child'));
+      await firstApp.click();
+      await secondDriver.wait(until.elementLocated(By.css('.application-details-container')), 5000);
+      
+      const secondRecruiterUrl = await secondDriver.getCurrentUrl();
+      console.log(`Second recruiter URL: ${secondRecruiterUrl}`);
+      
+      const detailsParagraphs = await driver.findElements(By.css('.application-details-container p'));
+      let firstRecruiterStatus = '';
+      
+      for (let i = 0; i < detailsParagraphs.length; i++) {
+        const text = await detailsParagraphs[i].getText();
+        if (text.toLowerCase().includes('status')) {
+          firstRecruiterStatus = text.split(':')[1]?.trim().toLowerCase() || 'unknown';
+          console.log(`First recruiter sees status: ${firstRecruiterStatus}`);
+          break;
+        }
+      }
+      expect(firstRecruiterStatus).not.toBe('unknown');
+      
+      const secondDetailsParas = await secondDriver.findElements(By.css('.application-details-container p'));
+      let secondRecruiterInitialStatus = '';
+      
+      for (let i = 0; i < secondDetailsParas.length; i++) {
+        const text = await secondDetailsParas[i].getText();
+        if (text.toLowerCase().includes('status')) {
+          secondRecruiterInitialStatus = text.split(':')[1]?.trim().toLowerCase() || 'unknown';
+          console.log(`Second recruiter sees status: ${secondRecruiterInitialStatus}`);
+          break;
+        }
+      }
+      expect(secondRecruiterInitialStatus).not.toBe('unknown');
+      
+      const statusDropdown = await driver.findElement(By.css('select'));
+      const newStatus = firstRecruiterStatus === 'accepted' ? 'rejected' : 'accepted';
+      console.log(`First recruiter changing status to: ${newStatus}`);
+      
+      await statusDropdown.findElement(By.css(`option[value="${newStatus}"]`)).click();
+      const updateButton = await driver.findElement(By.css('.update-status-button'));
+      await updateButton.click();
+      
+      const successMessage = await driver.wait(until.elementLocated(By.css('.success-message, .message')), 5000);
+      const messageText = await successMessage.getText();
+      console.log(`First recruiter received message: ${messageText}`);
+      expect(messageText.toLowerCase()).toContain('success');
+      
+      const statusDropdown2 = await secondDriver.findElement(By.css('select'));
+      const secondRecruiterNewStatus = secondRecruiterInitialStatus === 'accepted' ? 'rejected' : 'accepted';
+      console.log(`Second recruiter changing status to: ${secondRecruiterNewStatus}`);
+      
+      await statusDropdown2.findElement(By.css(`option[value="${secondRecruiterNewStatus}"]`)).click();
+      const updateButton2 = await secondDriver.findElement(By.css('.update-status-button'));
+      await updateButton2.click();
+      
+      const errorMessage = await secondDriver.wait(until.elementLocated(By.css('.error-message, .message')), 5000);
+      const errorText = await errorMessage.getText();
+      console.log(`Second recruiter received message: ${errorText}`);
+      expect(errorText.toLowerCase()).toContain('abort');
+    } finally {
+      await secondDriver.quit();
+    }
   });
 
   test('Back to applications button', async () => {
