@@ -66,6 +66,12 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
 
     const today = new Date().toISOString().split('T')[0]; 
 
+    const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/;
+    if (!dateRegex.test(fromDate) || !dateRegex.test(toDate)) {
+      setError('Invalid date format. Use YYYY-MM-DD.');
+      return;
+    }
+
     if (new Date(fromDate) < new Date(today) || new Date(toDate) < new Date(today)) {
       setError('Dates cannot be in the past.');
       return;
@@ -233,17 +239,17 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
               <div className="applicant-input-group">
                 <input
                   className="expertise-dropdown"
-                  type="date"
                   value={fromDate}
+                  name="fromDate"
                   onChange={(e) => setFromDate(e.target.value)}
                 />
                 <input
                   className="expertise-dropdown"
-                  type="date"
                   value={toDate}
+                  name="toDate"
                   onChange={(e) => setToDate(e.target.value)}
                 />
-                <button className="submit-button" onClick={handleAddAvailability}>
+                <button className="submit-button" id="addAvailability" onClick={handleAddAvailability}>
                   Add Availability
                 </button>
               </div>
@@ -260,7 +266,7 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
               </ul>
             </div>
 
-            <button className="submit-button" onClick={handleSubmit}>
+            <button className="submit-button" id="submit" onClick={handleSubmit}>
               Submit Application
             </button>
             <button className="cancel-button" onClick={handleCancel}>

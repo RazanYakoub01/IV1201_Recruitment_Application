@@ -124,7 +124,6 @@ const ApplicantFormPresenter = () => {
           timestamp: new Date().toISOString()
         });
 
-        alert('Application submitted successfully');
       } else {
         setError(data.message || 'Error submitting application');
       }

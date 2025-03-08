@@ -67,12 +67,12 @@ app.post('/users/verify-email', authController.verifyEmail);
 app.post('/users/send-update-email', authController.sendUpdateCredentialsEmail);
 app.post('/users/update-credentials', authController.updateCredentials);
 
+app.post('/users/validate-token', authController.validateToken);
 app.post('/users/refresh-token', verifyToken, authController.refreshToken);
 app.get('/competences', verifyToken, applicationController.getCompetences);
 app.post('/applications/submit', verifyToken, requireApplicant, applicationController.submitApplication);
 app.get('/applications/fetch', verifyToken, requireRecruiter, recruiterController.getApplications);
 app.post('/applications/update', verifyToken, requireRecruiter, recruiterController.updateApplication);
-
 
 
 /**

@@ -46,7 +46,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
         }
       }
 
-      alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
+      //alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 

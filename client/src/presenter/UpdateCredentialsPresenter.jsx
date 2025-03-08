@@ -16,13 +16,37 @@ const UpdateCredentialsPresenter = () => {
   const navigate = useNavigate();
 
   /**
-   * useEffect hook to check if the token is present in the URL.
-   * If missing, an error message is displayed.
+   * useEffect hook to check if the token is valid.
+   * If missing or invalid, an error message is displayed.
    */
   useEffect(() => {
-    if (!token) {
-      setError('Invalid or missing token.');
-    }
+    const validateToken = async () => {
+      if (!token) {
+        setError('Invalid or missing token.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/validate-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Token validation failed.');
+        }
+
+        // Token is valid, proceed with any further actions if needed.
+        setSuccessMessage('test test');
+      } catch (err) {
+        setError(err.message || 'Failed to validate token.');
+      }
+    };
+
+    validateToken();
   }, [token]);
 
   /**
