@@ -44,19 +44,22 @@ describe('Recruiter Page Tests', () => {
     if (paginationControls.length === 0) {
       return expect(paginationControls.length).toBeGreaterThan(0);
     }
-
+  
     const firstAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
     const nextButton = await driver.findElement(By.id("next"));
     const isNextEnabled = await nextButton.isEnabled();
+    
     if (isNextEnabled) {
+      await driver.sleep(3000); 
       await nextButton.click();
+      await driver.sleep(3000);
       const secondPageAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
       expect(firstAppText).not.toBe(secondPageAppText);
     } else {
       expect(isNextEnabled).toBe(true);
     }
   });
-
+  
   test('Select an application', async () => {
     const firstApp = await driver.findElement(By.css('.applications-table tbody tr:first-child'));
     await firstApp.click();
