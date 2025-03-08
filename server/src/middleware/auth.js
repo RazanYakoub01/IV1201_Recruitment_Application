@@ -15,7 +15,6 @@ const jwt = require('jsonwebtoken');
  */
 const verifyToken = (req, res, next) => {
   try {
-    // Get token from Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
@@ -27,10 +26,10 @@ const verifyToken = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     
-    // Verify the token
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Verifying the token by decoding...");
-    // Add user data to request object
+    
     req.user = {
       personId: decoded.personId,
       role: decoded.role
@@ -81,7 +80,6 @@ const requireRecruiter = (req, res, next) => {
     });
   }
   
-  // If user is a recruiter, proceed to the next middleware/route handler
   next();
 };
 
@@ -94,7 +92,6 @@ const requireRecruiter = (req, res, next) => {
  * @returns {void}
  */
 const requireApplicant = (req, res, next) => {
-  // Check if user exists and has role of 2 (applicant)
   if (!req.user || req.user.role !== 2) {
     console.log('Unauthorized access attempt to applicant resource:', {
       userId: req.user ? req.user.personId : 'Unknown',
@@ -109,8 +106,7 @@ const requireApplicant = (req, res, next) => {
       code: 'NOT_AUTHORIZED'
     });
   }
-  
-  // If user is an applicant, proceed to the next middleware/route handler
+
   next();
 };
 
@@ -125,12 +121,10 @@ const requireApplicant = (req, res, next) => {
 const requireSelfOrRecruiter = (req, res, next) => {
   const userId = parseInt(req.params.userId || req.body.userId);
   
-  // Allow access if user is a recruiter
   if (req.user.role === 1) {
     return next();
   }
   
-  // Allow access if user is requesting their own data
   if (req.user.personId === userId) {
     return next();
   }

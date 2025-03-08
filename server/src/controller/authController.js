@@ -58,9 +58,9 @@ const verifyEmail = async (req, res) => {
 
 
 /**
- * Updates the credentials (username and password) for a user based on their personal number.
+ * Updates the credentials (username and password) for a user based on email.
  * 
- * This function ensures that the personal number is valid, checks if the new username is available,
+ * This function ensures that the email is valid, checks if the new username is available,
  * and then updates the user's credentials (username and password). Password is hashed before storing.
  * 
  * @param {Object} req - The request object containing the body with the personal number, new username, and new password.
@@ -80,7 +80,6 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    // Verify JWT token
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -238,7 +237,6 @@ const generateToken = (user, rememberMe = false) => {
     username: user.username
   };
 
-  // Set token expiry to 24 hours by default or 30 days if remember me is checked
   const expiresIn = rememberMe ? '30d' : '24h';
   
   return jwt.sign(
@@ -379,10 +377,9 @@ const signup = async (req, res) => {
       password,
     });
 
-    // Generate token for the new user
     const token = generateToken({
       person_id: newUser.person_id,
-      role_id: 2, // Assuming new signups are always applicants (role_id 2)
+      role_id: 2, 
       username
     });
 
@@ -417,10 +414,8 @@ const signup = async (req, res) => {
  */
 const refreshToken = (req, res) => {
   try {
-    // User data is already attached to req by the verifyToken middleware
     const { user } = req;
     
-    // Generate a new token
     const token = jwt.sign(
       { personId: user.personId, role: user.role },
       process.env.JWT_SECRET,
