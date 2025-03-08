@@ -184,10 +184,11 @@ const RecruiterView = ({
                 </table>
 
                 <div className="pagination-controls">
-                  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                  <button id= "previous" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
                     Previous
                   </button>
                   <button
+                    id="next"
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === Math.ceil(applications.length / applicationsPerPage)}
                   >

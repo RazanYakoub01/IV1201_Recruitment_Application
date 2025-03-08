@@ -46,7 +46,7 @@ describe('Recruiter Page Tests', () => {
     }
 
     const firstAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
-    const nextButton = await driver.findElement(By.xpath("//button[contains(text(), 'Next')]"));
+    const nextButton = await driver.findElement(By.id("next"));
     const isNextEnabled = await nextButton.isEnabled();
     if (isNextEnabled) {
       await nextButton.click();

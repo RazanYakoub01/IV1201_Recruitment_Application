@@ -94,47 +94,34 @@ const RecruiterPresenter = () => {
    */
   const updateApplicationStatus = async (applicationId, newStatus, lastUpdated, setSelectedApplication, setMessage) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/update`, {
-        method: 'POST',
-        headers: createAuthHeaders(),
-        body: JSON.stringify({
-          application_id: applicationId,
-          status: newStatus,
-          lastUpdated: lastUpdated,
-        }),
-      });
-      
-      if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('user'); 
-        setUser(null);
-        return Promise.resolve();
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/update`, {
+            method: 'POST',
+            headers: createAuthHeaders(),            
+            body: JSON.stringify({
+                application_id: applicationId,
+                status: newStatus,
+                lastUpdated: lastUpdated, 
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            setMessage({ type: 'success', text: 'Application status updated successfully' });
+            setSelectedApplication((prev) => ({ ...prev, application_status: newStatus }));
+
+            setApplications((prevApplications) =>
+                prevApplications.map((app) =>
+                    app.application_id === applicationId ? { ...app, application_status: newStatus } : app
+                )
+            );
+        } else {
+            setMessage({ type: 'error', text: data.message || 'Error updating application status' });
+        }
+      } catch (err) {
+        console.error('Error in updating application status:', err);
+        setMessage({ type: 'error', text: 'Error updating application status' });   
       }
-      
-      if (!response.ok) {
-        throw new Error(`Failed to update: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setMessage({ type: 'success', text: 'Status updated successfully' });
-        setSelectedApplication(prev => ({
-          ...prev,
-          application_status: newStatus,
-          last_updated: lastUpdated
-        }));
-        
-        fetchApplications();
-        return Promise.resolve();
-      } else {
-        setMessage({ type: 'error', text: 'Failed to update status: ' + result.message });
-        return Promise.reject(new Error(result.message));
-      }
-    } catch (err) {
-      console.error('Error updating application status:', err);
-      setMessage({ type: 'error', text: 'An error occurred while updating the status.' });
-      return Promise.reject(err);
-    }
   };
 
   return (
