@@ -103,10 +103,13 @@ const submitApplication = async (req, res) => {
   }
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0); 
+  today.setHours(0, 0, 0, 0);
+
+  const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/;
 
   for (const period of availability) {
     console.log('7. Checking availability period:', period);
+
     if (!period.from_date || !period.to_date) {
       console.log('8. Failed at date existence check:', period);
       return res.status(400).json({
@@ -115,13 +118,21 @@ const submitApplication = async (req, res) => {
       });
     }
 
+    if (!dateRegex.test(period.from_date) || !dateRegex.test(period.to_date)) {
+      console.log('9. Failed at date format validation:', { from_date: period.from_date, to_date: period.to_date });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid date format. Use YYYY-MM-DD.',
+      });
+    }
+
     const fromDate = new Date(period.from_date);
-    fromDate.setHours(0, 0, 0, 0); 
+    fromDate.setHours(0, 0, 0, 0);
     const toDate = new Date(period.to_date);
     toDate.setHours(0, 0, 0, 0);
 
     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-      console.log('9. Failed at date format check:', { fromDate, toDate });
+      console.log('10. Failed at date parsing check:', { fromDate, toDate });
       return res.status(400).json({
         success: false,
         message: 'Invalid date format. Please provide valid dates.',
@@ -129,7 +140,7 @@ const submitApplication = async (req, res) => {
     }
 
     if (fromDate < today) {
-      console.log('10. Failed at past date check:', { fromDate, today });
+      console.log('11. Failed at past date check:', { fromDate, today });
       return res.status(400).json({
         success: false,
         message: 'Start date cannot be in the past.',
@@ -137,7 +148,7 @@ const submitApplication = async (req, res) => {
     }
 
     if (fromDate > toDate) {
-      console.log('11. Failed at date order check:', { fromDate, toDate });
+      console.log('12. Failed at date order check:', { fromDate, toDate });
       return res.status(400).json({
         success: false,
         message: 'from_date cannot be later than to_date.',
@@ -145,7 +156,7 @@ const submitApplication = async (req, res) => {
     }
   }
 
-  console.log('12. Passed all validations, attempting to submit');
+  console.log('13. Passed all validations, attempting to submit');
   try {
     console.log('Submitting application:', {
       userId: userId,
@@ -158,7 +169,7 @@ const submitApplication = async (req, res) => {
       success: true,
       message: 'Application submitted successfully',
     });
-    console.log('Submited application successfully', {
+    console.log('Submitted application successfully', {
       userId: userId,
       expertiseCount: expertise?.length || 0,
       availabilityCount: availability?.length || 0,

@@ -45,11 +45,36 @@ const submitApplication = async (userId, expertise, availability) => {
       throw new Error('Availability must be a non-empty array.');
     }
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/;
+
     for (const period of availability) {
-      if (!period.from_date || !period.to_date) {
+      const { from_date, to_date } = period;
+
+      if (!from_date || !to_date) {
         throw new Error('Availability periods must have both from_date and to_date.');
       }
-      if (new Date(period.from_date) > new Date(period.to_date)) {
+
+      if (!dateRegex.test(from_date) || !dateRegex.test(to_date)) {
+        throw new Error(`Invalid date format. Use YYYY-MM-DD. Received: from_date=${from_date}, to_date=${to_date}`);
+      }
+
+      const fromDate = new Date(from_date);
+      const toDate = new Date(to_date);
+      fromDate.setHours(0, 0, 0, 0);
+      toDate.setHours(0, 0, 0, 0);
+
+      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+        throw new Error(`Invalid date values. Could not parse: from_date=${from_date}, to_date=${to_date}`);
+      }
+
+      if (fromDate < today) {
+        throw new Error('Start date cannot be in the past.');
+      }
+
+      if (fromDate > toDate) {
         throw new Error('From date cannot be later than to date.');
       }
     }
