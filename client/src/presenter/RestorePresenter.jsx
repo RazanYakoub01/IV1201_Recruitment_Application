@@ -77,7 +77,7 @@ const RestorePresenter = () => {
         throw new Error(data.message || 'Failed to generate update email.');
       }
   
-      setSuccessMessage('Update credentials link generated successfully.');
+      setSuccessMessage('Email verified successfully and a link to restore your credentials was sent!');
       setEmailContent(data.emailText);
   
     } catch (err) {

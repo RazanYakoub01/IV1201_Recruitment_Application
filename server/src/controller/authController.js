@@ -58,6 +58,41 @@ const verifyEmail = async (req, res) => {
 
 
 /**
+ * Validates a JWT token.
+ * 
+ * @param {string} token - The token to validate.
+ * @returns {Object} - An object indicating if the token is valid and the decoded payload if successful.
+ */
+const validateToken = (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token || typeof token !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Token must be a valid string',
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    res.status(200).json({
+      success: true,
+      message: 'Token is valid',
+      decoded,
+    });
+  } catch (err) {
+    console.error('Token validation failed:', err.message);
+
+    res.status(401).json({
+      success: false,
+      message: err.name === 'TokenExpiredError' ? 'Token expired' : 'Invalid token',
+    });
+  }
+};
+
+
+/**
  * Updates the credentials (username and password) for a user based on their personal number.
  * 
  * This function ensures that the personal number is valid, checks if the new username is available,
@@ -380,4 +415,4 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail };
+module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail, validateToken };

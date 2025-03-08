@@ -1,6 +1,18 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const { expect } = require('@jest/globals');
 
 const BASE_URL = 'http://localhost:8080';
+
+/**
+ * Waits for an element to be visible and retrieves its text.
+ * @param {WebDriver} driver - The Selenium WebDriver instance.
+ * @param {string} selector - The CSS selector of the element.
+ * @returns {Promise<string>} The text of the element.
+ */
+async function getElementText(driver, selector) {
+  const element = await driver.wait(until.elementLocated(By.css(selector)), 5000);
+  return await element.getText();
+}
 
 /**
  * Tests unauthorized access to a specific URL without logging in.
@@ -10,21 +22,12 @@ const BASE_URL = 'http://localhost:8080';
  * @param {string} expectedMessage - The expected error message to be displayed.
  */
 async function testUnauthorizedAccess(driver, url, expectedMessage) {
-  try {
-    console.log(`\n🔹 Testing unauthorized access to ${url}`);
-    await driver.get(url); 
+  await driver.get(url);
 
-    let errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
-    let text = await errorMessage.getText();
+  let errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
+  let text = await errorMessage.getText();
 
-    if (text.includes(expectedMessage)) {
-      console.log(`✅ Test Passed: Correct error message displayed for ${url}`);
-    } else {
-      console.error(`❌ Test Failed: Unexpected message for ${url}: "${text}"`);
-    }
-  } catch (error) {
-    console.error(`❌ Test Failed: Error when testing ${url}`, error);
-  }
+  expect(text).toContain(expectedMessage);
 }
 
 /**
@@ -35,7 +38,6 @@ async function testUnauthorizedAccess(driver, url, expectedMessage) {
  * @param {string} password - The password of the user.
  */
 async function login(driver, username, password) {
-  console.log(`\n🔹 Logging in as ${username}`);
   await driver.get(BASE_URL); 
 
   let usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
@@ -48,7 +50,6 @@ async function login(driver, username, password) {
   await signInButton.click();
 
   await driver.wait(until.urlContains(username.includes('JoelleWilkinson') ? '/recruiter' : '/applicant'), 5000);
-  console.log(`✅ Logged in as ${username}`);
 }
 
 /**
@@ -62,32 +63,30 @@ async function login(driver, username, password) {
  * @param {string} expectedMessage - The expected error message for unauthorized access.
  */
 async function testRoleAccess(driver, loginDetails, restrictedUrl, expectedMessage) {
-  try {
-    await login(driver, loginDetails.username, loginDetails.password);
-    console.log(`\n🔹 Trying to access ${restrictedUrl} manually...`);
+  await login(driver, loginDetails.username, loginDetails.password);
 
-    await driver.get(restrictedUrl); 
-    let errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
-    let text = await errorMessage.getText();
+  await driver.get(restrictedUrl); 
+  let errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
+  let text = await errorMessage.getText();
 
-    if (text.includes(expectedMessage)) {
-      console.log(`✅ Test Passed: Correct error message displayed for ${restrictedUrl}`);
-    } else {
-      console.error(`❌ Test Failed: Unexpected message for ${restrictedUrl}: "${text}"`);
-    }
-  } catch (error) {
-    console.error(`❌ Test Failed: Error when testing ${restrictedUrl}`, error);
-  }
+  expect(text).toContain(expectedMessage);
 }
 
 /**
  * Runs all authentication tests, including unauthorized access tests and role-based access tests.
  */
-(async function runTests() {
-  let driver = await new Builder().forBrowser('chrome').build();
+describe('Authentication Tests', () => {
+  let driver;
 
-  try {
-    // Test cases for unauthorized access (without login)
+  beforeAll(async () => {
+    driver = await new Builder().forBrowser('chrome').build();
+  });
+
+  afterAll(async () => {
+    await driver.quit();
+  });
+
+  test('Unauthorized access tests', async () => {
     const unauthorizedTests = [
       { url: `${BASE_URL}/applicant`, expectedMessage: 'You must be logged in to access this page. Please log in first!' },
       { url: `${BASE_URL}/recruiter`, expectedMessage: 'You must be logged in to access this page. Please log in first!' },
@@ -97,8 +96,9 @@ async function testRoleAccess(driver, loginDetails, restrictedUrl, expectedMessa
     for (const testCase of unauthorizedTests) {
       await testUnauthorizedAccess(driver, testCase.url, testCase.expectedMessage);
     }
+  });
 
-    // Test cases for role-based access control
+  test('Role-based access control tests', async () => {
     const roleAccessTests = [
       {
         loginDetails: { username: 'JoelleWilkinson', password: 'LiZ98qvL8Lw' },
@@ -115,9 +115,5 @@ async function testRoleAccess(driver, loginDetails, restrictedUrl, expectedMessa
     for (const test of roleAccessTests) {
       await testRoleAccess(driver, test.loginDetails, test.restrictedUrl, test.expectedMessage);
     }
-
-  } finally {
-    await driver.quit();
-    console.log('\n🎉 All tests completed!');
-  }
-})();
+  });
+});

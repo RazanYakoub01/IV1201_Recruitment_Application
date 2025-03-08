@@ -59,7 +59,7 @@ app.get('/competences', applicationController.getCompetences);
 app.post('/applications/submit', applicationController.submitApplication);
 app.get('/applications/fetch', recruiterController.getApplications)
 app.post('/applications/update', recruiterController.updateApplication)
-
+app.post('/users/validate-token', authController.validateToken);
 
 
 /**

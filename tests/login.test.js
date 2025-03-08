@@ -1,164 +1,128 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const { login } = require('./loginHelper');
+const { expect } = require('@jest/globals');
 
 /**
- * Test the login functionality of the application by verifying different credentials.
- * @param {string} username - The username input for login.
- * @param {string} password - The password input for login.
- * @param {string} expectedError - The expected error message if login fails.
- * @param {string} expectedWelcomeMessage - The expected welcome message if login is successful.
- * @param {string} expectedPageUrl - The expected page URL after login.
+ * Helper function to test login functionality
+ * @param {WebDriver} driver - The WebDriver instance
+ * @param {string} username - The username for login
+ * @param {string} password - The password for login
+ * @param {string} expectedError - The expected error message (if any)
+ * @param {string} expectedWelcomeMessage - The expected welcome message (for successful login)
+ * @param {string} expectedPageUrl - The expected page URL after login
  */
 async function testLogin(driver, username, password, expectedError, expectedWelcomeMessage, expectedPageUrl) {
-  try {
-    console.log(`\n🔹 Running test with username: '${username}' | password: '${password}'`);
-    await driver.get('http://localhost:8080/');
+  await driver.get('http://localhost:8080/');
 
-    let usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
-    if (username) await usernameField.sendKeys(username);
+  const usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
+  if (username) await usernameField.sendKeys(username);
 
-    let passwordField = await driver.wait(until.elementLocated(By.id('password')), 5000);
-    if (password) await passwordField.sendKeys(password);
+  const passwordField = await driver.wait(until.elementLocated(By.id('password')), 5000);
+  if (password) await passwordField.sendKeys(password);
 
-    let signInButton = await driver.findElement(By.css('.submit-button'));
-    await signInButton.click();
+  const signInButton = await driver.findElement(By.css('.submit-button'));
+  await signInButton.click();
 
-    if (expectedError) {
-      let errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
-      let text = await errorMessage.getText();
-      if (text.includes(expectedError)) {
-        console.log(`✅ Test Passed: Expected error message '${expectedError}' displayed.`);
-      } else {
-        console.error(`❌ Test Failed: Expected '${expectedError}', but got '${text}'.`);
-      }
-    } else {
-      await driver.wait(until.urlContains(expectedPageUrl), 5000);
+  if (expectedError) {
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 5000);
+    const text = await errorMessage.getText();
+    expect(text).toContain(expectedError);
+  } else {
+    await driver.wait(until.urlContains(expectedPageUrl), 5000);
 
-      let currentUrl = await driver.getCurrentUrl();
-      if (currentUrl.includes(expectedPageUrl)) {
-        console.log(`✅ Test Passed: Correct URL '${expectedPageUrl}' after login.`);
-      } else {
-        console.error(`❌ Test Failed: Expected '${expectedPageUrl}', but got '${currentUrl}'.`);
-      }
+    const currentUrl = await driver.getCurrentUrl();
+    expect(currentUrl).toContain(expectedPageUrl);
 
-      if (expectedPageUrl === '/applicant') {
-        let applicantSpecificElement = await driver.wait(until.elementLocated(By.css('h3')), 5000);
-        let applicantGreeting = await applicantSpecificElement.getText();
-        if (applicantGreeting.includes(`Hello, ${username}!`)) {
-          console.log('✅ Test Passed: Found correct greeting message on applicant page!');
-        } else {
-          console.error(`❌ Test Failed: Expected 'Hello, ${username}!' on applicant page, but got '${applicantGreeting}'.`);
-        }
-      }
-
-      if (expectedPageUrl === '/recruiter') {
-        let welcomeMessage = await driver.wait(until.elementLocated(By.css('.recruiter-header')), 5000);
-        let welcomeText = await welcomeMessage.getText();
-        if (welcomeText.includes(expectedWelcomeMessage)) {
-            console.log(`✅ Test Passed: Successfully logged in and found welcome message: '${expectedWelcomeMessage}'`);
-        } else {
-            console.error(`❌ Test Failed: Expected '${expectedWelcomeMessage}', but got '${welcomeText}'.`);
-        }
-      }
+    if (expectedPageUrl === '/applicant') {
+      const applicantSpecificElement = await driver.wait(until.elementLocated(By.css('h3')), 5000);
+      const applicantGreeting = await applicantSpecificElement.getText();
+      expect(applicantGreeting).toContain(`Hello, ${username}!`);
     }
-  } catch (error) {
-    console.error('❌ Test Failed:', error);
+
+    if (expectedPageUrl === '/recruiter') {
+      const welcomeMessage = await driver.wait(until.elementLocated(By.css('.recruiter-header')), 5000);
+      const welcomeText = await welcomeMessage.getText();
+      expect(welcomeText).toContain(expectedWelcomeMessage);
+    }
   }
 }
 
 /**
- * Test the "Sign Up" button by checking if it navigates to the sign-up page.
+ * Helper function to test the "Sign Up" button
+ * @param {WebDriver} driver - The WebDriver instance
  */
 async function testSignUp(driver) {
-  try {
-    console.log(`\n🔹 Running test for "Sign Up" button`);
-    await driver.get('http://localhost:8080/');
+  await driver.get('http://localhost:8080/');
 
-    let signUpButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Sign Up')]")), 5000);
-    await signUpButton.click();
+  const signUpButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Sign Up')]")), 5000);
+  await signUpButton.click();
 
-    let currentUrl = await driver.getCurrentUrl();
-    if (currentUrl.includes('/signup')) {
-      console.log(`✅ Test Passed: Correct URL '/signup' after clicking "Sign Up" button.`);
-    } else {
-      console.error(`❌ Test Failed: Expected '/signup', but got '${currentUrl}'.`);
-    }
+  const currentUrl = await driver.getCurrentUrl();
+  expect(currentUrl).toContain('/signup');
 
-    let signUpTitle = await driver.wait(until.elementLocated(By.css('.signup-title')), 5000);
-    let titleText = await signUpTitle.getText();
-    if (titleText.includes('Create an Account')) {
-      console.log(`✅ Test Passed: Found correct "Create an Account" title on the Sign Up page.`);
-    } else {
-      console.error(`❌ Test Failed: Expected 'Create an Account', but got '${titleText}'.`);
-    }
-  } catch (error) {
-    console.error('❌ Test Failed:', error);
-  }
+  const signUpTitle = await driver.wait(until.elementLocated(By.css('.signup-title')), 5000);
+  const titleText = await signUpTitle.getText();
+  expect(titleText).toContain('Create an Account');
 }
 
 /**
- * Test the "Forgot Username or Password?" button by checking if it navigates to the restore page.
+ * Helper function to test the "Forgot Username or Password?" button
+ * @param {WebDriver} driver - The WebDriver instance
  */
 async function testRestore(driver) {
-  try {
-    console.log(`\n🔹 Running test for "Forgot Username or Password?" button`);
-    await driver.get('http://localhost:8080/');
+  await driver.get('http://localhost:8080/');
 
-    let forgotButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Forgot Username or Password?')]")), 5000);
-    await forgotButton.click();
+  const forgotButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Forgot Username or Password?')]")), 5000);
+  await forgotButton.click();
 
-    let currentUrl = await driver.getCurrentUrl();
-    if (currentUrl.includes('/restore')) {
-      console.log(`✅ Test Passed: Correct URL '/restore' after clicking "Forgot Username or Password?" button.`);
-    } else {
-      console.error(`❌ Test Failed: Expected '/restore', but got '${currentUrl}'.`);
-    }
+  const currentUrl = await driver.getCurrentUrl();
+  expect(currentUrl).toContain('/restore');
 
-    let restoreTitle = await driver.wait(until.elementLocated(By.css('.restore-header')), 5000);
-    let restoreText = await restoreTitle.getText();
-    if (restoreText.includes('Reset Your Credentials')) {
-      console.log(`✅ Test Passed: Found correct "Reset Your Credentials" title on the Restore page.`);
-    } else {
-      console.error(`❌ Test Failed: Expected 'Reset Your Credentials', but got '${restoreText}'.`);
-    }
-  } catch (error) {
-    console.error('❌ Test Failed:', error);
-  }
+  const restoreTitle = await driver.wait(until.elementLocated(By.css('.restore-header')), 5000);
+  const restoreText = await restoreTitle.getText();
+  expect(restoreText).toContain('Reset Your Credentials');
 }
 
-/**
- * Run all the defined test cases for login, sign-up, and password restore functionality.
- */
-(async function runTests() {
-  let driver = await new Builder().forBrowser('chrome').build();
+describe('Login, Sign Up and Restore Tests', () => {
+  let driver;
 
-  try {
-    // Test invalid credentials
-    await testLogin(driver, 'invalidUser', 'wrongPassword', 'Invalid username or password', null, null); 
+  beforeAll(async () => {
+    driver = await new Builder().forBrowser('chrome').build();
+  });
 
-    // Test missing username
-    await testLogin(driver, '', 'somePassword', 'Username is required', null, null); 
-    
-    // Test missing password
-    await testLogin(driver, 'validUser', '', 'Password is required', null, null); 
-    
-    // Test missing both username and password
-    await testLogin(driver, '', '', 'Username is required', null, null); 
-
-    // Test successful login for JoelleWilkinson
-    await testLogin(driver, 'JoelleWilkinson', 'LiZ98qvL8Lw', null, 'Welcome, JoelleWilkinson!', '/recruiter');
-
-    // Test successful login for testuserselenium with applicant page
-    await testLogin(driver, 'testuserselenium', 'password123', null, 'Hello, testuserselenium!', '/applicant');
-
-    // Test "Sign Up" button
-    await testSignUp(driver);
-
-    // Test "Forgot Username or Password?" button
-    await testRestore(driver);
-
-  } catch (error) {
-    console.error('❌ Test Failed:', error);
-  } finally {
+  afterAll(async () => {
     await driver.quit();
-  }
-})();
+  });
+
+  test('Test invalid credentials for login', async () => {
+    await testLogin(driver, 'invalidUser', 'wrongPassword', 'Invalid username or password', null, null);
+  });
+
+  test('Test missing username', async () => {
+    await testLogin(driver, '', 'somePassword', 'Username is required', null, null);
+  });
+
+  test('Test missing password', async () => {
+    await testLogin(driver, 'validUser', '', 'Password is required', null, null);
+  });
+
+  test('Test missing both username and password', async () => {
+    await testLogin(driver, '', '', 'Username is required', null, null);
+  });
+
+  test('Test successful login for JoelleWilkinson with recruiter page', async () => {
+    await testLogin(driver, 'JoelleWilkinson', 'LiZ98qvL8Lw', null, 'Welcome, JoelleWilkinson!', '/recruiter');
+  });
+
+  test('Test successful login for testuserselenium with applicant page', async () => {
+    await testLogin(driver, 'testuserselenium', 'password123', null, 'Hello, testuserselenium!', '/applicant');
+  });
+
+  test('Test "Sign Up" button', async () => {
+    await testSignUp(driver);
+  });
+
+  test('Test "Forgot Username or Password?" button', async () => {
+    await testRestore(driver);
+  });
+});
