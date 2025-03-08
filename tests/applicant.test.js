@@ -1,7 +1,7 @@
 const { Builder, By, until, Key } = require('selenium-webdriver');
 const { login } = require('./loginHelper');
 const { signup } = require('./signupHelper');
-const { expect } = require('@jest/globals');
+const { expect, afterEach } = require('@jest/globals');
 
 jest.setTimeout(30000);
 
@@ -47,6 +47,23 @@ describe('ApplicantForm Tests', () => {
     console.log("Browser closed");
   });
 
+  /**
+  * Runs after each test to click the cancel button if found.
+  * Waits for the cancel button, clicks it if located, and logs the action.
+  * If the button is not found within 5 seconds, logs a skip message.
+  */
+  afterEach(async () => {
+    try {
+      const cancelButton = await driver.wait(until.elementLocated(By.css('.cancel-button')), 5000);
+      console.log("Found cancel button");
+  
+      await cancelButton.click();
+      console.log("Clicked cancel button");
+    } catch (error) {
+      console.log("Cancel button not found, skipping...");
+    }
+  });
+  
   test('Should show error message for missing expertise and availability', async () => {
     console.log("Running test: Missing expertise and availability");
 
@@ -153,14 +170,11 @@ describe('ApplicantForm Tests', () => {
     const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
     const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
     const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
-
-    await fromDateInput.sendKeys(Key.CONTROL, "a", Key.BACK_SPACE);
-    await toDateInput.sendKeys(Key.CONTROL, "a", Key.BACK_SPACE);
-
-    const clearedFromDate = await fromDateInput.getAttribute('value');
-    const clearedToDate = await toDateInput.getAttribute('value');
-    console.log("Cleared values -> From: " + clearedFromDate + ", To: " + clearedToDate);
-
+    
+    await fromDateInput.sendKeys(Key.chord(Key.CONTROL, "a"), Key.BACK_SPACE);
+    await toDateInput.sendKeys(Key.chord(Key.CONTROL, "a"), Key.BACK_SPACE);
+    console.log("Cleared date fields");
+  
     const invalidFromDate = '2025-06-01';
     const invalidToDate = '2025-05-01';
 
