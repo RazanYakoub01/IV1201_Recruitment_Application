@@ -1,125 +1,267 @@
-const { Builder, By, until } = require('selenium-webdriver');
+const { Builder, By, until, Key } = require('selenium-webdriver');
+const { login } = require('./loginHelper');
+const { signup } = require('./signupHelper');
+const { expect } = require('@jest/globals');
+
+jest.setTimeout(30000);
 
 /**
- * Function to correctly set a date in a React-controlled <input type="date"> field.
+ * Test suite for ApplicantForm functionality.
+ * Tests include validation for missing and invalid data in the applicant form.
  */
-async function setReactDateInput(driver, dateInputElement, dateString) {
-  // Use JavaScript to directly set the date value and manually trigger events
-  await driver.executeScript(`
-    arguments[0].value = arguments[1]; 
-    arguments[0].dispatchEvent(new Event('input', { bubbles: true })); 
-    arguments[0].dispatchEvent(new Event('change', { bubbles: true })); 
-  `, dateInputElement, dateString);
-}
 
-/**
- * Logs in as an applicant and navigates to the applicant page.
- */
-async function loginAsApplicant() {
-  let driver = await new Builder().forBrowser('chrome').build();
-  try {
-    console.log(`🔹 Logging in as applicant...`);
-    await driver.get('http://localhost:8080/');
+describe('ApplicantForm Tests', () => {
+  let driver;
 
-    let usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
-    await usernameField.sendKeys('testuserselenium');
-
-    let passwordField = await driver.wait(until.elementLocated(By.id('password')), 5000);
-    await passwordField.sendKeys('password123');
-
-    let signInButton = await driver.findElement(By.css('.submit-button'));
-    await signInButton.click();
-
-    await driver.wait(until.urlContains('/applicant'), 5000);
-
-    return driver;
-  } catch (error) {
-    console.error('❌ Login Test Failed:', error);
+  /**
+  * Initializes the WebDriver and logs in before tests.
+  */
+  beforeAll(async () => {
+    console.log("Initializing the test suite...");
+    driver = await new Builder().forBrowser('chrome').build();
+    console.log("Launching browser...");
+  
+    const uniqueUsername = `testuser_${Date.now()}`; 
+    const password = 'password123';
+    const firstName = 'John';
+    const lastName = 'Doe';
+    const email = `johndoe${Date.now()}@example.com`;
+    const personNumber = '199001011234';
+  
+    await signup(driver, firstName, lastName, email, personNumber, uniqueUsername, password);
+    console.log("Signed up successfully");
+  
+    await login(driver, uniqueUsername, password);
+    console.log("Logged in successfully");
+  
+    await driver.wait(until.urlContains('/applicant'), 10000);
+    console.log("Navigated to applicant page");
+  });
+  
+  /**
+  * Closes the browser after all tests are completed.
+  */
+  afterAll(async () => {
+    console.log("Closing browser...");
     await driver.quit();
-  }
-}
+    console.log("Browser closed");
+  });
 
-/**
- * Test case: Successfully submit an application with valid data.
- */
-async function testSuccessfulApplication() {
-  let driver = await loginAsApplicant();
-  if (!driver) return;
+  test('Should show error message for missing expertise and availability', async () => {
+    console.log("Running test: Missing expertise and availability");
 
-  try {
-    console.log(`🔹 Running test for successful application submission...`);
+    const submitButton = await driver.wait(until.elementLocated(By.id('submit')), 10000);
+    console.log("Found submit button");
 
-    // Select competence
-    let competenceDropdown = await driver.wait(until.elementLocated(By.css('select.expertise-dropdown')), 5000);
-    await competenceDropdown.click();
-    let option = await driver.wait(until.elementLocated(By.css('select.expertise-dropdown option[value="1"]')), 5000);
-    await option.click();
-
-    // Input years of experience
-    let experienceField = await driver.wait(until.elementLocated(By.css('input[type="number"]')), 5000);
-    await experienceField.sendKeys('3');
-
-    // Add expertise
-    let addExpertiseButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Add Expertise')]")), 5000);
-    await addExpertiseButton.click();
-
-    // Wait to ensure expertise is added
-    await driver.wait(until.elementLocated(By.css('.expertise-list li')), 5000);
-    console.log("✅ Expertise added successfully");
-
-    // Define correct hardcoded date values
-    let fromDateString = "2025-06-01";
-    let toDateString = "2025-06-28";
-
-    // Locate date input fields
-    let fromDate = await driver.wait(until.elementLocated(By.css('input[type="date"]:nth-of-type(1)')), 5000);
-    let toDate = await driver.wait(until.elementLocated(By.css('input[type="date"]:nth-of-type(2)')), 5000);
-
-    console.log(`🔹 Setting date values properly using JavaScript...`);
-
-    // Use JavaScript to set values properly
-    await setReactDateInput(driver, fromDate, fromDateString);
-    await setReactDateInput(driver, toDate, toDateString);
-
-    // Wait a bit to allow UI update
-    await driver.sleep(1000);
-
-    // Verify the values were correctly entered
-    let enteredFromDate = await fromDate.getAttribute("value");
-    let enteredToDate = await toDate.getAttribute("value");
-    console.log(`🔹 After Input -> From: ${enteredFromDate}, To: ${enteredToDate}`);
-
-    // Click "Add Availability"
-    let addAvailabilityButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Add Availability')]")), 5000);
-    await addAvailabilityButton.click();
-
-    // Wait to ensure availability is added
-    await driver.wait(until.elementLocated(By.css('.availability-list li')), 5000);
-    console.log("✅ Availability added successfully");
-
-    // Submit application
-    let submitButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Submit Application')]")), 5000);
     await submitButton.click();
+    console.log("Clicked submit button");
 
-    // Wait for success message
-    let successMessage = await driver.wait(until.elementLocated(By.css('.success-message h3')), 10000);
-    let text = await successMessage.getText();
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Please add at least one competence and one availability period before submitting.');
+  });
 
-    if (text.includes('Your application is under review!')) {
-      console.log(`✅ Test Passed: Application submitted successfully.`);
-    } else {
-      console.error(`❌ Test Failed: Expected success message not found.`);
-    }
-  } catch (error) {
-    console.error('❌ Test Failed:', error);
-  } finally {
-    await driver.quit();
-  }
-}
+  test('Should show error message for missing expertise and experience', async () => {
+    console.log("Running test: Missing expertise and experience");
 
-/**
- * Run all test cases.
- */
-(async function runTests() {
-  await testSuccessfulApplication();
-})();
+    const addExpertiseButton = await driver.wait(until.elementLocated(By.css('.submit-button')), 10000);
+    console.log("Found expertise button");
+
+    const competenceDropdown = await driver.wait(until.elementLocated(By.css('.expertise-dropdown')), 10000);
+    const experienceInput = await driver.wait(until.elementLocated(By.css('.expertise-dropdown[type="number"]')), 10000);
+
+    await addExpertiseButton.click();
+    console.log("Clicked add expertise button");
+
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Please select a competence and years of experience.');
+  });
+
+  test('Should show error message for invalid years of experience', async () => {
+    console.log("Running test: Invalid years of experience");
+
+    const addExpertiseButton = await driver.wait(until.elementLocated(By.css('.submit-button')), 10000);
+    console.log("Found expertise button");
+
+    const competenceDropdown = await driver.wait(until.elementLocated(By.css('.expertise-dropdown')), 10000);
+    const experienceInput = await driver.wait(until.elementLocated(By.css('.expertise-dropdown[type="number"]')), 10000);
+
+    await competenceDropdown.sendKeys('ticket sales');
+    await experienceInput.sendKeys('-1');
+    console.log("Set invalid experience value: -1");
+
+    await addExpertiseButton.click();
+    console.log("Clicked add expertise button");
+
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Please enter a valid number of years of experience between 0 and 99.');
+  });
+
+  test('Should show error message for missing availability dates', async () => {
+    console.log("Running test: Missing availability dates");
+
+    const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
+    const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
+    const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
+
+    await fromDateInput.clear();
+    await toDateInput.clear();
+    console.log("Cleared date fields");
+
+    await addAvailabilityButton.click();
+    console.log("Clicked add availability button");
+
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Please provide both start and end dates.');
+  });
+
+  test('Should show error message for dates in the past', async () => {
+    console.log("Running test: Dates in the past");
+
+    const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
+    const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
+    const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
+
+    await fromDateInput.clear();
+    await toDateInput.clear();
+    console.log("Cleared date fields");
+
+    const pastDate = '2020-01-01';
+    await fromDateInput.sendKeys(pastDate);
+    await toDateInput.sendKeys(pastDate);
+    console.log("Set past dates: " + pastDate);
+
+    await addAvailabilityButton.click();
+    console.log("Clicked add availability button");
+
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Dates cannot be in the past.');
+  });
+
+  test('Should show error message for invalid date range (From date > To date)', async () => {
+    console.log("Running test: Invalid date range (From > To)");
+
+    const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
+    const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
+    const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
+
+    await fromDateInput.sendKeys(Key.CONTROL, "a", Key.BACK_SPACE);
+    await toDateInput.sendKeys(Key.CONTROL, "a", Key.BACK_SPACE);
+
+    const clearedFromDate = await fromDateInput.getAttribute('value');
+    const clearedToDate = await toDateInput.getAttribute('value');
+    console.log("Cleared values -> From: " + clearedFromDate + ", To: " + clearedToDate);
+
+    const invalidFromDate = '2025-06-01';
+    const invalidToDate = '2025-05-01';
+
+    await fromDateInput.sendKeys(invalidFromDate);
+    await toDateInput.sendKeys(invalidToDate);
+
+    console.log("Set invalid date range: From - " + invalidFromDate + " To - " + invalidToDate);
+
+    await addAvailabilityButton.click();
+    console.log("Clicked add availability button");
+
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('From date cannot be later than To date.');
+  });
+
+  test('Should show error message for invalid date format', async () => {
+    console.log("Running test: Invalid date format");
+  
+    const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
+    const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
+    const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
+  
+    await fromDateInput.sendKeys(Key.chord(Key.CONTROL, "a"), Key.BACK_SPACE);
+    await toDateInput.sendKeys(Key.chord(Key.CONTROL, "a"), Key.BACK_SPACE);
+    console.log("Cleared date fields");
+  
+    const invalidFromDate = '01-06-2025'; 
+    const invalidToDate = '2025/05/01';  
+  
+    await fromDateInput.sendKeys(invalidFromDate);
+    await toDateInput.sendKeys(invalidToDate);
+    console.log("Set invalid date format: From - " + invalidFromDate + " To - " + invalidToDate);
+  
+    await addAvailabilityButton.click();
+    console.log("Clicked add availability button");
+  
+    const errorMessage = await driver.wait(until.elementLocated(By.css('.error-message')), 10000);
+    const errorText = await errorMessage.getText();
+    console.log("Received error message: " + errorText);
+    expect(errorText).toContain('Invalid date format. Use YYYY-MM-DD.');
+  });
+
+  
+  test('Should cancel the form input and reset fields', async () => {
+    console.log("Running test: Cancel form input and reset fields");
+
+    const cancelButton = await driver.wait(until.elementLocated(By.css('.cancel-button')), 10000);
+    console.log("Found cancel button");
+
+    await cancelButton.click();
+    console.log("Clicked cancel button");
+
+    const expertiseList = await driver.wait(until.elementLocated(By.css('.expertise-list ul')), 10000);
+    const expertiseItems = await expertiseList.findElements(By.css('li'));
+    console.log("Expertise list items: " + expertiseItems.length);
+    expect(expertiseItems.length).toBe(0);
+
+    const availabilityList = await driver.wait(until.elementLocated(By.css('.availability-list ul')), 10000);
+    const availabilityItems = await availabilityList.findElements(By.css('li'));
+    console.log("Availability list items: " + availabilityItems.length);
+    expect(availabilityItems.length).toBe(0);
+  });
+
+  test('Should fill in correct data and submit the form successfully', async () => {
+    console.log("Running test: Fill in correct data and submit");
+
+    const competenceDropdown = await driver.wait(until.elementLocated(By.css('.expertise-dropdown')), 10000);
+    const experienceInput = await driver.wait(until.elementLocated(By.css('.expertise-dropdown[type="number"]')), 10000);
+    const addButton = await driver.wait(until.elementLocated(By.css('.submit-button')), 10000);
+
+    await competenceDropdown.sendKeys('ticket sales');
+    await experienceInput.sendKeys('5');
+    console.log("Selected expertise: ticket sales, experience: 5");
+
+    await addButton.click();
+    console.log("Clicked add expertise button");
+
+    const fromDateInput = await driver.wait(until.elementLocated(By.name('fromDate')), 10000);
+    const toDateInput = await driver.wait(until.elementLocated(By.name('toDate')), 10000);
+    const addAvailabilityButton = await driver.wait(until.elementLocated(By.id('addAvailability')), 10000);
+
+    await fromDateInput.clear();
+    await toDateInput.clear();
+    console.log("Cleared date fields");
+
+    await fromDateInput.sendKeys('2025-05-05');
+    await toDateInput.sendKeys('2025-06-06');
+    console.log("Set valid dates: From - 2025-05-05, To - 2025-06-06");
+
+    await addAvailabilityButton.click();
+    console.log("Clicked add availability button");
+
+    const submitButton = await driver.wait(until.elementLocated(By.id('submit')), 10000);
+    await submitButton.click();
+    console.log("Clicked submit button");
+
+    const successMessage = await driver.wait(until.elementLocated(By.css('.success-message')), 10000);
+    const successText = await successMessage.getText();
+    console.log("Received success message: " + successText);
+    expect(successText).toContain('Your application is under review!');
+  });
+});
