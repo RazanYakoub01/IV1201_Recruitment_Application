@@ -28,9 +28,9 @@ app.use(express.json());
  * Only allow specific origins, methods, and headers
  */
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://iv1201-recruitment-application-frontend.onrender.com/']
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'], 
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://iv1201-recruitment-application-frontend.onrender.com']
+    : ['http://localhost:8080'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
