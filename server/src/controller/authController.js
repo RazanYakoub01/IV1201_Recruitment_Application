@@ -93,9 +93,7 @@ const validateToken = (req, res) => {
 
 
 /**
- * Updates the credentials (username and password) for a user based on their personal number.
- * 
- * This function ensures that the personal number is valid, checks if the new username is available,
+ * This function ensures that the email is valid, checks if the new username is available,
  * and then updates the user's credentials (username and password). Password is hashed before storing.
  * 
  * @param {Object} req - The request object containing the body with the personal number, new username, and new password.
@@ -115,7 +113,6 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    // Verify JWT token
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -259,6 +256,28 @@ const sendUpdateCredentialsEmail = async (req, res) => {
   }
 };
 
+/**
+ * Generates a JWT token for user authentication
+ * 
+ * @param {Object} user - User object containing person_id, role_id, etc.
+ * @param {boolean} rememberMe - Whether to extend token expiry
+ * @returns {string} - Generated JWT token
+ */
+const generateToken = (user, rememberMe = false) => {
+  const payload = {
+    personId: user.person_id,
+    role: user.role_id,
+    username: user.username
+  };
+
+  const expiresIn = rememberMe ? '30d' : '24h';
+  
+  return jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    { expiresIn }
+  );
+};
 
 /**
  * Handles user login authentication and token generation
@@ -267,7 +286,7 @@ const sendUpdateCredentialsEmail = async (req, res) => {
  */
 const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, rememberMe } = req.body;
     console.log('Login attempt received:', {
       username,
       timestamp: new Date().toISOString()
@@ -311,18 +330,18 @@ const login = async (req, res) => {
       });
     }
 
+    const token = generateToken(user, rememberMe);
+
     console.log('Login successful:', {
       username,
       userId: user.person_id,
       timestamp: new Date().toISOString()
     });
 
-    const token = 'dummy-token';
-
     res.json({
       success: true,
       message: 'Login successful',
-      token: 'dummy-token',
+      token,
       user: {
         username: user.username,
         person_id: user.person_id,
@@ -381,21 +400,27 @@ const signup = async (req, res) => {
       });
     }
 
-    const formattedPersonNumber = `${personNumber.slice(0, 8)}-${personNumber.slice(8)}`;
 
     const newUser = await userDAO.createUser({
       firstName,
       lastName,
       email,
-      personNumber: formattedPersonNumber,
+      personNumber,
       username,
       password,
+    });
+
+    const token = generateToken({
+      person_id: newUser.person_id,
+      role_id: 2, 
+      username
     });
 
     res.status(201).json({
       success: true,
       message: 'User created successfully',
       userId: newUser.person_id,
+      token
     });
 
   } catch (err) {
@@ -415,4 +440,32 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail, validateToken };
+/**
+ * Refreshes the JWT token if the current token is valid
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const refreshToken = (req, res) => {
+  try {
+    const { user } = req;
+    
+    const token = jwt.sign(
+      { personId: user.personId, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    
+    res.status(200).json({
+      success: true,
+      token
+    });
+  } catch (err) {
+    console.error('Error refreshing token:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+module.exports = { login, signup, verifyEmail, updateCredentials, sendUpdateCredentialsEmail, refreshToken, validateToken };

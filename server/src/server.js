@@ -14,7 +14,7 @@ const cors = require("cors");
 const authController = require('./controller/authController');
 const applicationController = require('./controller/applicationController'); 
 const recruiterController = require('./controller/recruiterController'); 
-
+const { verifyToken, requireApplicant, requireRecruiter} = require('./middleware/auth');
 
 const app = express();
 
@@ -23,7 +23,21 @@ const app = express();
  */
 app.use(express.json());
 
-app.use(cors());
+/**
+ * Configure CORS with restrictions
+ * Only allow specific origins, methods, and headers
+ */
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://iv1201-recruitment-application-frontend.onrender.com']
+    : ['http://localhost:8080'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
 
 /**
  * Database connection check
@@ -48,18 +62,17 @@ app.get('/ping', (req, res) => {
  * Define authentication routes
  */
 app.post('/users/login', authController.login);
-app.post('/users/signin')
 app.post('/users/signup', authController.signup);
-
 app.post('/users/verify-email', authController.verifyEmail);
 app.post('/users/send-update-email', authController.sendUpdateCredentialsEmail);
 app.post('/users/update-credentials', authController.updateCredentials);
 
-app.get('/competences', applicationController.getCompetences);
-app.post('/applications/submit', applicationController.submitApplication);
-app.get('/applications/fetch', recruiterController.getApplications)
-app.post('/applications/update', recruiterController.updateApplication)
 app.post('/users/validate-token', authController.validateToken);
+app.post('/users/refresh-token', verifyToken, authController.refreshToken);
+app.get('/competences', verifyToken, applicationController.getCompetences);
+app.post('/applications/submit', verifyToken, requireApplicant, applicationController.submitApplication);
+app.get('/applications/fetch', verifyToken, requireRecruiter, recruiterController.getApplications);
+app.post('/applications/update', verifyToken, requireRecruiter, recruiterController.updateApplication);
 
 
 /**

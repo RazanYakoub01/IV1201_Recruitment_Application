@@ -7,6 +7,11 @@ const applicantDAO = require('../integration/ApplicantDAO');
  */
 const getCompetences = async (req, res) => {
   try {
+    console.log('Competences accessed by:', {
+      userId: req.user ? req.user.personId : 'Unauthenticated',
+      timestamp: new Date().toISOString()
+    });
+
     const competences = await applicantDAO.getCompetences();
 
     if (competences.length === 0) {
@@ -41,6 +46,17 @@ const submitApplication = async (req, res) => {
     expertiseCount: expertise?.length || 0,
     availabilityCount: availability?.length || 0,
   });
+
+  if (req.user.personId !== userId) {
+    console.log('Unauthorized application submission attempt:', { 
+      tokenUserId: req.user.personId, 
+      requestedUserId: userId 
+    });
+    return res.status(403).json({
+      success: false,
+      message: 'Unauthorized. You can only submit applications for yourself.',
+    });
+  }
 
   if (!userId || typeof userId !== 'number' || userId <= 0) {
     console.log('2. Failed at userId validation:', { userId });

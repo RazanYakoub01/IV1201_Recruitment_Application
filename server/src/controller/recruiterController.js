@@ -2,11 +2,18 @@ const recruiterDAO = require('../integration/RecruiterDAO');
 
 /**
  * Fetches all applications for recruiters.
+ * Requires recruiter role authentication.
+ * 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 const getApplications = async (req, res) => {
   try {
+    console.log('Applications accessed by recruiter:', {
+      recruiterId: req.user.personId,
+      timestamp: new Date().toISOString()
+    });
+
     const applications = await recruiterDAO.getApplications();
 
     if (applications.length === 0) {
@@ -31,11 +38,19 @@ const getApplications = async (req, res) => {
 
 /**
  * Updates the status of an application.
+ * Requires recruiter role authentication.
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 const updateApplication = async (req, res) => {
   const { application_id, status, lastUpdated } = req.body;
+
+  console.log('Application status update attempt:', {
+    recruiterId: req.user.personId,
+    applicationId: application_id,
+    newStatus: status,
+    timestamp: new Date().toISOString()
+  });
 
   if (!application_id || typeof application_id !== 'number' || application_id <= 0) {
     return res.status(400).json({
@@ -70,7 +85,12 @@ const updateApplication = async (req, res) => {
   }
 
   try {
-    const result = await recruiterDAO.updateApplication(application_id, status, lastUpdated);
+    const result = await recruiterDAO.updateApplication(
+      application_id, 
+      status, 
+      lastUpdated,
+      req.user.personId
+    );
 
     if (result.success) {
       return res.status(200).json(result);

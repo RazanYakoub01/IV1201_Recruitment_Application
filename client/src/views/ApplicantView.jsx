@@ -7,11 +7,13 @@ import '../styles/Applicant.css';
  * This component handles the job application process, allowing users to select their area of expertise,
  * specify years of experience, and define availability periods before submitting their application.
  * 
- * @param {function} onSubmit - Function to handle form submission.
- * @param {Array} competences - List of available competences.
+ * @param {Object} user - The authenticated user object
+ * @param {boolean} accessError - Whether the user has access to this page
+ * @param {function} onSubmit - Function to handle form submission
+ * @param {Array} competences - List of available competences
+ * @param {string} error - Error message from the presenter
  */
-const ApplicantForm = ({ onSubmit, competences }) => {
-  const [user, setUser] = useState(null);
+const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presenterError }) => {
   const [selectedCompetence, setSelectedCompetence] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
   const [expertise, setExpertise] = useState([]);
@@ -22,16 +24,13 @@ const ApplicantForm = ({ onSubmit, competences }) => {
   const [status, setStatus] = useState(null);
 
   /**
-   * useEffect hook to retrieve user data from localStorage upon component mount.
+   * useEffect hook to set application status based on user data
    */
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setStatus(parsedUser.application_status);
+    if (user) {
+      setStatus(user.application_status || 'unsent');
     }
-  }, []);
+  }, [user]);
 
   /**
    * Adds a selected competence and years of experience to the expertise list.
@@ -160,8 +159,18 @@ const ApplicantForm = ({ onSubmit, competences }) => {
     }
   };
 
-  if (!user || status === null) {
+  /**
+   * Renders an error message if the user is not logged in.
+   */
+  if (!user) {
     return <div className="error-message">You must be logged in to access this page. Please log in first!</div>;
+  }
+
+  /**
+   * Renders an error message if the user does not have access to the applicant view.
+   */
+  if (accessError) {
+    return <div className="error-message">You don't have access to this page.</div>;
   }
 
   return (
@@ -171,7 +180,7 @@ const ApplicantForm = ({ onSubmit, competences }) => {
 
         <h3>Hello, {user.username}!</h3>
 
-        {error && <div className="error-message"><p>{error}</p></div>}
+        {(error || presenterError) && <div className="error-message"><p>{error || presenterError}</p></div>}
 
         {status === 'unsent' ? (
           <>
