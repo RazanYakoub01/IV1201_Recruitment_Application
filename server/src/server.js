@@ -23,7 +23,21 @@ const app = express();
  */
 app.use(express.json());
 
-app.use(cors());
+/**
+ * Configure CORS with restrictions
+ * Only allow specific origins, methods, and headers
+ */
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://iv1201-recruitment-application-frontend.onrender.com']
+    : ['http://localhost:8080'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
 
 /**
  * Database connection check
