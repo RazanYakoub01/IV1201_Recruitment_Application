@@ -3,7 +3,7 @@ const { login } = require('./loginHelper');
 const { expect } = require('@jest/globals');
 
 
-jest.setTimeout(30000); // Set a global timeout for all the tests
+jest.setTimeout(30000);
 
 /**
  * Test the recruiter page functionality

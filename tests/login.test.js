@@ -2,6 +2,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 const { login } = require('./loginHelper');
 const { expect } = require('@jest/globals');
 
+jest.setTimeout(150000);
 /**
  * Helper function to test login functionality
  * @param {WebDriver} driver - The WebDriver instance

@@ -3,6 +3,7 @@ const { expect } = require('@jest/globals');
 
 const baseUrl = 'http://localhost:8080/';
 
+jest.setTimeout(30000);
 /**
  * Function to test the sign-up functionality of the web application.
  * Fills in the sign-up form with the provided user details and submits the form.

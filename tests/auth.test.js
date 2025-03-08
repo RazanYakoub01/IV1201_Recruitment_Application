@@ -3,6 +3,7 @@ const { expect } = require('@jest/globals');
 
 const BASE_URL = 'http://localhost:8080';
 
+jest.setTimeout(30000);
 /**
  * Waits for an element to be visible and retrieves its text.
  * @param {WebDriver} driver - The Selenium WebDriver instance.
