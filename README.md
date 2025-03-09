@@ -31,7 +31,14 @@ git clone https://github.com/RazanYakoub01/IV1201_Recruitment_Application.git
 cd IV1201_Recruitment_Application
 ```
 
-### **2. Start the Application Using Docker**
+```js
+If you are running the application locally, you must remove or comment out the following lines from server/src/db.js:
+ssl: {
+    rejectUnauthorized: false,
+},
+```
+
+### **3. Start the Application Using Docker**
 Run the following command:
 ```sh
 docker-compose up --build -d
@@ -41,13 +48,13 @@ This will:
 - Start the backend server (`recruitment_backend_container`)
 - Start the frontend app (`recruitment_frontend_container`)
 
-### **3. Verify Containers Are Running**
+### **4. Verify Containers Are Running**
 To check running containers:
 ```sh
 docker ps
 ```
 
-### **4. Access the Application**
+### **5. Access the Application**
 - **Frontend:** [http://localhost:8080](http://localhost:8080)
 - **Backend API:** [http://localhost:3001](http://localhost:3001)
 
