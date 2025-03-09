@@ -73,7 +73,7 @@ describe('Recruiter Page Tests', () => {
   });
 
   test('Update application status - concurrent update scenario', async () => {
-    await driver.get('http://localhost:8080/recruiter'); 
+    await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/recruiter'); 
     
     const firstListButton = await driver.wait(until.elementLocated(By.css('.fetch-applications-button')), 5000);
     await firstListButton.click();

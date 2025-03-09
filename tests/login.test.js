@@ -13,7 +13,7 @@ jest.setTimeout(150000);
  * @param {string} expectedPageUrl - The expected page URL after login
  */
 async function testLogin(driver, username, password, expectedError, expectedWelcomeMessage, expectedPageUrl) {
-  await driver.get('http://localhost:8080/');
+  await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/');
 
   const usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
   if (username) await usernameField.sendKeys(username);
@@ -53,7 +53,7 @@ async function testLogin(driver, username, password, expectedError, expectedWelc
  * @param {WebDriver} driver - The WebDriver instance
  */
 async function testSignUp(driver) {
-  await driver.get('http://localhost:8080/');
+  await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/');
 
   const signUpButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Sign Up')]")), 5000);
   await signUpButton.click();
@@ -71,7 +71,7 @@ async function testSignUp(driver) {
  * @param {WebDriver} driver - The WebDriver instance
  */
 async function testRestore(driver) {
-  await driver.get('http://localhost:8080/');
+  await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/');
 
   const forgotButton = await driver.wait(until.elementLocated(By.xpath("//button[contains(text(),'Forgot Username or Password?')]")), 5000);
   await forgotButton.click();

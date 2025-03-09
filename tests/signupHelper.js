@@ -13,7 +13,7 @@ const { By, until } = require('selenium-webdriver');
  * @returns {WebDriver} - The WebDriver instance after submission.
  */
 async function signup(driver, firstName, lastName, email, personNumber, username, password) {
-  await driver.get('http://localhost:8080/signup');
+  await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/signup');
   
   await driver.wait(until.elementLocated(By.name('firstName')), 5000).sendKeys(firstName);
   await driver.wait(until.elementLocated(By.name('lastName')), 5000).sendKeys(lastName);

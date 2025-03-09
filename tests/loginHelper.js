@@ -14,7 +14,7 @@ const { Builder, By, until } = require('selenium-webdriver');
  * @returns {WebDriver} The WebDriver instance after the login action has been performed.
  */
 async function login(driver, username, password) {
-  await driver.get('http://localhost:8080/'); 
+  await driver.get('https://iv1201-recruitment-application-frontend.onrender.com/'); 
 
   let usernameField = await driver.wait(until.elementLocated(By.id('username')), 5000);
   await usernameField.sendKeys(username);

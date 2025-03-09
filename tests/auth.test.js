@@ -1,7 +1,7 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const { expect } = require('@jest/globals');
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'https://iv1201-recruitment-application-frontend.onrender.com';
 
 jest.setTimeout(30000);
 
