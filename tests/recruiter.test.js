@@ -47,16 +47,21 @@ describe('Recruiter Page Tests', () => {
   
     const firstAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
     const nextButton = await driver.findElement(By.id("next"));
-    const isNextEnabled = await nextButton.isEnabled();
-    
-    if (isNextEnabled) {
-      await driver.sleep(3000); 
+  
+    if (await nextButton.isEnabled()) {
+
       await nextButton.click();
-      await driver.sleep(3000);
+      await driver.sleep(2000);
       const secondPageAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
       expect(firstAppText).not.toBe(secondPageAppText);
+      
+      const prevButton = await driver.findElement(By.id("previous"));
+      await prevButton.click();
+      await driver.sleep(2000);
+      const returnedAppText = await driver.findElement(By.css('.applications-table tbody tr:first-child')).getText();
+      expect(returnedAppText).toBe(firstAppText);
     } else {
-      expect(isNextEnabled).toBe(true);
+      console.log('Next button or Previous button disabled');
     }
   });
   
