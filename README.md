@@ -30,9 +30,9 @@ git clone https://github.com/RazanYakoub01/IV1201_Recruitment_Application.git
 
 cd IV1201_Recruitment_Application
 ```
+If you are running the application locally, you must remove or comment out the following lines from server/src/db.js:
 
 ```js
-If you are running the application locally, you must remove or comment out the following lines from server/src/db.js:
 ssl: {
     rejectUnauthorized: false,
 },
