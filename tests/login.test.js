@@ -87,12 +87,14 @@ async function testRestore(driver) {
 describe('Login, Sign Up and Restore Tests', () => {
   let driver;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     driver = await new Builder().forBrowser('chrome').build();
   });
 
-  afterAll(async () => {
-    await driver.quit();
+  afterEach(async () => {
+    if (driver) {
+      await driver.quit();
+    }
   });
 
   test('Test invalid credentials for login', async () => {

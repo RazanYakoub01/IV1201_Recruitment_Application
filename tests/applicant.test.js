@@ -21,7 +21,7 @@ describe('ApplicantForm Tests', () => {
     driver = await new Builder().forBrowser('chrome').build();
     console.log("Launching browser...");
   
-    const uniqueUsername = `testuser_${Date.now()}`; 
+    const uniqueUsername = `user${Date.now()}`; 
     const password = 'password123';
     const firstName = 'John';
     const lastName = 'Doe';

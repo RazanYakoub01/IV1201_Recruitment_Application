@@ -1,7 +1,8 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const { expect } = require('@jest/globals');
+const { login } = require('./loginHelper');
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://localhost:8080/';
 
 jest.setTimeout(30000);
 
@@ -23,7 +24,7 @@ async function getElementText(driver, selector) {
  * @param {WebDriver} driver - The Selenium WebDriver instance.
  */
 async function testEmailVerification(driver) {
-  await driver.get(`${BASE_URL}/restore`);
+  await driver.get(`${BASE_URL}restore`);
 
   const emailInput = await driver.findElement(By.id('email'));
   await emailInput.sendKeys('invalid-email');
@@ -45,11 +46,11 @@ async function testEmailVerification(driver) {
  * @param {WebDriver} driver - The Selenium WebDriver instance.
  */
 async function testInvalidOrMissingToken(driver) {
-  await driver.get(`${BASE_URL}/update-credentials`); // No token
+  await driver.get(`${BASE_URL}update-credentials`); // No token
   const tokenError = await getElementText(driver, '.error-message');
   expect(tokenError).toContain('Invalid or missing token');
 
-  await driver.get(`${BASE_URL}/update-credentials?token=invalid`);
+  await driver.get(`${BASE_URL}update-credentials?token=invalid`);
   const invalidTokenError = await getElementText(driver, '.error-message');
   expect(invalidTokenError).toContain('Invalid token');
 }
@@ -61,7 +62,7 @@ async function testInvalidOrMissingToken(driver) {
  */
 async function extractUpdateLink(driver) {
   const emailPreview = await getElementText(driver, '.email-preview pre');
-  const updateLinkPattern = new RegExp(`(${BASE_URL.replace(/\//g, '\\/')}/update-credentials\\?token=[^ ]+)`);
+  const updateLinkPattern = new RegExp(`(${BASE_URL.replace(/\//g, '\\/')}update-credentials\\?token=[^ ]+)`);
   const linkMatch = emailPreview.match(updateLinkPattern);
 
   expect(linkMatch).not.toBeNull();
@@ -89,14 +90,12 @@ async function updateCredentials(driver, updateLink, newUsername, newPassword) {
   await usernameField.sendKeys(uniqueUsername);
   await passwordField.sendKeys(newPassword);
   await submitButton.click();
+  console.log(uniqueUsername);
+  await driver.wait(until.urlIs(BASE_URL), 30000);
 
-  await driver.wait(until.urlContains('/'), 5000);
 
-  await driver.wait(until.elementLocated(By.id('username')), 15000);
-  await driver.findElement(By.id('username')).sendKeys(uniqueUsername);
-  await driver.findElement(By.id('password')).sendKeys(newPassword);
-  await driver.findElement(By.css('.submit-button')).click();
-
+  await login(driver,uniqueUsername,newPassword);
+  console.log(uniqueUsername);
   await driver.wait(until.urlContains('/applicant'), 5000);
   const currentUrl = await driver.getCurrentUrl();
   expect(currentUrl).toContain('/applicant');
@@ -158,7 +157,7 @@ describe('Email Verification and Credentials Update Tests', () => {
       await extractUpdateLink(driver);
     }
 
-    const newUsername = 'updatedUser';
+    const newUsername = 'user';
     const newPassword = 'NewPassword123!';
     await updateCredentials(driver, globalUpdateLink, newUsername, newPassword);
   });

@@ -25,7 +25,10 @@ async function signup(driver, firstName, lastName, email, personNumber, username
   let signUpButton = await driver.findElement(By.css('.submit-button'));
   await signUpButton.click();
 
-  await driver.wait(until.elementLocated(By.css('.success-message, .error-message')), 5000);
+  await driver.wait(until.elementLocated(By.css('.success-message')), 5000);
+  const successMessageElement = await driver.findElement(By.css('.success-message'),15000);
+  await successMessageElement.getText();
+
 
   return driver;
 }

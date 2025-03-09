@@ -2,6 +2,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 const { expect } = require('@jest/globals');
 
 const baseUrl = 'http://localhost:8080/';
+const globalUserName = `johndoe${Date.now()}`;
 
 jest.setTimeout(30000);
 /**
@@ -71,12 +72,13 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: globalUserName,
       password: 'Password123!',
     });
 
-    const successMessage = await driver.findElements(By.css('.success-message'));
-    expect(successMessage.length).toBeGreaterThan(0);
+    const successMessageElement = await driver.findElement(By.css('.success-message'),15000);
+    const successMessageText = await successMessageElement.getText();
+    expect(successMessageText).toContain('Account created successfully!');
   });
 
   test('Duplicate Username', async () => {
@@ -85,7 +87,7 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: '199001011234',
-      username: 'john_doe', // Reuse username
+      username: globalUserName,
       password: 'Password123!',
     });
 
@@ -97,7 +99,7 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'Password123!',
     });
 
@@ -109,7 +111,7 @@ describe('Sign-Up Tests', () => {
       firstName: 'John',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'Password123!',
     });
 
@@ -121,7 +123,7 @@ describe('Sign-Up Tests', () => {
       firstName: 'John',
       lastName: 'Doe',
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'Password123!',
     });
 
@@ -169,7 +171,7 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: 'abcd1234efgh',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'Password123!',
     });
 
@@ -182,7 +184,7 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: 'invalid_email_format',
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'Password123!',
     });
 
@@ -195,7 +197,7 @@ describe('Sign-Up Tests', () => {
       lastName: 'Doe',
       email: `johndoe${Date.now()}@example.com`,
       personNumber: '199001011234',
-      username: `john_doe${Date.now()}`,
+      username: `johndoe${Date.now()}`,
       password: 'pass',
     });
 

@@ -39,8 +39,7 @@ const UpdateCredentialsPresenter = () => {
           throw new Error(data.message || 'Token validation failed.');
         }
 
-        // Token is valid, proceed with any further actions if needed.
-        setSuccessMessage('test test');
+        // Token is valid, proceed with any further actions!
       } catch (err) {
         setError(err.message || 'Failed to validate token.');
       }

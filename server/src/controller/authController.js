@@ -142,9 +142,7 @@ const updateCredentials = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    const result = await userDAO.updateUserCredentials(email, username, hashedPassword);
+    const result = await userDAO.updateUserCredentials(email, username, newPassword);
 
     if (!result) {
       console.error('Failed to update credentials');
@@ -319,8 +317,11 @@ const login = async (req, res) => {
         code: 'SECURITY_ERROR'
       });
     }
-
+    
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Entered password:", password);
+    console.log("Stored password in DB:", user.password);
+
     if (!isMatch) {
       console.log('Login failed: Invalid password:', { username });
       return res.status(401).json({
