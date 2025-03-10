@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Login from '../views/Login';
 import { setAuthToken, setCurrentUser } from '../util/auth';
 
@@ -11,6 +12,7 @@ import { setAuthToken, setCurrentUser } from '../util/auth';
  * @returns {React.ReactElement} Renders the Login view component with necessary handlers
  */
 const LoginPresenter = ({ onLoginSuccess }) => {
+  const { t } = useTranslation();
   const [error, setError] = useState('');
   const navigate = useNavigate(); 
 
@@ -36,17 +38,16 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       if (!response.ok) {
         switch (response.status) {
           case 400:
-            throw new Error('Please enter both username and password');
+            throw new Error(t('login.error.required_username'));
           case 401:
-            throw new Error('Invalid username or password');
+            throw new Error(t('login.error.invalid_credentials'));
           case 500:
-            throw new Error('Server error. Please try again later');
+            throw new Error(t('login.error.server_error'));
           default:
-            throw new Error(data.message || 'Login failed');
+            throw new Error(data.message || t('login.error.login_failed'));
         }
       }
 
-      //alert(`Login successful! ${data.user.username} AND ${data.user.application_status} AND ${data.user.person_id} `);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
@@ -58,7 +59,7 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       } else if (data.user.role === 2) {
         navigate('/applicant');
       } else {
-        alert("Unknown role. Please contact support.");
+        alert(t("login.error.unknown_role"));
       }
 
       onLoginSuccess(data.user.role); 
@@ -69,13 +70,12 @@ const LoginPresenter = ({ onLoginSuccess }) => {
       });
 
       if (err.name === 'AbortError') {
-        setError('Request timed out. Please try again.');
+        setError(t('login.error.request_timeout'));
       } else {
-        setError(err.message || 'Login failed. Please try again.');
+        setError(err.message || t('login.error.login_failed'));
       }
     }
   };
-
 
   const handleNavigateToSignUp = () => {
     navigate('/signup');

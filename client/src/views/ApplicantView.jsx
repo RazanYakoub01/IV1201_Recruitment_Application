@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Applicant.css';
 
 /**
@@ -14,6 +15,8 @@ import '../styles/Applicant.css';
  * @param {string} error - Error message from the presenter
  */
 const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presenterError }) => {
+  const { t } = useTranslation();
+  
   const [selectedCompetence, setSelectedCompetence] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
   const [expertise, setExpertise] = useState([]);
@@ -37,20 +40,17 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
    */
   const handleAddExpertise = () => {
     if (!selectedCompetence || !yearsOfExperience) {
-      setError('Please select a competence and years of experience.');
+      setError(t('applicant.error.select_competence'));
       return;
     }
 
     const experience = parseInt(yearsOfExperience, 10);
     if (isNaN(experience) || experience < 0 || experience > 99) {
-      setError('Please enter a valid number of years of experience between 0 and 99.');
+      setError(t('applicant.error.valid_experience'));
       return;
     }
   
-    setExpertise([ 
-      ...expertise,
-      { competence_id: selectedCompetence, years_of_experience: yearsOfExperience },
-    ]);
+    setExpertise([...expertise, { competence_id: selectedCompetence, years_of_experience: yearsOfExperience }]);
     setYearsOfExperience('');
     setError('');
   };
@@ -60,25 +60,19 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
    */
   const handleAddAvailability = () => {
     if (!fromDate || !toDate) {
-      setError('Please provide both start and end dates.');
+      setError(t('applicant.error.select_dates'));
       return;
     }
 
-    const today = new Date().toISOString().split('T')[0]; 
-
-    const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/;
-    if (!dateRegex.test(fromDate) || !dateRegex.test(toDate)) {
-      setError('Invalid date format. Use YYYY-MM-DD.');
-      return;
-    }
+    const today = new Date().toISOString().split('T')[0];
 
     if (new Date(fromDate) < new Date(today) || new Date(toDate) < new Date(today)) {
-      setError('Dates cannot be in the past.');
+      setError(t('applicant.error.past_dates'));
       return;
     }
 
     if (new Date(fromDate) > new Date(toDate)) {
-      setError('From date cannot be later than To date.');
+      setError(t('applicant.error.invalid_date_range'));
       return;
     }
 
@@ -94,7 +88,7 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
   const handleSubmit = () => {
     if (user) {
       if (expertise.length === 0 || availability.length === 0) {
-        setError('Please add at least one competence and one availability period before submitting.');
+        setError(t('applicant.error.missing_data'));
         return; 
       }  
       const { person_id } = user;
@@ -104,7 +98,7 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
       setAvailability([]);
       setStatus('unhandled');
     } else {
-      setError('User not found');
+      setError(t('applicant.error.user_not_found'));
     }
   };
 
@@ -131,29 +125,29 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
     if (status === 'accepted') {
       return (
         <div className="success-message">
-          <h3>Your application has been accepted!</h3>
-          <p>We will contact you soon!</p>
+          <h3>{t('applicant.status.accepted.title')}</h3>
+          <p>{t('applicant.status.accepted.message')}</p>
         </div>
       );
     } else if (status === 'rejected') {
       return (
         <div className="error-message">
-          <h3>Sorry, this time we chose to go with other candidates.</h3>
-          <p>We will inform you when the new application period opens up.</p>
+          <h3>{t('applicant.status.rejected.title')}</h3>
+          <p>{t('applicant.status.rejected.message')}</p>
         </div>
       );
     } else if (status === 'unhandled' || status === 'Missing Availability' || status === 'Missing Competence') {
       return (
         <div className="success-message">
-          <h3>Your application is under review!</h3>
-          <p>We are processing your details and will get back to you shortly.</p>
+          <h3>{t('applicant.status.unhandled.title')}</h3>
+          <p>{t('applicant.status.unhandled.message')}</p>
         </div>
       );
     } else {
       return (  
         <div className="error-message">
-          <h3>Something went wrong.</h3>
-          <p>Please log out and try again. If the issue persists, contact support.</p>
+          <h3>{t('applicant.status.error.title')}</h3>
+          <p>{t('applicant.status.error.message')}</p>
         </div>
       );
     }
@@ -163,115 +157,50 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
    * Renders an error message if the user is not logged in.
    */
   if (!user) {
-    return <div className="error-message">You must be logged in to access this page. Please log in first!</div>;
+    return <div className="error-message">{t('applicant.error.user_not_found')}</div>;
   }
 
   /**
    * Renders an error message if the user does not have access to the applicant view.
    */
   if (accessError) {
-    return <div className="error-message">You don't have access to this page.</div>;
+    return <div className="error-message">{t('applicant.error.access_denied')}</div>;
   }
 
   return (
     <div className="applicant-container">
       <div className="applicant-box">
-        <h2 className="applicant-header">Job Application</h2>
-
-        <h3>Hello, {user.username}!</h3>
-
+        <h2 className="applicant-header">{t('applicant.title')}</h2>
+        <h3>{t('applicant.greeting', { username: user.username })}</h3>
         {(error || presenterError) && <div className="error-message"><p>{error || presenterError}</p></div>}
 
         {status === 'unsent' ? (
           <>
             <div className="expertise-section">
-              <h3 className="applicant-title">Select Area of Expertise</h3>
+              <h3 className="applicant-title">{t('applicant.select_expertise')}</h3>
               <div className="applicant-input-group">
-                <select
-                  className="expertise-dropdown"
-                  onChange={(e) => setSelectedCompetence(e.target.value)}
-                  value={selectedCompetence}
-                >
-                  <option value="">Select Expertise</option>
+                <select className="expertise-dropdown" onChange={(e) => setSelectedCompetence(e.target.value)} value={selectedCompetence}>
+                  <option value="">{t('applicant.select_expertise_placeholder')}</option>
                   {competences.map((competence) => (
-                    <option key={competence.competence_id} value={competence.competence_id}>
-                      {competence.name}
-                    </option>
+                    <option key={competence.competence_id} value={competence.competence_id}>{competence.name}</option>
                   ))}
                 </select>
-
-                <input
-                  className="expertise-dropdown"
-                  type="number"
-                  placeholder="Years of Experience"
-                  value={yearsOfExperience}
-                  onChange={(e) => setYearsOfExperience(e.target.value)}
-                />
-                <button className="submit-button" onClick={handleAddExpertise}>
-                  Add Expertise
-                </button>
+                <input className="expertise-dropdown" type="number" placeholder={t('applicant.years_of_experience')} value={yearsOfExperience} onChange={(e) => setYearsOfExperience(e.target.value)} />
+                <button className="submit-button" onClick={handleAddExpertise}>{t('applicant.add_expertise')}</button>
               </div>
-            </div>
-
-            <div className="expertise-list">
-              <h3>Your Expertise</h3>
-              <ul>
-                {expertise.map((expert, idx) => {
-                  const competence = competences
-                    .map((competence) => {
-                      if (competence.competence_id == expert.competence_id) {
-                        return competence.name;
-                      }
-                      return null;
-                    })
-                    .filter((name) => name !== null);
-                  return (
-                    <li key={idx}>
-                      {competence.length > 0 ? competence[0] : 'Competence not found'}: {expert.years_of_experience} years
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
 
             <div className="availability-section">
-              <h3 className="applicant-title">Select Availability</h3>
+              <h3 className="applicant-title">{t('applicant.select_availability')}</h3>
               <div className="applicant-input-group">
-                <input
-                  className="expertise-dropdown"
-                  value={fromDate}
-                  name="fromDate"
-                  onChange={(e) => setFromDate(e.target.value)}
-                />
-                <input
-                  className="expertise-dropdown"
-                  value={toDate}
-                  name="toDate"
-                  onChange={(e) => setToDate(e.target.value)}
-                />
-                <button className="submit-button" id="addAvailability" onClick={handleAddAvailability}>
-                  Add Availability
-                </button>
+                <input className="expertise-dropdown" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                <input className="expertise-dropdown" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+                <button className="submit-button" onClick={handleAddAvailability}>{t('applicant.add_availability')}</button>
               </div>
             </div>
 
-            <div className="availability-list">
-              <h3>Your Availability</h3>
-              <ul>
-                {availability.map((period, idx) => (
-                  <li key={idx}>
-                    From: {period.from_date}, To: {period.to_date}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <button className="submit-button" id="submit" onClick={handleSubmit}>
-              Submit Application
-            </button>
-            <button className="cancel-button" onClick={handleCancel}>
-              Cancel
-            </button>
+            <button className="submit-button" onClick={handleSubmit}>{t('applicant.submit_application')}</button>
+            <button className="cancel-button" onClick={handleCancel}>{t('applicant.cancel')}</button>
           </>
         ) : (
           renderStatusMessage()

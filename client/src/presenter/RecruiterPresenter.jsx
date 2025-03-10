@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import RecruiterView from '../views/RecruiterView';
 import { useNavigate } from 'react-router-dom';
-import { createAuthHeaders, isRecruiter } from '../util/auth';
+import { createAuthHeaders } from '../util/auth';
+import { useTranslation } from 'react-i18next';
 
 /**
  * The RecruiterPresenter component handles fetching and updating applications.
@@ -10,6 +11,7 @@ import { createAuthHeaders, isRecruiter } from '../util/auth';
  * @component
  */
 const RecruiterPresenter = () => {
+  const { t } = useTranslation(); // Use translation hook
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState('');
   const [showApplications, setShowApplications] = useState(false);
@@ -32,7 +34,7 @@ const RecruiterPresenter = () => {
           setAccessError(true);
         }
       } catch (e) {
-        console.error('Error parsing user:', e);
+        console.error(t('recruiter.error.parsing_user'), e);
         setUser(null);
       }
     }
@@ -58,27 +60,27 @@ const RecruiterPresenter = () => {
       }
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
+        throw new Error(t('recruiter.error.fetch_failed', { statusText: response.statusText }));
       }
       
       const data = await response.json();
-      console.log('Applications fetched:', data);
+      console.log(t('recruiter.log.applications_fetched'), data);
       if (data && Array.isArray(data)) {
         setApplications(data);
         setShowApplications(true);
-        console.log('Applications state updated:', data.length, 'applications');
+        console.log(t('recruiter.log.applications_updated', { count: data.length }));
       } else if (data && data.applications && Array.isArray(data.applications)) {
         setApplications(data.applications);
         setShowApplications(true);
-        console.log('Applications state updated:', data.applications.length, 'applications');
+        console.log(t('recruiter.log.applications_updated', { count: data.applications.length }));
       } else {
-        console.error('Unexpected data format:', data);
-        setError('Received unexpected data format from server');
+        console.error(t('recruiter.error.unexpected_data_format'), data);
+        setError(t('recruiter.error.unexpected_data_format'));
       }
       
     } catch (err) {
-      console.error('Error fetching applications:', err);
-      setError('Failed to load applications. Please try again later.');
+      console.error(t('recruiter.error.fetch_error'), err);
+      setError(t('recruiter.error.fetch_error'));
     }
   };
 
@@ -107,7 +109,7 @@ const RecruiterPresenter = () => {
         const data = await response.json();
 
         if (response.ok) {
-            setMessage({ type: 'success', text: 'Application status updated successfully' });
+            setMessage({ type: 'success', text: t('recruiter.update_success') });
             setSelectedApplication((prev) => ({ ...prev, application_status: newStatus }));
 
             setApplications((prevApplications) =>
@@ -116,11 +118,11 @@ const RecruiterPresenter = () => {
                 )
             );
         } else {
-            setMessage({ type: 'error', text: data.message || 'Error updating application status' });
+            setMessage({ type: 'error', text: data.message || t('recruiter.update_error') });
         }
       } catch (err) {
-        console.error('Error in updating application status:', err);
-        setMessage({ type: 'error', text: 'Error updating application status' });   
+        console.error(t('recruiter.error.update_status'), err);
+        setMessage({ type: 'error', text: t('recruiter.error.update_status') });   
       }
   };
 

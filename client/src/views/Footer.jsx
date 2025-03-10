@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Footer.css';
 
 /**
@@ -9,10 +10,12 @@ import '../styles/Footer.css';
 */
 
 const Footer = () => {
+  const { t } = useTranslation();
+  
   return (
     <footer className="footer">
       <div className="footer-container">
-        <p className="footer-text">© 2025 HireFlow. All rights reserved.</p>
+        <p className="footer-text">{t('footer.copyright')}</p>
       </div>
     </footer>
   );

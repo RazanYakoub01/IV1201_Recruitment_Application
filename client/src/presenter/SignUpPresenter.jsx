@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SignUpView from '../views/SignUpView';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Presenter component for handling sign-up logic and backend integration.
@@ -9,6 +10,7 @@ import SignUpView from '../views/SignUpView';
  * @returns {React.ReactElement} Renders the SignUp view with necessary handlers
  */
 const SignUpPresenter = ({ onSignUpSuccess }) => {
+  const { t } = useTranslation();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,15 +20,15 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
    */
   const errorMessages = {
     409: {
-      default: 'Username or email already exists',
-      USERNAME_TAKEN: 'This username is already taken'
+      default: t('signup.error.email_exists'),
+      USERNAME_TAKEN: t('signup.error.username_taken')
     },
     400: {
-      INVALID_EMAIL: 'Please enter a valid email address',
-      INVALID_PNR: 'Please enter a valid person number',
-      MISSING_FIELDS: 'Please fill in all required fields'
+      INVALID_EMAIL: t('signup.error.invalid_email'),
+      INVALID_PNR: t('signup.error.invalid_person_number'),
+      MISSING_FIELDS: t('signup.error.missing_fields')
     },
-    500: 'Unable to complete registration. Please try again later'
+    500: t('signup.error.server_error')
   };
 
   /**
@@ -40,7 +42,7 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
 
     try {
       if (!navigator.onLine) {
-        throw new Error('No internet connection');
+        throw new Error(t('signup.error.no_internet'));
       }
 
       const endpoint = `${import.meta.env.VITE_BACKEND_URL}/users/signup`;
@@ -59,7 +61,8 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
           errorMessages[response.status]?.[data.code] || 
           errorMessages[response.status]?.default ||
           data.message ||
-          'Registration failed';
+          t('signup.error.server_error');
+
         console.log(response.status);
         throw new Error(errorMessage);
       }
@@ -67,20 +70,20 @@ const SignUpPresenter = ({ onSignUpSuccess }) => {
       setSuccess(true);
       onSignUpSuccess();
 
-      } catch (err) {
-        setSuccess(false);
-        if (err.name === 'AbortError') {
-          setError('Request timed out. Please try again.');
-        } else {
-          setError(err.message);
-        }
-        console.error('SignUp Error:', {
-          error: err.message,
-          userData: { ...userData, password: '[REDACTED]' }
-        });
-      } finally {
-        setIsLoading(false);
+    } catch (err) {
+      setSuccess(false);
+      if (err.name === 'AbortError') {
+        setError(t('signup.error.request_timeout'));
+      } else {
+        setError(err.message);
       }
+      console.error('SignUp Error:', {
+        error: err.message,
+        userData: { ...userData, password: '[REDACTED]' }
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return <SignUpView onSignUp={handleSignUp} error={error} success={success} />;

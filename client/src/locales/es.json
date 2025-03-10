@@ -1,0 +1,165 @@
+{
+    "header": {
+      "title": "HireFlow",
+      "logout": "Cerrar sesión"
+    },
+    "footer": {
+      "copyright": "© 2025 HireFlow. Todos los derechos reservados."
+    },
+    "language_switcher": {
+      "choose_language": "Elige idioma"
+    },
+    
+        "applicant": {
+          "title": "Solicitud de empleo",
+          "greeting": "¡Hola, {{username}}!",
+          "select_expertise": "Seleccionar área de especialización",
+          "select_expertise_placeholder": "Seleccionar especialización",
+          "years_of_experience": "Años de experiencia",
+          "add_expertise": "Agregar especialización",
+          "select_availability": "Seleccionar disponibilidad",
+          "add_availability": "Agregar disponibilidad",
+          "submit_application": "Enviar solicitud",
+          "cancel": "Cancelar",
+          "error": {
+            "select_competence": "Por favor seleccione una competencia y años de experiencia.",
+            "valid_experience": "Por favor ingrese un número válido de años de experiencia entre 0 y 99.",
+            "select_dates": "Por favor proporcione fechas de inicio y finalización.",
+            "past_dates": "Las fechas no pueden estar en el pasado.",
+            "invalid_date_range": "La fecha de inicio no puede ser posterior a la fecha de finalización.",
+            "missing_data": "Por favor agregue al menos una competencia y un período de disponibilidad antes de enviar.",
+            "user_not_found": "Usuario no encontrado.",
+            "access_denied": "No tienes acceso a esta página.",
+            "fetch_competences": "Error al obtener competencias. Inténtalo de nuevo más tarde.",
+            "submit_application_error": "Error al enviar la solicitud. Verifica tus datos e inténtalo de nuevo.",
+            "unauthorized": "No estás autorizado para realizar esta acción.",
+            "server_error": "Error del servidor. Inténtalo de nuevo más tarde."
+          },
+          "status": {
+            "accepted": {
+              "title": "¡Tu solicitud ha sido aceptada!",
+              "message": "Nos pondremos en contacto contigo pronto."
+            },
+            "rejected": {
+              "title": "Lo sentimos, esta vez elegimos a otros candidatos.",
+              "message": "Te informaremos cuando se abra un nuevo período de solicitud."
+            },
+            "unhandled": {
+              "title": "¡Tu solicitud está en revisión!",
+              "message": "Estamos procesando tus datos y nos pondremos en contacto contigo pronto."
+            },
+            "error": {
+              "title": "Algo salió mal.",
+              "message": "Cierra sesión e inténtalo de nuevo. Si el problema persiste, contacta con soporte."
+            }
+          }
+        },
+      
+    "login": {
+    "title": "Inicie sesión en su cuenta",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "forgot_password": "¿Olvidaste tu nombre de usuario o contraseña?",
+    "sign_in": "Iniciar sesión",
+    "no_account": "¿No tienes una cuenta?",
+    "sign_up": "Registrarse",
+    "error": {
+      "required_username": "Se requiere un nombre de usuario.",
+      "required_password": "Se requiere una contraseña.",
+      "invalid_credentials": "Nombre de usuario o contraseña inválidos.",
+      "server_error": "Error del servidor. Por favor, inténtelo de nuevo más tarde.",
+      "request_timeout": "La solicitud ha expirado. Por favor, inténtelo de nuevo.",
+      "login_failed": "Error al iniciar sesión. Por favor, inténtelo de nuevo."
+    }
+},
+        "signup": {
+          "title": "Crear una cuenta",
+          "first_name": "Nombre",
+          "last_name": "Apellido",
+          "email": "Correo electrónico",
+          "person_number": "Número de identificación",
+          "username": "Nombre de usuario",
+          "password": "Contraseña",
+          "sign_up": "Registrarse",
+          "go_back": "Volver al inicio de sesión",
+          "success_message": "¡Cuenta creada con éxito!",
+          "error": {
+            "required_first_name": "El nombre es obligatorio.",
+            "required_last_name": "El apellido es obligatorio.",
+            "invalid_email": "Formato de correo electrónico no válido.",
+            "invalid_person_number": "El número de identificación debe tener exactamente 12 dígitos y contener solo números.",
+            "short_username": "El nombre de usuario debe tener al menos 3 caracteres.",
+            "short_password": "La contraseña debe tener al menos 8 caracteres.",
+            "username_taken": "Este nombre de usuario ya está en uso.",
+            "email_exists": "El nombre de usuario o el correo electrónico ya existen.",
+            "missing_fields": "Por favor, complete todos los campos obligatorios.",
+            "request_timeout": "La solicitud ha caducado. Inténtalo de nuevo.",
+            "no_internet": "No hay conexión a Internet.",
+            "server_error": "No se pudo completar el registro. Inténtalo de nuevo más tarde."
+          }
+        },
+      
+    "recruiter": {
+      "welcome": "Bienvenido, {{username}}!",
+      "list_all_applications": "Listar todas las solicitudes",
+      "no_applications": "No se encontraron solicitudes.",
+      "application_details": "Detalles de la solicitud",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "status": "Estado",
+      "competences": "Competencias",
+      "availability": "Disponibilidad",
+      "update_status": "Actualizar estado",
+      "status_unhandled": "No gestionado",
+      "status_accepted": "Aceptado",
+      "status_rejected": "Rechazado",
+      "update_button": "Actualizar estado",
+      "back_button": "Volver a las solicitudes",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "login_required": "Debe iniciar sesión para ver esta página.",
+      "access_denied": "Acceso denegado. Solo los reclutadores pueden ver esta página.",
+      "update_error": "No se pudo actualizar el estado. Inténtalo de nuevo más tarde."
+    },
+    
+    
+    
+        "restore": {
+          "title": "Restablecer sus credenciales",
+          "email_label": "Ingrese su dirección de correo electrónico registrada:",
+          "send_link": "Enviar enlace de actualización",
+          "email_preview": "Vista previa del correo electrónico:",
+          "success_message": "Se ha enviado un enlace de restablecimiento a su correo electrónico.",
+          "error": {
+            "required_email": "Se requiere una dirección de correo electrónico.",
+            "invalid_email": "Formato de correo electrónico inválido.",
+            "email_not_found": "Correo electrónico no encontrado.",
+            "server_error": "Error del servidor. Por favor, inténtelo de nuevo más tarde.",
+            "verification_failed": "La verificación ha fallado."
+          }
+        },
+
+        
+        
+            "updateCredentials": {
+              "title": "Actualizar tus credenciales",
+              "username_label": "Nuevo nombre de usuario:",
+              "password_label": "Nueva contraseña:",
+              "update_button": "Actualizar credenciales",
+              "success_message": "¡Credenciales actualizadas correctamente! Redirigiendo...",
+              "error": {
+                "invalid_token": "Token inválido o faltante.",
+                "token_validation_failed": "No se pudo validar el token.",
+                "update_failed": "No se pudo actualizar las credenciales. Inténtalo de nuevo."
+              }
+            }
+          
+          
+          }
+          
+          
+          
+      
+      
+    
+  
