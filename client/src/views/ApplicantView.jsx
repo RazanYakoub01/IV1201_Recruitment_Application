@@ -66,6 +66,12 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
 
     const today = new Date().toISOString().split('T')[0];
 
+    const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/;
+    if (!dateRegex.test(fromDate) || !dateRegex.test(toDate)) {
+      setError('Invalid date format. Use YYYY-MM-DD.');
+      return;
+    }
+
     if (new Date(fromDate) < new Date(today) || new Date(toDate) < new Date(today)) {
       setError(t('applicant.error.past_dates'));
       return;
@@ -190,13 +196,46 @@ const ApplicantForm = ({ user, accessError, onSubmit, competences, error: presen
               </div>
             </div>
 
+            <div className="expertise-list">
+              <h3>Your Expertise</h3>
+              <ul>
+                {expertise.map((expert, idx) => {
+                  const competence = competences
+                    .map((competence) => {
+                      if (competence.competence_id == expert.competence_id) {
+                        return competence.name;
+                      }
+                      return null;
+                    })
+                    .filter((name) => name !== null);
+                  return (
+                    <li key={idx}>
+                      {competence.length > 0 ? competence[0] : 'Competence not found'}: {expert.years_of_experience} years
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+
             <div className="availability-section">
               <h3 className="applicant-title">{t('applicant.select_availability')}</h3>
               <div className="applicant-input-group">
-                <input className="expertise-dropdown" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-                <input className="expertise-dropdown" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+                <input className="expertise-dropdown" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+                <input className="expertise-dropdown" value={toDate} onChange={(e) => setToDate(e.target.value)} />
                 <button className="submit-button" onClick={handleAddAvailability}>{t('applicant.add_availability')}</button>
               </div>
+            </div>
+
+            <div className="availability-list">
+              <h3>Your Availability</h3>
+              <ul>
+                {availability.map((period, idx) => (
+                  <li key={idx}>
+                    From: {period.from_date}, To: {period.to_date}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <button className="submit-button" onClick={handleSubmit}>{t('applicant.submit_application')}</button>
