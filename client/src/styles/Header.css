@@ -31,28 +31,3 @@
 .logout-button:hover {
   background-color: #d32f2f;
 }
-/* Styles for the language switcher dropdown */
-.language-switcher {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.language-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #f9f9f9;
-}
-
-.language-select {
-  padding: 5px 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.language-select:hover {
-  border-color: #ede7e7;
-}

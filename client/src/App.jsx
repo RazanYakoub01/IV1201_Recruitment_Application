@@ -7,6 +7,7 @@ import RecruiterPresenter from './presenter/RecruiterPresenter';
 import ApplicantPresenter from './presenter/ApplicantPresenter';
 import RestorePresenter from './presenter/RestorePresenter';
 import UpdateCredentialsPresenter from './presenter/UpdateCredentialsPresenter';
+import './components/i18nConfig'; 
 
 import ProtectedRoute from './components/ProtectedRoute';
 import { isAuthenticated, isRecruiter, isApplicant } from './util/auth';

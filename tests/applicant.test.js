@@ -1,4 +1,4 @@
-const { Builder, By, until, Key } = require('selenium-webdriver');
+const { Builder, By, until, Key, Select  } = require('selenium-webdriver');
 const { login } = require('./loginHelper');
 const { signup } = require('./signupHelper');
 const { expect, afterEach } = require('@jest/globals');
@@ -106,8 +106,15 @@ describe('ApplicantForm Tests', () => {
     const competenceDropdown = await driver.wait(until.elementLocated(By.css('.expertise-dropdown')), 10000);
     const experienceInput = await driver.wait(until.elementLocated(By.css('.expertise-dropdown[type="number"]')), 10000);
 
-    await competenceDropdown.sendKeys('ticket sales');
-    await experienceInput.sendKeys('-1');
+    const select = new Select(competenceDropdown);
+    await driver.sleep(5000); 
+    await select.selectByVisibleText('ticket sales');
+    await driver.sleep(5000);
+    const selectedOption = await competenceDropdown.getAttribute('value');
+
+    console.log('Selected competence:', selectedOption);
+
+    await experienceInput.sendKeys('-1');    
     console.log("Set invalid experience value: -1");
 
     await addExpertiseButton.click();
