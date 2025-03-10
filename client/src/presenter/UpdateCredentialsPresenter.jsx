@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UpdateCredentialsView from '../views/UpdateCredentialsView';
 
 /**
@@ -9,6 +10,7 @@ import UpdateCredentialsView from '../views/UpdateCredentialsView';
  * @component
  */
 const UpdateCredentialsPresenter = () => {
+  const { t } = useTranslation(); // Load translations
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [searchParams] = useSearchParams();
@@ -22,7 +24,7 @@ const UpdateCredentialsPresenter = () => {
   useEffect(() => {
     const validateToken = async () => {
       if (!token) {
-        setError('Invalid or missing token.');
+        setError(t('updateCredentials.error.invalid_token'));
         return;
       }
 
@@ -36,17 +38,17 @@ const UpdateCredentialsPresenter = () => {
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-          throw new Error(data.message || 'Token validation failed.');
+          throw new Error(data.message || t('updateCredentials.error.token_validation_failed'));
         }
 
         // Token is valid, proceed with any further actions!
       } catch (err) {
-        setError(err.message || 'Failed to validate token.');
+        setError(err.message || t('updateCredentials.error.token_validation_failed'));
       }
     };
 
     validateToken();
-  }, [token]);
+  }, [token, t]);
 
   /**
    * Handles updating user credentials by sending a request to the backend.
@@ -66,13 +68,13 @@ const UpdateCredentialsPresenter = () => {
         body: JSON.stringify({ token, username, newPassword }),
       });
 
-      if (!response.ok) throw new Error('Failed to update credentials');
+      if (!response.ok) throw new Error(t('updateCredentials.error.update_failed'));
 
-      setSuccessMessage('Credentials updated successfully! Redirecting...');
+      setSuccessMessage(t('updateCredentials.success_message'));
       setTimeout(() => navigate('/'), 3000);
 
     } catch (err) {
-      setError(err.message || 'Failed to update credentials.');
+      setError(err.message || t('updateCredentials.error.update_failed'));
     }
   };
 

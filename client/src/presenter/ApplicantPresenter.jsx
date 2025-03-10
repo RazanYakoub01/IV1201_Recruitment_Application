@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ApplicantForm from '../views/ApplicantView';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser, createAuthHeaders, isApplicant } from '../util/auth';
+import { getCurrentUser, createAuthHeaders } from '../util/auth';
+import { useTranslation } from 'react-i18next';
 
 /**
  * The ApplicantFormPresenter component handles fetching competences
@@ -11,6 +12,7 @@ import { getCurrentUser, createAuthHeaders, isApplicant } from '../util/auth';
  * @component
  */
 const ApplicantFormPresenter = () => {
+  const { t } = useTranslation();
   const [competences, setCompetences] = useState([]);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
@@ -32,11 +34,10 @@ const ApplicantFormPresenter = () => {
           setAccessError(true);
         }
       } catch (e) {
-        console.error('Error parsing user:', e);
+        console.error(t('applicant.error.user_not_found'), e);
         setUser(null);
       }
     }
-    
   }, []);
 
   /**
@@ -48,24 +49,24 @@ const ApplicantFormPresenter = () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/competences`, {
           headers: createAuthHeaders()
         });
-        
+
         if (response.status === 401 || response.status === 403) {
           localStorage.removeItem('user');
           setUser(null);
           return;
         }
-        
+
         const data = await response.json();
         if (data.success) {
           setCompetences(data.competences);
         } else {
-          setError('Error fetching competences');
+          setError(t('applicant.error.fetch_competences'));
         }
       } catch (err) {
-        setError('Error fetching competences');
+        setError(t('applicant.error.fetch_competences'));
       }
     };
-    
+
     if (user && !accessError) {
       fetchCompetences();
     }
@@ -91,7 +92,7 @@ const ApplicantFormPresenter = () => {
         competence_id: Number(item.competence_id),
         years_of_experience: Number(item.years_of_experience)
       }));
-  
+
       console.log('Formatted expertise data:', formattedExpertise);
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications/submit`, {
@@ -103,6 +104,7 @@ const ApplicantFormPresenter = () => {
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('user'); 
         setUser(null);
+        setError(t('applicant.error.unauthorized'));
         return;
       }
 
@@ -125,10 +127,10 @@ const ApplicantFormPresenter = () => {
         });
 
       } else {
-        setError(data.message || 'Error submitting application');
+        setError(t('applicant.error.submit_application_error'));
       }
     } catch (err) {
-      setError('Error submitting application');
+      setError(t('applicant.error.server_error'));
     }
   };
 

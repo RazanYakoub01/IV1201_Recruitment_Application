@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import RestoreView from '../views/RestoreView';
 
 /**
@@ -8,6 +9,7 @@ import RestoreView from '../views/RestoreView';
  * @component
  */
 const RestorePresenter = () => {
+  const { t } = useTranslation();
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [emailContent, setEmailContent] = useState('');
@@ -35,19 +37,19 @@ const RestorePresenter = () => {
       if (!response.ok) {
         switch (response.status) {
           case 400:
-            throw new Error('Invalid email format');
+            throw new Error(t('restore.error.invalid_email'));
           case 404:
-            throw new Error('Email not found');
+            throw new Error(t('restore.error.email_not_found'));
           default:
-            throw new Error(data.message || 'Verification failed');
+            throw new Error(data.message || t('restore.error.verification_failed'));
         }
       }
 
-      setSuccessMessage('Email verified successfully. Sending update link...');
+      setSuccessMessage(t('restore.success_message'));
       sendUpdateEmail(email);
     } catch (err) {
       console.error('Verification error:', err);
-      setError(err.message || 'Server error. Please try again later.');
+      setError(err.message || t('restore.error.server_error'));
     }
   };
 
@@ -74,15 +76,15 @@ const RestorePresenter = () => {
       const data = await response.json();
   
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to generate update email.');
+        throw new Error(data.message || t('restore.error.email_send_failed'));
       }
   
-      setSuccessMessage('Email verified successfully and a link to restore your credentials was sent!');
+      setSuccessMessage(t('restore.success_message'));
       setEmailContent(data.emailText);
   
     } catch (err) {
       console.error('Email sending error:', err);
-      setError(err.message || 'Failed to generate update email.');
+      setError(err.message || t('restore.error.email_send_failed'));
     }
   };
 

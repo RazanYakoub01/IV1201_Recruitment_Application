@@ -1,0 +1,189 @@
+{
+    "header": {
+      "title": "HireFlow",
+      "logout": "Logga ut"
+    },
+    "footer": {
+      "copyright": "© 2025 HireFlow. Alla rättigheter förbehållna."
+    },
+    "language_switcher": {
+      "choose_language": "Välj språk"
+    },
+    
+        "applicant": {
+          "title": "Jobbansökan",
+          "greeting": "Hej, {{username}}!",
+          "select_expertise": "Välj kompetensområde",
+          "select_expertise_placeholder": "Välj kompetens",
+          "years_of_experience": "Antal års erfarenhet",
+          "add_expertise": "Lägg till kompetens",
+          "select_availability": "Välj tillgänglighet",
+          "add_availability": "Lägg till tillgänglighet",
+          "submit_application": "Skicka ansökan",
+          "cancel": "Avbryt",
+          "error": {
+            "select_competence": "Vänligen välj en kompetens och antal år av erfarenhet.",
+            "valid_experience": "Ange ett giltigt antal år av erfarenhet mellan 0 och 99.",
+            "select_dates": "Ange både start- och slutdatum.",
+            "past_dates": "Datum kan inte vara i det förflutna.",
+            "invalid_date_range": "Från-datumet kan inte vara senare än till-datumet.",
+            "missing_data": "Lägg till minst en kompetens och en tillgänglighetsperiod innan du skickar in.",
+            "user_not_found": "Användare hittades inte.",
+            "access_denied": "Du har inte tillgång till denna sida.",
+            "fetch_competences": "Fel vid hämtning av kompetenser. Försök igen senare.",
+            "submit_application_error": "Fel vid inlämning av ansökan. Kontrollera dina uppgifter och försök igen.",
+            "unauthorized": "Du är inte auktoriserad att utföra denna åtgärd.",
+            "server_error": "Serverfel. Försök igen senare."
+          },
+          "status": {
+            "accepted": {
+              "title": "Din ansökan har blivit accepterad!",
+              "message": "Vi kontaktar dig snart!"
+            },
+            "rejected": {
+              "title": "Tyvärr valde vi andra kandidater denna gång.",
+              "message": "Vi informerar dig när den nya ansökningsperioden öppnas."
+            },
+            "unhandled": {
+              "title": "Din ansökan granskas!",
+              "message": "Vi behandlar dina uppgifter och återkommer snart."
+            },
+            "error": {
+              "title": "Något gick fel.",
+              "message": "Logga ut och försök igen. Om problemet kvarstår, kontakta supporten."
+            }
+          }
+        },
+      
+
+    "login": {
+      "title": "Logga in på ditt konto",
+      "username": "Användarnamn",
+      "password": "Lösenord",
+      "forgot_password": "Glömt användarnamn eller lösenord?",
+      "sign_in": "Logga in",
+      "no_account": "Har du inget konto?",
+      "sign_up": "Registrera dig",
+      "error": {
+        "required_username": "Användarnamn krävs.",
+        "required_password": "Lösenord krävs.",
+        "invalid_credentials": "Ogiltigt användarnamn eller lösenord.",
+        "server_error": "Serverfel. Försök igen senare.",
+        "request_timeout": "Begäran har löpt ut. Försök igen.",
+        "login_failed": "Inloggning misslyckades. Försök igen."
+      }
+    },
+
+    
+        "signup": {
+          "title": "Skapa ett konto",
+          "first_name": "Förnamn",
+          "last_name": "Efternamn",
+          "email": "E-postadress",
+          "person_number": "Personnummer",
+          "username": "Användarnamn",
+          "password": "Lösenord",
+          "sign_up": "Registrera",
+          "go_back": "Gå tillbaka till inloggning",
+          "success_message": "Konto skapades framgångsrikt!",
+          "error": {
+            "required_first_name": "Förnamn är obligatoriskt.",
+            "required_last_name": "Efternamn är obligatoriskt.",
+            "invalid_email": "Ogiltigt e-postformat.",
+            "invalid_person_number": "Personnumret måste vara exakt 12 siffror långt och endast innehålla siffror.",
+            "short_username": "Användarnamnet måste vara minst 3 tecken långt.",
+            "short_password": "Lösenordet måste vara minst 8 tecken långt.",
+            "username_taken": "Detta användarnamn är redan taget.",
+            "email_exists": "Användarnamn eller e-postadress finns redan.",
+            "missing_fields": "Vänligen fyll i alla obligatoriska fält.",
+            "request_timeout": "Begäran tog för lång tid. Försök igen.",
+            "no_internet": "Ingen internetanslutning.",
+            "server_error": "Det gick inte att slutföra registreringen. Försök igen senare."
+          }
+        },
+      
+    
+    
+            "recruiter": {
+              "welcome": "Välkommen, {{username}}!",
+              "list_all_applications": "Lista alla ansökningar",
+              "no_applications": "Inga ansökningar hittades.",
+              "application_details": "Ansökningsdetaljer",
+              "name": "Namn",
+              "email": "E-post",
+              "status": "Status",
+              "competences": "Kompetenser",
+              "availability": "Tillgänglighet",
+              "update_status": "Uppdatera status",
+              "status_unhandled": "Ej behandlad",
+              "status_accepted": "Accepterad",
+              "status_rejected": "Avvisad",
+              "update_button": "Uppdatera status",
+              "back_button": "Tillbaka till ansökningar",
+              "previous": "Föregående",
+              "next": "Nästa",
+              "login_required": "Du måste vara inloggad för att se denna sida.",
+              "access_denied": "Åtkomst nekad. Endast rekryterare kan se denna sida.",
+              "update_error": "Det gick inte att uppdatera statusen. Försök igen senare.",
+              "update_success": "Ansökningsstatus uppdaterad!",
+              "error": {
+                "fetch_failed": "Misslyckades med att hämta ansökningar: {{statusText}}",
+                "unexpected_data_format": "Oväntat dataformat mottaget från servern.",
+                "fetch_error": "Det gick inte att ladda ansökningarna. Försök igen senare.",
+                "update_status": "Fel vid uppdatering av ansökningsstatus.",
+                "parsing_user": "Fel vid tolkning av användardata."
+              },
+              "log": {
+                "applications_fetched": "Ansökningar hämtades framgångsrikt.",
+                "applications_updated": "Uppdaterade ansökningslistan med {{count}} ansökningar."
+              }
+            },
+          
+
+      
+
+      
+        "restore": {
+          "title": "Återställ dina uppgifter",
+          "email_label": "Ange din registrerade e-postadress:",
+          "send_link": "Skicka uppdateringslänk",
+          "email_preview": "Förhandsgranskning av e-post:",
+          "success_message": "En återställningslänk har skickats till din e-post.",
+          "error": {
+            "required_email": "E-postadress krävs.",
+            "invalid_email": "Ogiltigt e-postformat.",
+            "email_not_found": "E-post hittades inte.",
+            "server_error": "Serverfel. Försök igen senare.",
+            "verification_failed": "Verifiering misslyckades."
+          }
+        },
+        
+        
+        
+            "updateCredentials": {
+              "title": "Uppdatera dina uppgifter",
+              "username_label": "Nytt användarnamn:",
+              "password_label": "Nytt lösenord:",
+              "update_button": "Uppdatera uppgifter",
+              "success_message": "Uppgifterna har uppdaterats! Omdirigerar...",
+              "error": {
+                "invalid_token": "Ogiltig eller saknad token.",
+                "token_validation_failed": "Misslyckades med att validera token.",
+                "update_failed": "Misslyckades med att uppdatera uppgifterna. Försök igen."
+              }
+            }
+          }
+          
+          
+          
+          
+          
+          
+          
+      
+      
+      
+    
+    
+  
+  

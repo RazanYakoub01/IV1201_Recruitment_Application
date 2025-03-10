@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/Recruiter.css';
 
 /**
@@ -14,6 +15,7 @@ const RecruiterView = ({
   fetchApplications, 
   showApplications: initialShowApplications = false 
 }) => {
+  const { t } = useTranslation();
   const [paginatedApplications, setPaginatedApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [applicationsPerPage] = useState(10);
@@ -23,18 +25,12 @@ const RecruiterView = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [message, setMessage] = useState(null);
 
-  /**
-   * useEffect hook to fetch applications when they are available and when the current page changes.
-   */
   useEffect(() => {
     if (applications && applications.length > 0) {
       handleFetchApplications();
     }
   }, [applications, currentPage]);
 
-  /**
-   * Handles the pagination and sets the displayed applications based on the current page.
-   */
   const handleFetchApplications = () => {
     if (applications && applications.length > 0) {
       const indexOfLastApplication = currentPage * applicationsPerPage;
@@ -45,108 +41,83 @@ const RecruiterView = ({
       setErrorMessage('');
     } else {
       setShowApplications(false);
-      setErrorMessage('No applications available at the moment.');
+      setErrorMessage(t('recruiter.no_applications'));
     }
   };
 
-  /**
-   * Sets the selected application and its current status.
-   */
   const handleApplicationClick = (app) => {
     setSelectedApplication(app);
     setNewStatus(app.application_status);
   };
 
-  /**
-   * Resets the selected application and message, and goes back to the list of applications.
-   */
   const handleBackToApplications = () => {
     setSelectedApplication(null);
     setMessage(null); 
   };
 
-  /**
-   * Handles the change of the application status.
-   */
   const handleStatusChange = (e) => {
     setNewStatus(e.target.value);
   };
 
-  /**
-   * Handles the update of the application status.
-   */
   const handleUpdateStatusClick = () => {
     if (selectedApplication) {
       const { application_id, last_updated } = selectedApplication;
 
       updateApplicationStatus(application_id, newStatus, last_updated, setSelectedApplication, setMessage)
-        .then(() => {
-        })
+        .then(() => {})
         .catch((err) => {
-          console.error('Error updating status:', err);
+          console.error(t('recruiter.update_error'), err);
         });
     }
   };
 
-  /**
-   * Renders an error message if the user is not logged in.
-   */
   if (!user) {
-    return <div className="error-message">You must be logged in to access this page. Please log in first!</div>;
+    return <div className="error-message">{t('recruiter.login_required')}</div>;
   }
 
-  /**
-   * Renders an error message if the user does not have access to the recruiter view.
-   */
   if (accessError) {
-    return <div className="error-message">You don't have access to this page.</div>;
+    return <div className="error-message">{t('recruiter.access_denied')}</div>;
   }
 
-  /**
-   * Renders the details of a selected application.
-   */
   if (selectedApplication) {
     return (
       <div className="application-details-container">
-        <h2>Application Details</h2>
+        <h2>{t('recruiter.application_details')}</h2>
         {message && (
           <div className={`message ${message.type === 'success' ? 'success-message' : 'error-message'}`}>
             {message.text}
           </div>
         )}
-        <p><strong>Name:</strong> {selectedApplication.name} {selectedApplication.surname}</p>
-        <p><strong>Email:</strong> {selectedApplication.email}</p>
-        <p><strong>Current Application Status:</strong> {selectedApplication.application_status}</p>
-        <p><strong>Applicants Competences:</strong> {selectedApplication.competences}</p>
-        <p><strong>Applicants Availability:</strong> {selectedApplication.availability}</p>
-        <p><strong>Updated Status:</strong> 
+        <p><strong>{t('recruiter.name')}:</strong> {selectedApplication.name} {selectedApplication.surname}</p>
+        <p><strong>{t('recruiter.email')}:</strong> {selectedApplication.email}</p>
+        <p><strong>{t('recruiter.status')}:</strong> {selectedApplication.application_status}</p>
+        <p><strong>{t('recruiter.competences')}:</strong> {selectedApplication.competences}</p>
+        <p><strong>{t('recruiter.availability')}:</strong> {selectedApplication.availability}</p>
+        <p><strong>{t('recruiter.update_status')}:</strong> 
           <select value={newStatus} onChange={handleStatusChange}>
-            <option value="unhandled">Unhandled</option>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Rejected</option>
+            <option value="unhandled">{t('recruiter.status_unhandled')}</option>
+            <option value="accepted">{t('recruiter.status_accepted')}</option>
+            <option value="rejected">{t('recruiter.status_rejected')}</option>
           </select>
         </p>
         <button onClick={handleUpdateStatusClick} className="update-status-button">
-          Update Status
+          {t('recruiter.update_button')}
         </button>
         <button onClick={handleBackToApplications} className="back-button">
-          Back to Applications
+          {t('recruiter.back_button')}
         </button>
       </div>
     );
   }
 
-  /**
-   * Renders the list of applications with pagination.
-   */
   return (
     <div className="recruiter-container">
       <div className="recruiter-box">
         {user.role === 1 ? (
           <>
-            <h2 className="recruiter-header">Welcome, {user.username}!</h2>
+            <h2 className="recruiter-header">{t('recruiter.welcome', { username: user.username })}</h2>
             <button onClick={fetchApplications} className="fetch-applications-button">
-              List All Applications
+              {t('recruiter.list_all_applications')}
             </button>
 
             {message && (
@@ -163,11 +134,11 @@ const RecruiterView = ({
                 <table className="applications-table">
                   <thead>
                     <tr>
-                      <th>Full Name</th>
-                      <th>Email</th>
-                      <th>Status</th>
-                      <th>Competences</th>
-                      <th>Availability</th>
+                      <th>{t('recruiter.name')}</th>
+                      <th>{t('recruiter.email')}</th>
+                      <th>{t('recruiter.status')}</th>
+                      <th>{t('recruiter.competences')}</th>
+                      <th>{t('recruiter.availability')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,15 +155,15 @@ const RecruiterView = ({
                 </table>
 
                 <div className="pagination-controls">
-                  <button id= "previous" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-                    Previous
+                  <button id="previous" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                    {t('recruiter.previous')}
                   </button>
                   <button
                     id="next"
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === Math.ceil(applications.length / applicationsPerPage)}
                   >
-                    Next
+                    {t('recruiter.next')}
                   </button>
                 </div>
               </div>
